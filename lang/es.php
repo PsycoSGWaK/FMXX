@@ -75,6 +75,7 @@ $t = [
     'alert_player_saved'    => 'Jugador actualizado.',
     'alert_mercato_saved'   => 'Estados de mercado guardados.',
     'alert_login_error'     => 'Correo o contraseña incorrectos.',
+    'alert_login_missing'   => 'Por favor, introduce tu correo y contraseña.',
     'alert_format_error'    => 'Formato de archivo no compatible. Usa un archivo .html o .csv.',
 
     // Pestañas index

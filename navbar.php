@@ -209,6 +209,14 @@ document.addEventListener('DOMContentLoaded', function () {
     <?php require_once("login.php"); ?>
 </div>
 
+<?php if (in_array($_GET['error'] ?? '', ['login', 'form'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('LoginModal')).show();
+});
+</script>
+<?php endif; ?>
+
 <div class="modal" tabindex="-1" id="SignupModal" aria-hidden="true">
     <?php require_once("signup.php"); ?>
 </div>
