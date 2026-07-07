@@ -75,6 +75,7 @@ $t = [
     'alert_player_saved'    => 'Player updated.',
     'alert_mercato_saved'   => 'Transfer statuses saved.',
     'alert_login_error'     => 'Incorrect email or password.',
+    'alert_login_missing'   => 'Please enter your email and password.',
     'alert_format_error'    => 'Unsupported file format. Please use an .html or .csv file.',
 
     // Index tabs

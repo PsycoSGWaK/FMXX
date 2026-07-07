@@ -286,12 +286,6 @@ if (count($joueurs) > 0) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    <?php if (isset($_GET['error']) && $_GET['error'] === 'login'): ?>
-        <div class="alert alert-danger alert-dismissible fade show">
-            <?= $t['alert_login_error'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
     <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
             <?= $t['alert_squad_imported'] ?>

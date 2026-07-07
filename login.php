@@ -5,6 +5,12 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <?php $loginError = $_GET['error'] ?? ''; ?>
+            <?php if ($loginError === 'login'): ?>
+                <div class="alert alert-danger py-2"><?= $t['alert_login_error'] ?></div>
+            <?php elseif ($loginError === 'form'): ?>
+                <div class="alert alert-danger py-2"><?= $t['alert_login_missing'] ?></div>
+            <?php endif; ?>
             <form class="form-login" action="login_post.php" method="post">
                 <?= csrf_field() ?>
                 <div class="mb-3">
