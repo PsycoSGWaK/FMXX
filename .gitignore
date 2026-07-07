@@ -1,0 +1,20 @@
+# --- Secrets / configuration de déploiement ---
+# Identifiants base de données en production : ne JAMAIS commiter.
+config.php
+# Clé API-Football (normalement hors webroot, sécurité supplémentaire si déplacée ici)
+api_key.txt
+*.env
+.env
+
+# --- Données personnelles / exports utilisateur ---
+# Effectifs exportés depuis FM26 (données perso, pas du code)
+Effectif_*.html
+Effectif_*.csv
+
+# --- Fichiers système / éditeur ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~

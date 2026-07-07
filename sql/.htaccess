@@ -1,0 +1,12 @@
+# Bloque tout accès web à ce dossier.
+# Il ne contient que des scripts CLI, des dumps SQL et des données sensibles
+# qui ne doivent jamais être servis par le navigateur.
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2
+    Order allow,deny
+    Deny from all
+</IfModule>
