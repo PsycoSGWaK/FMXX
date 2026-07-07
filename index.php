@@ -215,18 +215,25 @@ foreach ($optionsParType as $opts) {
     }
 }
 
-// Compétition européenne forcée (paramètres) ou déduite du rang championnat
+// Compétition européenne forcée (paramètres) ou déduite du résultat du championnat de la saison précédente
+// (la qualification européenne d'une saison se décide sur le classement déjà joué la saison d'avant, jamais sur l'objectif de la saison en cours)
 $overrideStmt = $pdo->prepare("SELECT comp_europe_override FROM user WHERE idUser = :id");
 $overrideStmt->execute(['id' => $idUser]);
 $compEuropeOverride = $overrideStmt->fetchColumn();
 
-$champRank = null;
-foreach ($competitions as $c) {
-    if ($c['typeCompetition'] === 'Championnat' && $c['objectif'] !== '') {
-        $champRank = $ranking[$c['objectif']] ?? null;
-        break;
-    }
-}
+[$saisonDebut, $saisonFinBrute] = explode('/', $saison);
+$saisonPrecedente = ((int)$saisonDebut - 1) . '/' . ((int)$saisonFinBrute - 1);
+
+$prevChampStmt = $pdo->prepare("
+    SELECT o.resultat
+    FROM objectif o
+    JOIN competition c ON c.idCompetition = o.idCompetition
+    WHERE o.idUser = :idUser AND o.saison = :saisonPrecedente AND c.typeCompetition = 'Championnat'
+    LIMIT 1
+");
+$prevChampStmt->execute(['idUser' => $idUser, 'saisonPrecedente' => $saisonPrecedente]);
+$prevChampResultat = $prevChampStmt->fetchColumn();
+$champRank = $prevChampResultat ? ($ranking[$prevChampResultat] ?? null) : null;
 $competitions = array_values(array_filter($competitions, function($c) use ($champRank, $compEuropeOverride) {
     if ($c['typeCompetition'] !== 'Continentale') return true;
     if ($compEuropeOverride) return (int)$c['idCompetition'] === (int)$compEuropeOverride;
