@@ -1,0 +1,108 @@
+Mapping confirmé : dump file  ->  league.id (API-Football, saison 2024)
+URL à appeler pour chaque : /teams?league=<id>&season=2024
+=========================================================================
+
+##### HOMMES (genre M) #####
+
+# ANGLETERRE (GB)
+gb_premier_league.json   39    M D1   Premier League
+gb_championship.json     40    M D2   Championship
+gb_league_one.json       41    M D3   League One
+
+# ESPAGNE (ES)
+es_la_liga.json          140   M D1   La Liga
+es_la_liga_2.json        141   M D2   Segunda División
+
+# ALLEMAGNE (DE)
+de_bundesliga.json       78    M D1   Bundesliga
+de_2_bundesliga.json     79    M D2   2. Bundesliga
+
+# ITALIE (IT)
+it_serie_a.json          135   M D1   Serie A
+it_serie_b.json          136   M D2   Serie B
+
+# FRANCE (FR) — National 2 scindé en 3 groupes A/B/C
+fr_ligue_1.json          61    M D1   Ligue 1
+fr_ligue_2.json          62    M D2   Ligue 2
+fr_national.json         63    M D3   National 1
+fr_national_2_a.json     67    M D4   National 2 - Group A
+fr_national_2_b.json     68    M D4   National 2 - Group B
+fr_national_2_c.json     69    M D4   National 2 - Group C
+
+# USA (US)
+us_mls.json              253   M D1   Major League Soccer
+
+# JAPON (JP)
+jp_j1.json               98    M D1   J1 League
+jp_j2.json               99    M D2   J2 League
+
+# PAYS DE GALLES (WL) — ⚠ Cymru North/South ABSENTS de l'API 2024.
+# Seuls Premier League (110) et FAW Championship (111, 2e niveau) dispo.
+wl_cymru_premier.json    110   M D1   Premier League (Cymru Premier)
+wl_faw_championship.json 111   M D2   FAW Championship
+
+# PAYS-BAS (NL)
+nl_eredivisie.json       88    M D1   Eredivisie
+nl_eerste_divisie.json   89    M D2   Eerste Divisie
+
+# PORTUGAL (PT)
+pt_primeira_liga.json    94    M D1   Primeira Liga
+pt_liga_portugal_2.json  95    M D2   Segunda Liga (Liga Portugal 2)
+
+# TURQUIE (TR)
+tr_super_lig.json        203   M D1   Süper Lig
+tr_1_lig.json            204   M D2   1. Lig
+
+# AUTRICHE (AT)
+at_bundesliga.json       218   M D1   Bundesliga
+
+# BELGIQUE (BE)
+be_pro_league.json       144   M D1   Jupiler Pro League
+be_challenger_pro.json   145   M D2   Challenger Pro League
+
+# BRESIL (BR)
+br_serie_a.json          71    M D1   Serie A
+br_serie_b.json          72    M D2   Serie B
+
+# SUEDE (SE)
+se_allsvenskan.json      113   M D1   Allsvenskan
+
+
+##### FEMMES (genre F) #####
+
+# ALLEMAGNE (DE)
+de_frauen_bundesliga.json 82   F D1   Frauen Bundesliga
+
+# ANGLETERRE (GB)
+gb_wsl.json              44    F D1   FA WSL
+gb_wsl2.json             699   F D2   Women's Championship
+
+# ESPAGNE (ES) — ⚠ D2 féminine (Segunda Femenina) ABSENTE de l'API 2024.
+es_liga_f.json           142   F D1   Primera División Femenina (Liga F)
+
+# USA (US)
+us_nwsl.json             254   F D1   NWSL Women
+
+# FRANCE (FR)
+fr_d1_feminine.json      64    F D1   Feminine Division 1
+
+# ITALIE (IT)
+it_serie_a_women.json    139   F D1   Serie A Women
+
+# JAPON (JP)
+jp_we_league.json        854   F D1   WE League
+
+# PAYS DE GALLES (WL) — ⚠ Adran Premier ABSENTE de l'API 2024.
+
+# SUEDE (SE)
+se_damallsvenskan.json   549   F D1   Damallsvenskan
+se_elitettan.json        736   F D2   Elitettan
+
+
+=========================================================================
+TOTAL : 42 appels /teams à faire (32 hommes + 10 femmes).
+
+MANQUANTS dans l'API (saison 2024) — à compléter à la main dans l'admin :
+  - Espagne D2 féminine (Segunda Federación Femenina)
+  - Pays de Galles : Cymru North + Cymru South (hommes D2)
+  - Pays de Galles : Adran Premier (femmes D1)

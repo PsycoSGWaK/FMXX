@@ -1,0 +1,11 @@
+# Bloque tout accès web à ce dossier (dumps JSON de l'API + anciennes clés).
+# Rien ici ne doit être téléchargeable depuis un navigateur.
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2
+    Order allow,deny
+    Deny from all
+</IfModule>

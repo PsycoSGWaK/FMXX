@@ -1,0 +1,36 @@
+# ==========================================================================
+# FMXX — configuration Apache / LiteSpeed pour le déploiement
+# (sans effet en local WAMP si tu n'utilises pas mod_rewrite, mais inoffensif)
+# ==========================================================================
+
+# --- Désactiver le listing des répertoires ---
+Options -Indexes
+
+# --- Bloquer l'accès web aux fichiers sensibles ---
+# config.php contient les identifiants de la base : il ne doit jamais être servi.
+<FilesMatch "^(config\.php|config\.example\.php|\.gitignore|\.env|api_key\.txt)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- En-têtes de sécurité ---
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # HSTS : forcer HTTPS pendant 6 mois (activer SEULEMENT une fois le HTTPS confirmé)
+    # Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+</IfModule>
+
+# --- HTTPS ---
+# NE PAS forcer la redirection HTTP->HTTPS ici : Cloudflare le fait via
+# « Always Use HTTPS ». Une redirection ici, derrière le proxy Cloudflare en mode
+# Flexible, provoquerait une boucle de redirection. Laisser Cloudflare gérer.
+
+# --- Page d'accueil ---
+DirectoryIndex index.php
