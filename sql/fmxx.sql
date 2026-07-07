@@ -98,7 +98,7 @@ INSERT INTO `competition` (`idCompetition`, `nomCompetition`, `typeCompetition`,
 (26, 'DFB-Pokal', 'Nationale', 3, NULL, 'M', NULL, NULL),
 (27, 'Coppa Italia', 'Nationale', 4, NULL, 'M', NULL, NULL),
 (28, 'Coupe de France', 'Nationale', 5, NULL, 'M', NULL, NULL),
-(30, 'UEFA Women s Champions League', 'Continentale', NULL, NULL, 'F', 1, 20),
+(30, 'UEFA Women s Champions League', 'Continentale', NULL, NULL, 'F', 1, 1),
 (31, 'Women s Super League', 'Championnat', 1, 'D1', 'F', NULL, NULL),
 (32, 'Women s Championship', 'Championnat', 1, 'D2', 'F', NULL, NULL),
 (33, 'FA Women s Cup', 'Nationale', 1, NULL, 'F', NULL, NULL),
@@ -114,7 +114,7 @@ INSERT INTO `competition` (`idCompetition`, `nomCompetition`, `typeCompetition`,
 (43, 'Serie A Femminile', 'Championnat', 4, 'D1', 'F', NULL, NULL),
 (44, 'Serie B Femminile', 'Championnat', 4, 'D2', 'F', NULL, NULL),
 (45, 'Coppa Italia Femminile', 'Nationale', 4, NULL, 'F', NULL, NULL),
-(46, 'UEFA Women s Europa Cup', 'Continentale', NULL, NULL, 'F', 1, 20);
+(46, 'UEFA Women s Europa Cup', 'Continentale', NULL, NULL, 'F', 2, 20);
 
 --
 -- Déclencheurs `competition`
