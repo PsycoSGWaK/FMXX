@@ -115,7 +115,7 @@ INSERT INTO `competition` (`idCompetition`, `nomCompetition`, `typeCompetition`,
 (44, 'Serie B Femminile', 'Championnat', 4, 'D2', 'F', NULL, NULL),
 (45, 'Coppa Italia Femminile', 'Nationale', 4, NULL, 'F', NULL, NULL),
 (46, 'UEFA Women s Europa Cup', 'Continentale', NULL, NULL, 'F', 2, 20),
-(48, 'FIFA Women Champions Cup', 'Continentale', NULL, NULL, 'F', NULL, NULL);
+(47, 'Supercoupe d Espagne Feminine', 'Ligue', 2, 'D1', 'F', NULL, NULL);
 
 --
 -- Déclencheurs `competition`
