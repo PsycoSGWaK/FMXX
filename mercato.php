@@ -172,8 +172,17 @@ function formatBudget(int $val): string {
 
     <!-- Section Arrivées -->
 <div class="card mt-4">
-    <div class="card-header py-2" style="background:#091c3e; color:#cdfb0a;">
+    <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#cdfb0a;">
         <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
+        <?php if (!empty($arrivees)): ?>
+            <form action="mercato_arrivee_post.php" method="post" onsubmit="return confirm('<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>')">
+                <?= csrf_field() ?>
+                <input type="hidden" name="delete_all" value="1">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <ion-icon name="trash-outline"></ion-icon> <?= $t['mercato_arr_delete_all'] ?>
+                </button>
+            </form>
+        <?php endif; ?>
     </div>
     <div class="card-body p-0">
         <?php
