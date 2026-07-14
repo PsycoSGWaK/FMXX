@@ -11,6 +11,14 @@ if (!isset($_SESSION['idUser']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
 csrf_verify();
 $idUser = $_SESSION['idUser'];
 
+// Suppression totale
+if (isset($_POST['delete_all'])) {
+    $stmt = $pdo->prepare("DELETE FROM mercato_arrivee WHERE idUser = :idUser");
+    $stmt->execute(['idUser' => $idUser]);
+    header("Location: mercato.php?saved=1");
+    exit;
+}
+
 // Suppression
 if (isset($_POST['delete_id'])) {
     $id = (int)$_POST['delete_id'];

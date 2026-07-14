@@ -162,6 +162,8 @@ $t = [
     'mercato_arr_opt_nego'   => 'En négociation',
     'mercato_arr_opt_signe'  => 'Signé',
     'mercato_arr_add'        => 'Ajouter',
+    'mercato_arr_delete_all' => 'Tout supprimer',
+    'mercato_arr_delete_all_confirm' => 'Supprimer toutes les arrivées mercato ? Cette action est irréversible.',
     'mercato_arr_empty'      => 'Aucune arrivée enregistrée.',
     'mercato_empty'      => 'Aucun joueur.',
     'mercato_import_link'=> 'Importer un effectif',
@@ -220,6 +222,8 @@ $t = [
     // Dropdown user
     'dropdown_edit_profile'   => '✏️ Modifier mon profil',
     'dropdown_export'         => '⬇ Exporter mes données',
+    'dropdown_backup'         => '💾 Télécharger une sauvegarde',
+    'dropdown_restore_backup' => '📤 Restaurer une sauvegarde',
     'dropdown_delete_account' => '🗑 Supprimer mon compte',
 
     // Modal profil
@@ -238,6 +242,16 @@ $t = [
     'delete_account_warning'  => 'Cette action est <strong>irréversible</strong>. Toutes vos données (effectif, objectifs, palmarès) seront définitivement supprimées.',
     'delete_account_confirm'  => 'Confirmer la suppression',
     'alert_account_deleted'   => 'Votre compte a été supprimé. À bientôt !',
+
+    // Modal restauration sauvegarde
+    'restore_backup_title'    => 'Restaurer une sauvegarde',
+    'restore_backup_info'     => 'Utile après une suppression de compte : recréez un compte, puis importez ici le fichier .json téléchargé via « Télécharger une sauvegarde ». Vos identifiants de connexion ne sont jamais modifiés.',
+    'restore_backup_warning'  => '⚠️ Cette action remplace définitivement vos données actuelles (effectif, tactique, objectifs, saisons, arrivées mercato) par celles du fichier importé.',
+    'restore_backup_confirm_dialog' => 'Importer cette sauvegarde va remplacer vos données actuelles (effectif, tactique, objectifs, saisons, arrivées mercato). Continuer ?',
+    'restore_backup_label'    => 'Fichier de sauvegarde (.json)',
+    'restore_backup_confirm'  => 'Importer et remplacer',
+    'alert_backup_restored'   => 'Sauvegarde restaurée avec succès.',
+    'alert_backup_error'      => 'Échec de la restauration : fichier de sauvegarde invalide ou illisible.',
 
     // Paramètres
     'setting_title'           => 'Paramètres de la saison',

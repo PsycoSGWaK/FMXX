@@ -162,6 +162,8 @@ $t = [
     'mercato_arr_opt_nego'   => 'En negociación',
     'mercato_arr_opt_signe'  => 'Fichado',
     'mercato_arr_add'        => 'Añadir',
+    'mercato_arr_delete_all' => 'Eliminar todo',
+    'mercato_arr_delete_all_confirm' => '¿Eliminar todas las llegadas del mercado? Esta acción no se puede deshacer.',
     'mercato_arr_empty'      => 'No hay llegadas registradas.',
     'mercato_empty'      => 'Sin jugadores.',
     'mercato_import_link'=> 'Importar una plantilla',
@@ -220,6 +222,8 @@ $t = [
     // Menú usuario
     'dropdown_edit_profile'   => '✏️ Editar perfil',
     'dropdown_export'         => '⬇ Exportar mis datos',
+    'dropdown_backup'         => '💾 Descargar una copia de seguridad',
+    'dropdown_restore_backup' => '📤 Restaurar una copia de seguridad',
     'dropdown_delete_account' => '🗑 Eliminar mi cuenta',
 
     // Modal perfil
@@ -238,6 +242,16 @@ $t = [
     'delete_account_warning'  => 'Esta acción es <strong>irreversible</strong>. Todos tus datos (plantilla, objetivos, palmarés) serán eliminados permanentemente.',
     'delete_account_confirm'  => 'Confirmar eliminación',
     'alert_account_deleted'   => '¡Tu cuenta ha sido eliminada. ¡Hasta pronto!',
+
+    // Modal restaurar copia de seguridad
+    'restore_backup_title'    => 'Restaurar una copia de seguridad',
+    'restore_backup_info'     => 'Útil tras eliminar tu cuenta: recrea una cuenta y luego importa aquí el archivo .json descargado con «Descargar una copia de seguridad». Tus credenciales de acceso nunca se modifican.',
+    'restore_backup_warning'  => '⚠️ Esta acción reemplaza definitivamente tus datos actuales (plantilla, táctica, objetivos, temporadas, llegadas de mercado) por los del archivo importado.',
+    'restore_backup_confirm_dialog' => 'Importar esta copia de seguridad reemplazará tus datos actuales (plantilla, táctica, objetivos, temporadas, llegadas de mercado). ¿Continuar?',
+    'restore_backup_label'    => 'Archivo de copia de seguridad (.json)',
+    'restore_backup_confirm'  => 'Importar y reemplazar',
+    'alert_backup_restored'   => 'Copia de seguridad restaurada con éxito.',
+    'alert_backup_error'      => 'Fallo al restaurar: archivo de copia de seguridad inválido o ilegible.',
 
     // Ajustes
     'setting_title'           => 'Ajustes de temporada',

@@ -162,6 +162,8 @@ $t = [
     'mercato_arr_opt_nego'   => 'In negotiation',
     'mercato_arr_opt_signe'  => 'Signed',
     'mercato_arr_add'        => 'Add',
+    'mercato_arr_delete_all' => 'Delete all',
+    'mercato_arr_delete_all_confirm' => 'Delete all mercato arrivals? This action cannot be undone.',
     'mercato_arr_empty'      => 'No incoming transfers recorded.',
     'mercato_empty'      => 'No players.',
     'mercato_import_link'=> 'Import a squad',
@@ -220,6 +222,8 @@ $t = [
     // User dropdown
     'dropdown_edit_profile'   => '✏️ Edit profile',
     'dropdown_export'         => '⬇ Export my data',
+    'dropdown_backup'         => '💾 Download a backup',
+    'dropdown_restore_backup' => '📤 Restore a backup',
     'dropdown_delete_account' => '🗑 Delete my account',
 
     // Profile modal
@@ -238,6 +242,16 @@ $t = [
     'delete_account_warning'  => 'This action is <strong>irreversible</strong>. All your data (squad, objectives, trophy cabinet) will be permanently deleted.',
     'delete_account_confirm'  => 'Confirm deletion',
     'alert_account_deleted'   => 'Your account has been deleted. See you around!',
+
+    // Restore backup modal
+    'restore_backup_title'    => 'Restore a backup',
+    'restore_backup_info'     => 'Useful after deleting your account: recreate an account, then import here the .json file downloaded via "Download a backup". Your login credentials are never changed.',
+    'restore_backup_warning'  => '⚠️ This action permanently replaces your current data (squad, tactics, objectives, seasons, mercato arrivals) with the content of the imported file.',
+    'restore_backup_confirm_dialog' => 'Importing this backup will replace your current data (squad, tactics, objectives, seasons, mercato arrivals). Continue?',
+    'restore_backup_label'    => 'Backup file (.json)',
+    'restore_backup_confirm'  => 'Import and replace',
+    'alert_backup_restored'   => 'Backup restored successfully.',
+    'alert_backup_error'      => 'Restore failed: invalid or unreadable backup file.',
 
     // Settings
     'setting_title'           => 'Season settings',
