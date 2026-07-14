@@ -323,6 +323,18 @@ if (count($joueurs) > 0) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
+    <?php if (isset($_GET['backup_restored'])): ?>
+        <div class="alert alert-success alert-dismissible fade show">
+            <?= $t['alert_backup_restored'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_GET['backup_error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <?= $t['alert_backup_error'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- NAV TABS -->
     <ul class="nav nav-tabs mb-0" id="mainTabs">

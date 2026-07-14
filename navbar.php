@@ -46,6 +46,12 @@
                                 </a>
                             </li>
                             <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
+                            <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#restoreBackupModal">
+                                    <?= $t['dropdown_restore_backup'] ?>
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
@@ -199,6 +205,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 <form action="delete_account.php" method="post">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-danger w-100"><?= $t['delete_account_confirm'] ?></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal restauration sauvegarde -->
+<div class="modal fade" tabindex="-1" id="restoreBackupModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><?= $t['restore_backup_title'] ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted"><?= $t['restore_backup_info'] ?></p>
+                <div class="alert alert-warning small py-2"><?= $t['restore_backup_warning'] ?></div>
+                <form action="backup_import.php" method="post" enctype="multipart/form-data"
+                      onsubmit="return confirm('<?= htmlspecialchars($t['restore_backup_confirm_dialog'], ENT_QUOTES) ?>')">
+                    <?= csrf_field() ?>
+                    <div class="mb-3">
+                        <label class="form-label"><?= $t['restore_backup_label'] ?></label>
+                        <input type="file" name="backup_file" accept=".json,application/json" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><?= $t['restore_backup_confirm'] ?></button>
                 </form>
             </div>
         </div>
