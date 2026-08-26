@@ -331,6 +331,42 @@ footer a.text-secondary:hover {
     box-shadow: 0 .6rem 1.4rem -.4rem hsl(var(--shadow-color) / .25) !important;
 }
 
+/* ---------- Page "À propos" ---------- */
+
+.section-heading {
+    border-left: 3px solid var(--brand);
+    padding-left: .65rem;
+}
+
+.feature-tile {
+    border-top: 3px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.feature-tile:hover {
+    transform: translateY(-3px);
+    border-top-color: var(--brand);
+    box-shadow: 0 .6rem 1.4rem -.4rem hsl(var(--shadow-color) / .18) !important;
+}
+
+.feature-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(213, 34, 44, .08);
+    font-size: 1.2rem;
+    margin-bottom: .6rem;
+}
+
+/* ---------- Modales d'authentification ---------- */
+
+.auth-modal {
+    border-top: 3px solid var(--brand);
+}
+
 /* ---------- Divider (existant) ---------- */
 
 .divider-custom {
