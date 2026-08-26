@@ -148,7 +148,7 @@ function formatBudget(int $val): string {
 
     <!-- Section Arrivées -->
 <div class="card mt-4">
-    <div class="card-header card-header-brand py-2 d-flex justify-content-between align-items-center">
+    <div class="card-header card-header-brand py-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
         <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
         <?php if (!empty($arrivees)): ?>
             <form action="mercato_arrivee_post.php" method="post"
