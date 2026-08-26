@@ -55,6 +55,11 @@ $t = [
     'pwd_strength_medium' => 'Medium',
     'pwd_strength_strong' => 'Strong',
 
+    // 404 page
+    'page404_title' => 'Offside.',
+    'page404_text'  => 'This page doesn\'t exist or has moved.',
+    'page404_home'  => 'Back to the game',
+
     // Generic confirmation modal
     'confirm_title'  => 'Confirmation',
     'confirm_cancel' => 'Cancel',
