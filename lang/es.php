@@ -55,6 +55,11 @@ $t = [
     'pwd_strength_medium' => 'Medio',
     'pwd_strength_strong' => 'Fuerte',
 
+    // Modal de confirmación genérico
+    'confirm_title'  => 'Confirmación',
+    'confirm_cancel' => 'Cancelar',
+    'confirm_ok'     => 'Confirmar',
+
     // Botones comunes
     'btn_save'          => 'Guardar',
     'btn_import'        => 'Importar',

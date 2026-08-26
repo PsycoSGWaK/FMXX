@@ -469,7 +469,8 @@ if (count($joueurs) > 0) {
                             <div class="mt-3 d-flex gap-2">
                                 <button type="submit" class="btn btn-sm btn-primary"><?= $t['btn_save'] ?></button>
                                 <a href="saison_next.php" class="btn btn-sm btn-outline-secondary"
-                                   onclick="return confirm(<?= htmlspecialchars(json_encode($t['confirm_next_season'])) ?>)">
+                                   data-confirm="<?= htmlspecialchars($t['confirm_next_season'], ENT_QUOTES) ?>"
+                                   data-confirm-variant="warning">
                                     <?= $t['btn_next_season'] ?>
                                 </a>
                             </div>
@@ -576,7 +577,9 @@ if (count($joueurs) > 0) {
                     <span class="fs-4 fw-bold"><?= $t['card_squad'] ?></span>
                     <div class="d-flex gap-2">
                         <?php if (count($joueurs) > 0): ?>
-                            <form action="deleteData.php" method="post" style="display:contents" onsubmit="return confirm(<?= htmlspecialchars(json_encode($t['confirm_clear_squad'])) ?>)">
+                            <form action="deleteData.php" method="post" style="display:contents"
+                                  data-confirm="<?= htmlspecialchars($t['confirm_clear_squad'], ENT_QUOTES) ?>"
+                                  data-confirm-variant="danger">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><?= $t['btn_clear'] ?></button>
                             </form>

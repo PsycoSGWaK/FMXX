@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p class="small text-muted"><?= $t['restore_backup_info'] ?></p>
                 <div class="alert alert-warning small py-2"><?= $t['restore_backup_warning'] ?></div>
                 <form action="backup_import.php" method="post" enctype="multipart/form-data"
-                      onsubmit="return confirm('<?= htmlspecialchars($t['restore_backup_confirm_dialog'], ENT_QUOTES) ?>')">
+                      data-confirm="<?= htmlspecialchars($t['restore_backup_confirm_dialog'], ENT_QUOTES) ?>"
+                      data-confirm-variant="danger">
                     <?= csrf_field() ?>
                     <div class="mb-3">
                         <label class="form-label"><?= $t['restore_backup_label'] ?></label>
@@ -256,4 +257,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <div class="modal" tabindex="-1" id="SignupModal" aria-hidden="true">
     <?php require_once("signup.php"); ?>
+</div>
+
+<!-- Modal de confirmation générique (remplace window.confirm) -->
+<div class="modal fade" tabindex="-1" id="confirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><?= $t['confirm_title'] ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= $t['confirm_cancel'] ?></button>
+                <button type="button" class="btn btn-primary" id="confirmModalOk"><?= $t['confirm_ok'] ?></button>
+            </div>
+        </div>
+    </div>
 </div>

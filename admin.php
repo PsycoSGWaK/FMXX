@@ -97,7 +97,8 @@ $tab = $_GET['tab'] ?? 'users';
                                 </button>
                                 <?php if ($u['idUser'] != $_SESSION['idUser']): ?>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Changer le type de <?= htmlspecialchars($u['username'], ENT_QUOTES) ?> en <?= $u['type'] === '1' ? 'User' : 'Admin' ?> ?')">
+                                      data-confirm="Changer le type de <?= htmlspecialchars($u['username'], ENT_QUOTES) ?> en <?= $u['type'] === '1' ? 'User' : 'Admin' ?> ?"
+                                      data-confirm-variant="warning">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="toggle_user_type">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
@@ -108,7 +109,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     </button>
                                 </form>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer cet utilisateur et toutes ses données ?')">
+                                      data-confirm="Supprimer cet utilisateur et toutes ses données ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_user">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
@@ -264,7 +266,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer cette compétition ?')">
+                                      data-confirm="Supprimer cette compétition ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_competition">
                                     <input type="hidden" name="idCompetition" value="<?= $c['idCompetition'] ?>">
@@ -438,7 +441,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer ce club ?')">
+                                      data-confirm="Supprimer ce club ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_club">
                                     <input type="hidden" name="idEquipe" value="<?= $e['idEquipe'] ?>">
@@ -582,7 +586,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer ce pays ? Cela peut affecter les clubs et compétitions liés.')">
+                                      data-confirm="Supprimer ce pays ? Cela peut affecter les clubs et compétitions liés."
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_pays">
                                     <input type="hidden" name="idPays" value="<?= $p['idPays'] ?>">
