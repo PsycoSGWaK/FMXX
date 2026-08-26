@@ -23,11 +23,9 @@ if ($userType !== '1') {
 
 $tab = $_GET['tab'] ?? 'users';
 ?>
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <body>
-<div class="container-fluid px-4 py-3">
-    <h2 class="fw-bold mb-3" style="color:#091c3e;">Administration</h2>
+<div class="container-fluid px-4 py-3 page-content">
+    <h2 class="fw-bold mb-3" style="color:var(--ink);">Administration</h2>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -56,7 +54,7 @@ $tab = $_GET['tab'] ?? 'users';
     $users = $pdo->query("SELECT idUser, username, mail, type, saison_active, club, division, genre FROM user ORDER BY idUser")->fetchAll();
     ?>
     <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Utilisateurs (<?= count($users) ?>)
         </div>
         <div class="card-body p-0">
@@ -181,7 +179,7 @@ $tab = $_GET['tab'] ?? 'users';
     ")->fetchAll();
     ?>
     <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Ajouter une compétition
         </div>
         <div class="card-body">
@@ -225,7 +223,7 @@ $tab = $_GET['tab'] ?? 'users';
         </div>
     </div>
     <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Compétitions (<?= count($comps) ?>)
         </div>
         <div class="card-body p-0">
@@ -370,7 +368,7 @@ $tab = $_GET['tab'] ?? 'users';
     ")->fetchAll();
     ?>
     <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Ajouter un club
         </div>
         <div class="card-body">
@@ -407,7 +405,7 @@ $tab = $_GET['tab'] ?? 'users';
         </div>
     </div>
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand d-flex justify-content-between align-items-center fw-bold">
             <span>Clubs (<?= count($clubs) ?>)</span>
             <input type="text" id="filterClub" class="form-control form-control-sm ms-3" placeholder="Rechercher…" style="max-width:200px; color:#000;">
         </div>
@@ -527,7 +525,7 @@ $tab = $_GET['tab'] ?? 'users';
     $paysList = $pdo->query("SELECT * FROM pays ORDER BY nomPays")->fetchAll();
     ?>
     <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Ajouter un pays
         </div>
         <div class="card-body">
@@ -553,7 +551,7 @@ $tab = $_GET['tab'] ?? 'users';
         </div>
     </div>
     <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
+        <div class="card-header card-header-brand fw-bold">
             Pays (<?= count($paysList) ?>)
         </div>
         <div class="card-body p-0">
@@ -667,31 +665,29 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY nb_joueurs DESC
     ")->fetchAll();
     ?>
-    <div class="row g-3 mb-4">
-        <?php
-        $cards = [
-            ['Utilisateurs',     $nbUsers,     'primary'],
-            ['Joueurs importés', $nbJoueurs,   'info'],
-            ['Clubs',            $nbClubs,     'secondary'],
-            ['Compétitions',     $nbComps,     'warning'],
-            ['Pays',             $nbPays,      'dark'],
-            ['Saisons jouées',   $nbSaisons,   'success'],
-            ['Objectifs',        $nbObjectifs, 'danger'],
-        ];
-        foreach ($cards as [$label, $val, $color]):
-        ?>
-        <div class="col-6 col-md-3">
-            <div class="card border-<?= $color ?> text-center">
-                <div class="card-body py-3">
-                    <div class="fs-1 fw-bold text-<?= $color ?>"><?= $val ?></div>
-                    <div class="small text-muted"><?= $label ?></div>
-                </div>
+    <?php
+    $cards = [
+        ['Utilisateurs',     $nbUsers,     'primary'],
+        ['Joueurs importés', $nbJoueurs,   'info'],
+        ['Clubs',            $nbClubs,     'secondary'],
+        ['Compétitions',     $nbComps,     'warning'],
+        ['Pays',             $nbPays,      'dark'],
+        ['Saisons jouées',   $nbSaisons,   'success'],
+        ['Objectifs',        $nbObjectifs, 'danger'],
+    ];
+    ?>
+    <div class="card mb-4">
+        <div class="stat-bar">
+            <?php foreach ($cards as [$label, $val, $color]): ?>
+            <div class="stat-item">
+                <div class="stat-value text-<?= $color ?>"><?= $val ?></div>
+                <div class="stat-label"><?= $label ?></div>
             </div>
+            <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
     </div>
     <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">Effectifs par utilisateur</div>
+        <div class="card-header card-header-brand fw-bold">Effectifs par utilisateur</div>
         <div class="card-body p-0">
             <table class="table table-sm table-striped mb-0">
                 <thead class="table-dark">

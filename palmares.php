@@ -59,7 +59,7 @@ function trophees(array $objectifs): array {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0"><?= $t['pal_title'] ?></h2>
@@ -92,29 +92,20 @@ function trophees(array $objectifs): array {
             $chartTitres[]  = count(trophees($objs));
         }
         ?>
-        <div class="row g-3 mb-4">
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-warning">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold text-warning"><?= $totalTrophees ?></div>
-                        <div class="text-muted small"><?= $t['pal_trophies'] ?></div>
-                    </div>
+        <div class="card mb-4">
+            <div class="stat-bar">
+                <div class="stat-item">
+                    <div class="stat-value text-warning"><?= $totalTrophees ?></div>
+                    <div class="stat-label"><?= $t['pal_trophies'] ?></div>
                 </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-primary">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold text-primary"><?= $totalSaisons ?></div>
-                        <div class="text-muted small"><?= $t['pal_seasons'] ?></div>
-                    </div>
+                <div class="stat-item">
+                    <div class="stat-value text-primary"><?= $totalSaisons ?></div>
+                    <div class="stat-label"><?= $t['pal_seasons'] ?></div>
                 </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-<?= $avgPct === null ? 'secondary' : ($avgPct >= 75 ? 'success' : ($avgPct >= 50 ? 'warning' : 'danger')) ?>">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold"><?= $avgPct !== null ? $avgPct . ' %' : '—' ?></div>
-                        <div class="text-muted small"><?= $t['pal_avg_success'] ?></div>
-                    </div>
+                <div class="stat-item">
+                    <?php $avgPctColor = $avgPct === null ? 'text-secondary' : ($avgPct >= 75 ? 'text-success' : ($avgPct >= 50 ? 'text-warning' : 'text-danger')); ?>
+                    <div class="stat-value <?= $avgPctColor ?>"><?= $avgPct !== null ? $avgPct . ' %' : '—' ?></div>
+                    <div class="stat-label"><?= $t['pal_avg_success'] ?></div>
                 </div>
             </div>
         </div>
@@ -197,7 +188,7 @@ function trophees(array $objectifs): array {
             $pctColor = $pct === null ? 'secondary' : ($pct >= 75 ? 'success' : ($pct >= 50 ? 'warning' : 'danger'));
         ?>
         <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#fff;">
+            <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                 <div class="d-flex align-items-center gap-3">
                     <span class="fw-bold fs-5"><?= htmlspecialchars($s['saison']) ?></span>
                     <?php if ($s['club']): ?>

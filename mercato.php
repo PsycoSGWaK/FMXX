@@ -35,7 +35,7 @@ function formatBudget(int $val): string {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -45,67 +45,43 @@ function formatBudget(int $val): string {
     <?php endif; ?>
 
     <!-- Résumé -->
-    <div class="row mb-3 g-2">
-        <div class="col">
-            <div class="card text-center border-danger h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-danger"><?= count($sells) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_sell'] ?></div>
-                </div>
+    <div class="card mb-3">
+        <div class="stat-bar">
+            <div class="stat-item">
+                <div class="stat-value text-danger"><?= count($sells) ?></div>
+                <div class="stat-label"><?= $t['mercato_sell'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-primary h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-primary"><?= count($loans) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_loan'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-primary"><?= count($loans) ?></div>
+                <div class="stat-label"><?= $t['mercato_loan'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-secondary h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold"><?= count($joueurs) - count($sells) - count($loans) - count($frees) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_kept'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value"><?= count($joueurs) - count($sells) - count($loans) - count($frees) ?></div>
+                <div class="stat-label"><?= $t['mercato_kept'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-warning h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-warning"><?= $nbCibles ?></div>
-                    <div class="text-muted small"><?= $t['mercato_arr_targets'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-warning"><?= $nbCibles ?></div>
+                <div class="stat-label"><?= $t['mercato_arr_targets'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-success h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-success"><?= $nbSignes ?></div>
-                    <div class="text-muted small"><?= $t['mercato_arr_signed'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-success"><?= $nbSignes ?></div>
+                <div class="stat-label"><?= $t['mercato_arr_signed'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center h-100 <?= $solde >= 0 ? 'border-success' : 'border-danger' ?>">
-                <div class="card-body py-2">
-                    <div class="fs-5 fw-bold <?= $solde >= 0 ? 'text-success' : 'text-danger' ?>">
-                        <?= $solde > 0 ? '+' : '' ?><?= formatBudget($solde) ?>
-                    </div>
-                    <div class="text-muted small"><?= $t['mercato_revenue'] ?></div>
-                    <?php if ($depenses > 0): ?>
-                        <div class="text-muted" style="font-size:.7rem;">
-                            +<?= formatBudget($recettes) ?> / −<?= formatBudget($depenses) ?>
-                        </div>
-                    <?php endif; ?>
+            <div class="stat-item">
+                <div class="stat-value <?= $solde >= 0 ? 'text-success' : 'text-danger' ?>">
+                    <?= $solde > 0 ? '+' : '' ?><?= formatBudget($solde) ?>
                 </div>
+                <div class="stat-label"><?= $t['mercato_revenue'] ?></div>
+                <?php if ($depenses > 0): ?>
+                    <div class="stat-sub">+<?= formatBudget($recettes) ?> / −<?= formatBudget($depenses) ?></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <!-- Tableau mercato -->
     <div class="card">
-        <div class="card-header py-2" style="background:#091c3e; color:#16ffd0;">
+        <div class="card-header card-header-brand py-2">
             <span class="fs-4 fw-bold"><?= $t['mercato_title'] ?></span>
         </div>
         <div class="card-body p-0">
@@ -172,7 +148,7 @@ function formatBudget(int $val): string {
 
     <!-- Section Arrivées -->
 <div class="card mt-4">
-    <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#cdfb0a;">
+    <div class="card-header card-header-brand py-2 d-flex justify-content-between align-items-center">
         <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
         <?php if (!empty($arrivees)): ?>
             <form action="mercato_arrivee_post.php" method="post" onsubmit="return confirm('<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>')">

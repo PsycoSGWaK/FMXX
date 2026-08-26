@@ -1,9 +1,15 @@
+<?php
+$currentPage = basename($_SERVER['SCRIPT_NAME'] ?? '');
+function navActive(string $page, string $current): string {
+    return $page === $current ? 'active' : '';
+}
+?>
 <?php if (isset($_SESSION['mail'])) { ?>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="hub.php">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
-                iDev <span style="color:#d52228;">Compagnon</span>
+                iDev <span class="text-brand">Compagnon</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -11,16 +17,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.php"><?= $t['nav_home'] ?></a>
+                        <a class="nav-link <?= navActive('index.php', $currentPage) ?>" href="index.php"><?= $t['nav_home'] ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="mercato.php"><?= $t['nav_mercato'] ?></a>
+                        <a class="nav-link <?= navActive('mercato.php', $currentPage) ?>" href="mercato.php"><?= $t['nav_mercato'] ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="palmares.php"><?= $t['nav_palmares'] ?></a>
+                        <a class="nav-link <?= navActive('palmares.php', $currentPage) ?>" href="palmares.php"><?= $t['nav_palmares'] ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php"><?= $t['nav_about'] ?></a>
+                        <a class="nav-link <?= navActive('about.php', $currentPage) ?>" href="about.php"><?= $t['nav_about'] ?></a>
                     </li>
                     <?php
                     if (!isset($_SESSION['_admin_type'])) {
@@ -30,7 +36,7 @@
                     }
                     if ($_SESSION['_admin_type'] === '1'): ?>
                     <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="admin.php"><?= $t['nav_admin'] ?></a>
+                        <a class="nav-link text-danger fw-bold <?= navActive('admin.php', $currentPage) ?>" href="admin.php"><?= $t['nav_admin'] ?></a>
                     </li>
                     <?php endif; ?>
                 </ul>
@@ -78,7 +84,7 @@
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
-                iDev <span style="color:#d52228;">Compagnon</span>
+                iDev <span class="text-brand">Compagnon</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -86,10 +92,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.php"><?= $t['nav_home'] ?></a>
+                        <a class="nav-link <?= navActive('index.php', $currentPage) ?>" href="index.php"><?= $t['nav_home'] ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php"><?= $t['nav_about'] ?></a>
+                        <a class="nav-link <?= navActive('about.php', $currentPage) ?>" href="about.php"><?= $t['nav_about'] ?></a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">

@@ -6,57 +6,85 @@ require_once("navbar.php");
 
 if (!isset($_SESSION['mail'])) {
     ?>
-    <div style="background:linear-gradient(135deg,#091c3e 0%,#0d2a5e 60%,#091c3e 100%); min-height:calc(100vh - 120px); display:flex; align-items:center;">
+    <div class="hero-dark">
         <div class="container py-5">
+            <div class="row align-items-center g-5">
 
-            <!-- Hero -->
-            <div class="text-center mb-5">
-                <div class="mb-3">
-                    <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="100" style="object-fit:contain;">
+                <!-- Texte + CTA + features -->
+                <div class="col-lg-6">
+                    <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="72" style="object-fit:contain;" class="mb-4">
+                    <h1 class="display-4 fw-bold mb-3" style="color:#fff;">
+                        iDev <span class="text-brand">Compagnon</span>
+                    </h1>
+                    <p class="lead mb-4" style="color:#a8c0e8; max-width:480px;">
+                        <?= $t['landing_tagline'] ?>
+                    </p>
+                    <div class="d-flex gap-3 mb-5">
+                        <button class="btn btn-lg btn-primary px-4 fw-semibold"
+                                data-bs-toggle="modal" data-bs-target="#LoginModal">
+                            <?= $t['landing_login'] ?>
+                        </button>
+                        <button class="btn btn-lg px-4 fw-semibold btn-outline-light"
+                                data-bs-toggle="modal" data-bs-target="#SignupModal">
+                            <?= $t['landing_signup'] ?>
+                        </button>
+                    </div>
+
+                    <div class="hero-feature-list">
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">🎯</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat1_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat1_text'] ?></p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">🗂️</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat2_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat2_text'] ?></p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">📋</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat3_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat3_text'] ?></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="display-4 fw-bold mb-2" style="color:#fff; letter-spacing:-1px;">
-                    iDev <span style="color:#d52228;">Compagnon</span>
-                </h1>
-                <p class="lead mb-4" style="color:#a8c0e8; max-width:520px; margin:0 auto;">
-                    <?= $t['landing_tagline'] ?>
-                </p>
-                <div class="d-flex gap-3 justify-content-center">
-                    <button class="btn btn-lg px-4 fw-semibold" style="background:#d52228; border:none; color:#fff;"
-                            data-bs-toggle="modal" data-bs-target="#LoginModal">
-                        <?= $t['landing_login'] ?>
-                    </button>
-                    <button class="btn btn-lg px-4 fw-semibold btn-outline-light"
-                            data-bs-toggle="modal" data-bs-target="#SignupModal">
-                        <?= $t['landing_signup'] ?>
-                    </button>
+
+                <!-- Visuel : plan tactique -->
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="pitch-panel">
+                        <svg viewBox="0 0 260 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="6" y="6" width="248" height="368" rx="10" class="pitch-line"/>
+                            <line x1="6" y1="190" x2="254" y2="190" class="pitch-line"/>
+                            <circle cx="130" cy="190" r="38" class="pitch-line"/>
+                            <rect x="65" y="6" width="130" height="55" class="pitch-line"/>
+                            <rect x="65" y="319" width="130" height="55" class="pitch-line"/>
+                            <rect x="100" y="6" width="60" height="22" class="pitch-line"/>
+                            <rect x="100" y="352" width="60" height="22" class="pitch-line"/>
+                            <circle cx="130" cy="350" r="7" class="pitch-dot-gk"/>
+                            <circle cx="40" cy="290" r="7" class="pitch-dot"/>
+                            <circle cx="100" cy="300" r="7" class="pitch-dot"/>
+                            <circle cx="160" cy="300" r="7" class="pitch-dot"/>
+                            <circle cx="220" cy="290" r="7" class="pitch-dot"/>
+                            <circle cx="70" cy="210" r="7" class="pitch-dot"/>
+                            <circle cx="130" cy="220" r="7" class="pitch-dot"/>
+                            <circle cx="190" cy="210" r="7" class="pitch-dot"/>
+                            <circle cx="60" cy="110" r="7" class="pitch-dot"/>
+                            <circle cx="130" cy="90" r="7" class="pitch-dot"/>
+                            <circle cx="200" cy="110" r="7" class="pitch-dot"/>
+                        </svg>
+                        <div class="text-center mt-2">
+                            <span class="badge bg-secondary">4-3-3</span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-
-            <!-- Feature cards -->
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
-                        <div class="fs-2 mb-2">🎯</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat1_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat1_text'] ?></p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
-                        <div class="fs-2 mb-2">🗂️</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat2_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat2_text'] ?></p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
-                        <div class="fs-2 mb-2">📋</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat3_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat3_text'] ?></p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <?php
@@ -285,7 +313,7 @@ if (count($joueurs) > 0) {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <?php if (isset($_GET['account']) && $_GET['account'] === 'deleted'): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -370,7 +398,7 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#d52228;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                         <span class="fs-4 fw-bold"><?= $t['card_objectives'] ?></span>
                         <span class="badge bg-light text-dark fw-bold fs-6"><?= htmlspecialchars($saison) ?></span>
@@ -385,7 +413,7 @@ if (count($joueurs) > 0) {
                 </div>
                 <div class="card-body">
                     <?php if (!$idPays || !$division): ?>
-                        <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal">↗</a></p>
+                        <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal"><ion-icon name="open-outline"></ion-icon></a></p>
                     <?php elseif (empty($competitions)): ?>
                         <p class="text-muted mb-3"><?= $t['obj_no_competitions'] ?></p>
                     <?php else: ?>
@@ -452,7 +480,7 @@ if (count($joueurs) > 0) {
 
             <!-- BUDGET -->
             <div class="card mt-3">
-                <div class="card-header py-2" style="background:#091c3e; color:#f0c040;">
+                <div class="card-header card-header-brand py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_budget'] ?></span>
                 </div>
                 <div class="card-body">
@@ -544,7 +572,7 @@ if (count($joueurs) > 0) {
 
             <!-- Tableau effectif -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#16ffd0;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_squad'] ?></span>
                     <div class="d-flex gap-2">
                         <?php if (count($joueurs) > 0): ?>
@@ -568,7 +596,7 @@ if (count($joueurs) > 0) {
                         ?>
                         <?php if (!empty($expiresUrgent)): ?>
                         <div class="alert alert-danger mb-0 rounded-0 border-0 border-bottom py-2 px-3">
-                            <strong>⚠ <?= $t['squad_contract_alert'] ?> (<?= $saisonFin ?>) :</strong>
+                            <strong><ion-icon name="warning-outline"></ion-icon> <?= $t['squad_contract_alert'] ?> (<?= $saisonFin ?>) :</strong>
                             <?= implode(', ', array_map(fn($j) => htmlspecialchars($j['nom']), $expiresUrgent)) ?>
                         </div>
                         <?php endif; ?>
@@ -610,18 +638,18 @@ if (count($joueurs) > 0) {
                                 <thead class="table-dark">
                                     <tr>
                                         <th>#</th>
-                                        <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <span class="sort-icon text-muted">↕</span></th>
+                                        <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th><?= $t['squad_col_number'] ?></th>
                                         <th><?= $t['squad_col_nat'] ?></th>
                                         <th><?= $t['squad_col_pob'] ?></th>
-                                        <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <span class="sort-icon text-muted">↕</span></th>
+                                        <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -639,9 +667,9 @@ if (count($joueurs) > 0) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
                                             if ((int)$expireYear === $saisonFin)
-                                                $expireBadge = '<span class="badge bg-danger ms-3">⚠ ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
+                                                $expireBadge = '<span class="badge bg-danger ms-3"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
                                             elseif ((int)$expireYear === $saisonFinNext)
-                                                $expireBadge = '<span class="badge bg-warning text-dark ms-3">↗ ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                                $expireBadge = '<span class="badge bg-warning text-dark ms-3"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
                                         }
                                         ?>
                                         <tr class="<?= $rowClass ?>"
@@ -702,7 +730,7 @@ if (count($joueurs) > 0) {
                                 document.getElementById(id).value = '';
                             });
                             sortCol = null; sortAsc = true;
-                            document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.textContent = '↕');
+                            document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.setAttribute('name', 'swap-vertical-outline'));
                             Array.from(tbody.querySelectorAll('tr'))
                                 .sort((a, b) => parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent))
                                 .forEach(r => tbody.appendChild(r));
@@ -723,8 +751,8 @@ if (count($joueurs) > 0) {
                                 const type = th.dataset.sort;
                                 if (sortCol === col) sortAsc = !sortAsc;
                                 else { sortCol = col; sortAsc = true; }
-                                document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.textContent = '↕');
-                                th.querySelector('.sort-icon').textContent = sortAsc ? '↑' : '↓';
+                                document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.setAttribute('name', 'swap-vertical-outline'));
+                                th.querySelector('.sort-icon').setAttribute('name', sortAsc ? 'arrow-up-outline' : 'arrow-down-outline');
                                 const allRows = Array.from(tbody.querySelectorAll('tr'));
                                 allRows.sort((a, b) => {
                                     let va = a.cells[col]?.textContent.trim() ?? '';
@@ -757,7 +785,7 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET TACTIC SUB ===================== -->
         <div class="tab-pane <?= $activeTab === 'tactic' ? 'show active' : '' ?>" id="pane-tactic">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#cdfb0a;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_tactic'] ?></span>
                     <div class="d-flex gap-1">
                         <?php foreach (['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-2-1-2'] as $f): ?>
