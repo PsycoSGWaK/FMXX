@@ -98,11 +98,11 @@ function formatBudget(int $val): string {
                                 <tr>
                                     <th>#</th>
                                     <th><?= $t['mercato_col_name'] ?></th>
-                                    <th><?= $t['mercato_col_age'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_age'] ?></th>
                                     <th><?= $t['mercato_col_pos'] ?></th>
-                                    <th><?= $t['mercato_col_apps'] ?></th>
-                                    <th><?= $t['mercato_col_rating'] ?></th>
-                                    <th><?= $t['mercato_col_value'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_apps'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_rating'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_value'] ?></th>
                                     <th><?= $t['mercato_col_status'] ?></th>
                                 </tr>
                             </thead>
@@ -120,11 +120,11 @@ function formatBudget(int $val): string {
                                     <tr class="<?= $rowClass ?>">
                                         <td><?= $i + 1 ?></td>
                                         <td class="fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></td>
-                                        <td><?= $j['age'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['age'] ?? '' ?></td>
                                         <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
-                                        <td><?= $j['app'] ?? '' ?></td>
-                                        <td><?= $j['noteMoy'] ?? '' ?></td>
-                                        <td><?= $j['prixDemande'] !== null ? formatBudget((int)$j['prixDemande']) : '—' ?></td>
+                                        <td class="text-end"><?= $j['app'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['prixDemande'] !== null ? formatBudget((int)$j['prixDemande']) : '—' ?></td>
                                         <td>
                                             <select class="form-select form-select-sm" name="status[<?= $j['idJoueur'] ?>]" style="min-width:100px">
                                                 <option value=""     <?= $status === null   ? 'selected' : '' ?>>—</option>
@@ -179,7 +179,7 @@ function formatBudget(int $val): string {
                             <th>#</th>
                             <th><?= $t['mercato_arr_col_name'] ?></th>
                             <th><?= $t['mercato_arr_col_pos'] ?></th>
-                            <th><?= $t['mercato_arr_col_price'] ?></th>
+                            <th class="text-end"><?= $t['mercato_arr_col_price'] ?></th>
                             <th><?= $t['mercato_arr_col_status'] ?></th>
                             <th></th>
                         </tr>
@@ -190,10 +190,10 @@ function formatBudget(int $val): string {
                                 <td><?= $i + 1 ?></td>
                                 <td class="fw-semibold"><?= htmlspecialchars($a['nom']) ?></td>
                                 <td><?= htmlspecialchars($a['poste'] ?? '—') ?></td>
-                                <td><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
+                                <td class="text-end"><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
                                 <td><span class="badge bg-<?= $statutColors[$a['statut']] ?? 'secondary' ?>"><?= $statutLabels[$a['statut']] ?? $a['statut'] ?></span></td>
                                 <td class="d-flex gap-1 align-items-center">
-                                    <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                    <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                             data-bs-toggle="modal" data-bs-target="#editArriveeModal"
                                             data-id="<?= $a['idArrivee'] ?>"
                                             data-nom="<?= htmlspecialchars($a['nom'], ENT_QUOTES) ?>"
@@ -206,7 +206,7 @@ function formatBudget(int $val): string {
                                           onsubmit="return confirm('Supprimer ?')">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="delete_id" value="<?= $a['idArrivee'] ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                             <ion-icon name="trash-outline"></ion-icon>
                                         </button>
                                     </form>
