@@ -89,7 +89,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($u['genre'] ?? '—') ?></td>
                             <td><?= htmlspecialchars($u['division'] ?? '—') ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-warning" title="Réinitialiser le mot de passe"
+                                <button class="btn btn-sm btn-warning" title="Réinitialiser le mot de passe" aria-label="Réinitialiser le mot de passe"
                                     data-bs-toggle="modal" data-bs-target="#modalResetPwd"
                                     data-id="<?= $u['idUser'] ?>"
                                     data-name="<?= htmlspecialchars($u['username']) ?>">
@@ -102,7 +102,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     <input type="hidden" name="action" value="toggle_user_type">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
                                     <button class="btn btn-sm <?= $u['type'] === '1' ? 'btn-outline-secondary' : 'btn-outline-success' ?>"
-                                            title="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>">
+                                            title="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>"
+                                            aria-label="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>">
                                         <ion-icon name="<?= $u['type'] === '1' ? 'arrow-down-outline' : 'arrow-up-outline' ?>"></ion-icon>
                                     </button>
                                 </form>
@@ -111,7 +112,7 @@ $tab = $_GET['tab'] ?? 'users';
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_user">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -250,7 +251,7 @@ $tab = $_GET['tab'] ?? 'users';
                                 <?php else: ?>—<?php endif; ?>
                             </td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditComp"
                                     data-id="<?= $c['idCompetition'] ?>"
                                     data-nom="<?= htmlspecialchars($c['nomCompetition']) ?>"
@@ -267,7 +268,7 @@ $tab = $_GET['tab'] ?? 'users';
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_competition">
                                     <input type="hidden" name="idCompetition" value="<?= $c['idCompetition'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -427,7 +428,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= $e['genre'] ?></td>
                             <td><?= $e['division'] ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditClub"
                                     data-id="<?= $e['idEquipe'] ?>"
                                     data-nom="<?= htmlspecialchars($e['nomEquipe']) ?>"
@@ -441,7 +442,7 @@ $tab = $_GET['tab'] ?? 'users';
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_club">
                                     <input type="hidden" name="idEquipe" value="<?= $e['idEquipe'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -571,7 +572,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($p['paysA3C'] ?? '') ?></td>
                             <td><?= $p['paysNum'] ?? '' ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditPays"
                                     data-id="<?= $p['idPays'] ?>"
                                     data-nom="<?= htmlspecialchars($p['nomPays']) ?>"
@@ -585,7 +586,7 @@ $tab = $_GET['tab'] ?? 'users';
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_pays">
                                     <input type="hidden" name="idPays" value="<?= $p['idPays'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>

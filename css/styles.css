@@ -106,6 +106,7 @@ html {
     border-color: var(--border);
     border-radius: .65rem;
     box-shadow: 0 .2rem .6rem -.35rem hsl(var(--shadow-color) / .12);
+    overflow: hidden;
 }
 
 /* Header de carte "marque" : remplace les styles inline
@@ -157,6 +158,18 @@ html {
     font-size: .78rem;
     text-transform: uppercase;
     letter-spacing: .04em;
+}
+
+.table thead.table-dark th[data-sort] {
+    transition: color .15s ease;
+}
+
+.table thead.table-dark th[data-sort]:hover {
+    color: #ffd7d7;
+}
+
+.table thead.table-dark th[data-sort]:hover .sort-icon {
+    color: #ffd7d7 !important;
 }
 
 .table-hover > tbody > tr:hover > * {

@@ -639,16 +639,16 @@ if (count($joueurs) > 0) {
                                     <tr>
                                         <th>#</th>
                                         <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th><?= $t['squad_col_number'] ?></th>
+                                        <th class="text-end" data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end"><?= $t['squad_col_number'] ?></th>
                                         <th><?= $t['squad_col_nat'] ?></th>
                                         <th><?= $t['squad_col_pob'] ?></th>
                                         <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                     </tr>
                                 </thead>
@@ -679,16 +679,16 @@ if (count($joueurs) > 0) {
                                             data-statut="<?= $j['mercato_status'] ?? '' ?>">
                                             <td><?= $i + 1 ?></td>
                                             <td><a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a></td>
-                                            <td><?= $j['age'] ?? '' ?></td>
-                                            <td><?= $j['numero'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['age'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['numero'] ?? '' ?></td>
                                             <td><?= htmlspecialchars($j['nat'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['pdn'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
-                                            <td><?= $j['app'] ?? '' ?></td>
-                                            <td><?= $j['pDec'] ?? '' ?></td>
-                                            <td><?= $j['buts'] ?? '' ?></td>
-                                            <td><?= $j['noteMoy'] ?? '' ?></td>
-                                            <td><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
+                                            <td class="text-end"><?= $j['app'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['pDec'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['buts'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
+                                            <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
                                             <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
                                         </tr>
                                     <?php endforeach; ?>
