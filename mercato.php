@@ -105,7 +105,7 @@ function formatBudget(int $val): string {
 
     <!-- Tableau mercato -->
     <div class="card">
-        <div class="card-header py-2" style="background:#091c3e; color:#16ffd0;">
+        <div class="card-header card-header-brand py-2">
             <span class="fs-4 fw-bold"><?= $t['mercato_title'] ?></span>
         </div>
         <div class="card-body p-0">
@@ -172,7 +172,7 @@ function formatBudget(int $val): string {
 
     <!-- Section Arrivées -->
 <div class="card mt-4">
-    <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#cdfb0a;">
+    <div class="card-header card-header-brand py-2 d-flex justify-content-between align-items-center">
         <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
         <?php if (!empty($arrivees)): ?>
             <form action="mercato_arrivee_post.php" method="post" onsubmit="return confirm('<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>')">

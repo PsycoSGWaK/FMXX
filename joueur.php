@@ -44,7 +44,7 @@ $saved = isset($_GET['saved']);
     <?php endif; ?>
 
     <div class="card mb-4">
-        <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#16ffd0;">
+        <div class="card-header card-header-brand py-2 d-flex justify-content-between align-items-center">
             <span class="fs-4 fw-bold"><?= htmlspecialchars($j['nom'] ?? '—') ?></span>
             <?php
             $badgeClass = match($j['mercato_status']) {

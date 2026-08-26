@@ -1,3 +1,229 @@
+/* =========================================================
+   iDev Compagnon — Design system
+   Tokens + surcharges Bootstrap. Ne remplace pas Bootstrap,
+   vient s'ajouter par-dessus (chargé après bootstrap.min.css).
+   ========================================================= */
+
+:root {
+    --ink: #0c2043;
+    --ink-soft: #16305c;
+    --brand: #d5222c;
+    --brand-dark: #ad1b23;
+    --surface: #f6f7fb;
+    --border: #e3e6ee;
+    --shadow-color: 220 40% 20%;
+}
+
+/* ---------- Typographie ---------- */
+
+body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--surface);
+    color: #1c2333;
+}
+
+h1, h2, h3, h4, h5, h6,
+.navbar-brand, .btn, .card-header, .fw-bold, .fw-semibold {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3 {
+    letter-spacing: -0.02em;
+    font-weight: 700;
+}
+
+.display-4 {
+    letter-spacing: -0.03em;
+}
+
+table, .fs-4, .fs-3, .fs-2, .fs-1, .fw-bold {
+    font-variant-numeric: tabular-nums;
+}
+
+::selection {
+    background: var(--brand);
+    color: #fff;
+}
+
+/* ---------- Accent de marque ---------- */
+
+.text-brand {
+    color: var(--brand) !important;
+}
+
+/* ---------- Interactions globales ---------- */
+
+a, .btn, .nav-link, .card, .badge, .form-control, .form-select, .hub-card {
+    transition: background-color .18s ease, border-color .18s ease,
+                color .18s ease, transform .12s ease, box-shadow .18s ease;
+}
+
+a:focus-visible, .btn:focus-visible, .nav-link:focus-visible,
+.form-control:focus-visible, .form-select:focus-visible,
+button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 .2rem rgba(213, 34, 44, .15);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ---------- Boutons ---------- */
+
+.btn {
+    border-radius: .5rem;
+    font-weight: 600;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background-color: var(--brand);
+    border-color: var(--brand);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+    box-shadow: 0 .35rem .9rem -.3rem hsl(var(--shadow-color) / .5);
+}
+
+.btn:not(.btn-sm):not(.btn-lg):hover {
+    transform: translateY(-1px);
+}
+
+/* ---------- Cartes ---------- */
+
+.card {
+    border-color: var(--border);
+    border-radius: .65rem;
+    box-shadow: 0 .2rem .6rem -.35rem hsl(var(--shadow-color) / .12);
+}
+
+/* Header de carte "marque" : remplace les styles inline
+   background:#091c3e / couleur de texte au hasard par page. */
+.card-header-brand {
+    background: var(--ink);
+    color: #fff;
+    border-bottom: 2px solid var(--brand);
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+
+.card-header-brand .badge.bg-light {
+    color: var(--ink);
+}
+
+/* ---------- Onglets ---------- */
+
+.nav-tabs {
+    border-bottom-color: var(--border);
+}
+
+.nav-tabs .nav-link {
+    color: #5a6478;
+    font-weight: 600;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding-bottom: .6rem;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--ink);
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--ink);
+    background: transparent;
+    border-bottom-color: var(--brand);
+}
+
+/* ---------- Tables ---------- */
+
+.table thead.table-dark th {
+    background-color: var(--ink);
+    border-color: var(--ink);
+    font-weight: 600;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.table-hover > tbody > tr:hover > * {
+    --bs-table-accent-bg: rgba(213, 34, 44, .05);
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+/* ---------- Footer ---------- */
+
+footer a.text-secondary:hover {
+    color: var(--brand) !important;
+}
+
+/* ---------- Landing / Hero ---------- */
+
+.hero-dark {
+    background: radial-gradient(ellipse 120% 80% at 20% -10%, var(--ink-soft), transparent),
+                linear-gradient(135deg, var(--ink) 0%, #0d2a5e 60%, var(--ink) 100%);
+    min-height: calc(100dvh - 120px);
+    display: flex;
+    align-items: center;
+}
+
+.hero-feature-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: .75rem;
+    transition: transform .18s ease, background-color .18s ease;
+}
+
+.hero-feature-card:hover {
+    background: rgba(255, 255, 255, .1);
+    transform: translateY(-3px);
+}
+
+.hero-feature-card h5 {
+    color: #fff;
+}
+
+/* ---------- Hub ---------- */
+
+.hub-card {
+    border-top: 3px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    cursor: pointer;
+}
+
+.hub-card.hub-card-active {
+    border-top-color: var(--brand);
+}
+
+.hub-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .6rem 1.4rem -.4rem hsl(var(--shadow-color) / .25) !important;
+}
+
+/* ---------- Divider (existant) ---------- */
+
 .divider-custom {
     margin: 1.25rem 0 1.5rem;
     width: 100%;
@@ -10,9 +236,9 @@
     width: 100%;
     max-width: 7rem;
     height: 0.25rem;
-    background-color: #f78e21;
+    background-color: var(--brand);
     border-radius: 1rem;
-    border-color: #f78e21 !important;
+    border-color: var(--brand) !important;
 }
 
 .divider-custom .divider-custom-line:first-child {
@@ -24,7 +250,7 @@
 }
 
 .divider-custom .divider-custom-icon {
-    color: #07578d !important;
+    color: var(--ink) !important;
     font-size: 2rem;
 }
 

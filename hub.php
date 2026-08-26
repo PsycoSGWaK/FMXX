@@ -16,7 +16,7 @@ require_once("navbar.php");
 
     <div class="text-center mb-5">
         <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="72" style="object-fit:contain;" class="mb-3">
-        <h1 class="fw-bold mb-1">iDev <span style="color:#d52228;">Compagnon</span></h1>
+        <h1 class="fw-bold mb-1">iDev <span class="text-brand">Compagnon</span></h1>
         <p class="text-muted"><?= $t['hub_subtitle'] ?></p>
     </div>
 
@@ -25,12 +25,12 @@ require_once("navbar.php");
         <!-- Module Football (actif) -->
         <div class="col-md-5 col-lg-4">
             <a href="index.php" class="text-decoration-none">
-                <div class="card h-100 shadow-sm border-0 hub-card">
+                <div class="card h-100 shadow-sm border-0 hub-card hub-card-active">
                     <div class="card-body text-center p-4">
                         <div class="display-4 mb-3">⚽</div>
                         <h4 class="fw-bold text-dark mb-2"><?= $t['hub_football_title'] ?></h4>
                         <p class="text-muted small mb-3"><?= $t['hub_football_desc'] ?></p>
-                        <span class="btn btn-sm px-4 fw-semibold" style="background:#d52228; border:none; color:#fff;"><?= $t['hub_open'] ?></span>
+                        <span class="btn btn-sm btn-primary px-4 fw-semibold"><?= $t['hub_open'] ?></span>
                     </div>
                 </div>
             </a>
@@ -62,10 +62,5 @@ require_once("navbar.php");
     </div>
 </div>
 
-
-<style>
-.hub-card { transition: transform .15s ease, box-shadow .15s ease; cursor: pointer; }
-.hub-card:hover { transform: translateY(-4px); box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.12) !important; }
-</style>
 
 <?php require_once("footer.php"); ?>

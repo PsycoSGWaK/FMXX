@@ -6,7 +6,7 @@ require_once("navbar.php");
 
 if (!isset($_SESSION['mail'])) {
     ?>
-    <div style="background:linear-gradient(135deg,#091c3e 0%,#0d2a5e 60%,#091c3e 100%); min-height:calc(100vh - 120px); display:flex; align-items:center;">
+    <div class="hero-dark">
         <div class="container py-5">
 
             <!-- Hero -->
@@ -14,14 +14,14 @@ if (!isset($_SESSION['mail'])) {
                 <div class="mb-3">
                     <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="100" style="object-fit:contain;">
                 </div>
-                <h1 class="display-4 fw-bold mb-2" style="color:#fff; letter-spacing:-1px;">
-                    iDev <span style="color:#d52228;">Compagnon</span>
+                <h1 class="display-4 fw-bold mb-2" style="color:#fff;">
+                    iDev <span class="text-brand">Compagnon</span>
                 </h1>
                 <p class="lead mb-4" style="color:#a8c0e8; max-width:520px; margin:0 auto;">
                     <?= $t['landing_tagline'] ?>
                 </p>
                 <div class="d-flex gap-3 justify-content-center">
-                    <button class="btn btn-lg px-4 fw-semibold" style="background:#d52228; border:none; color:#fff;"
+                    <button class="btn btn-lg btn-primary px-4 fw-semibold"
                             data-bs-toggle="modal" data-bs-target="#LoginModal">
                         <?= $t['landing_login'] ?>
                     </button>
@@ -35,23 +35,23 @@ if (!isset($_SESSION['mail'])) {
             <!-- Feature cards -->
             <div class="row g-4 justify-content-center">
                 <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
+                    <div class="hero-feature-card p-4 h-100">
                         <div class="fs-2 mb-2">🎯</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat1_title'] ?></h5>
+                        <h5 class="fw-bold mb-1"><?= $t['landing_feat1_title'] ?></h5>
                         <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat1_text'] ?></p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
+                    <div class="hero-feature-card p-4 h-100">
                         <div class="fs-2 mb-2">🗂️</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat2_title'] ?></h5>
+                        <h5 class="fw-bold mb-1"><?= $t['landing_feat2_title'] ?></h5>
                         <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat2_text'] ?></p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="rounded-3 p-4 h-100" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);">
+                    <div class="hero-feature-card p-4 h-100">
                         <div class="fs-2 mb-2">📋</div>
-                        <h5 class="fw-bold mb-1" style="color:#16ffd0;"><?= $t['landing_feat3_title'] ?></h5>
+                        <h5 class="fw-bold mb-1"><?= $t['landing_feat3_title'] ?></h5>
                         <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat3_text'] ?></p>
                     </div>
                 </div>
@@ -370,7 +370,7 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#d52228;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                         <span class="fs-4 fw-bold"><?= $t['card_objectives'] ?></span>
                         <span class="badge bg-light text-dark fw-bold fs-6"><?= htmlspecialchars($saison) ?></span>
@@ -452,7 +452,7 @@ if (count($joueurs) > 0) {
 
             <!-- BUDGET -->
             <div class="card mt-3">
-                <div class="card-header py-2" style="background:#091c3e; color:#f0c040;">
+                <div class="card-header card-header-brand py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_budget'] ?></span>
                 </div>
                 <div class="card-body">
@@ -544,7 +544,7 @@ if (count($joueurs) > 0) {
 
             <!-- Tableau effectif -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#16ffd0;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_squad'] ?></span>
                     <div class="d-flex gap-2">
                         <?php if (count($joueurs) > 0): ?>
@@ -757,7 +757,7 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET TACTIC SUB ===================== -->
         <div class="tab-pane <?= $activeTab === 'tactic' ? 'show active' : '' ?>" id="pane-tactic">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#cdfb0a;">
+                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_tactic'] ?></span>
                     <div class="d-flex gap-1">
                         <?php foreach (['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-2-1-2'] as $f): ?>
