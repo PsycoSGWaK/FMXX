@@ -31,6 +31,7 @@ require_once(__DIR__ . "/lang.php");
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="js/password-strength.js"></script>
+    <script src="js/confirm-modal.js"></script>
     <style>
         html, body { height: 100%; }
         body { display: flex; flex-direction: column; min-height: 100dvh; }
