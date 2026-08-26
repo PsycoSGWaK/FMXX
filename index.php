@@ -313,7 +313,7 @@ if (count($joueurs) > 0) {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <?php if (isset($_GET['account']) && $_GET['account'] === 'deleted'): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -413,7 +413,7 @@ if (count($joueurs) > 0) {
                 </div>
                 <div class="card-body">
                     <?php if (!$idPays || !$division): ?>
-                        <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal">↗</a></p>
+                        <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal"><ion-icon name="open-outline"></ion-icon></a></p>
                     <?php elseif (empty($competitions)): ?>
                         <p class="text-muted mb-3"><?= $t['obj_no_competitions'] ?></p>
                     <?php else: ?>
@@ -596,7 +596,7 @@ if (count($joueurs) > 0) {
                         ?>
                         <?php if (!empty($expiresUrgent)): ?>
                         <div class="alert alert-danger mb-0 rounded-0 border-0 border-bottom py-2 px-3">
-                            <strong>⚠ <?= $t['squad_contract_alert'] ?> (<?= $saisonFin ?>) :</strong>
+                            <strong><ion-icon name="warning-outline"></ion-icon> <?= $t['squad_contract_alert'] ?> (<?= $saisonFin ?>) :</strong>
                             <?= implode(', ', array_map(fn($j) => htmlspecialchars($j['nom']), $expiresUrgent)) ?>
                         </div>
                         <?php endif; ?>
@@ -638,18 +638,18 @@ if (count($joueurs) > 0) {
                                 <thead class="table-dark">
                                     <tr>
                                         <th>#</th>
-                                        <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <span class="sort-icon text-muted">↕</span></th>
+                                        <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th><?= $t['squad_col_number'] ?></th>
                                         <th><?= $t['squad_col_nat'] ?></th>
                                         <th><?= $t['squad_col_pob'] ?></th>
-                                        <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <span class="sort-icon text-muted">↕</span></th>
-                                        <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <span class="sort-icon text-muted">↕</span></th>
+                                        <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -667,9 +667,9 @@ if (count($joueurs) > 0) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
                                             if ((int)$expireYear === $saisonFin)
-                                                $expireBadge = '<span class="badge bg-danger ms-3">⚠ ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
+                                                $expireBadge = '<span class="badge bg-danger ms-3"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
                                             elseif ((int)$expireYear === $saisonFinNext)
-                                                $expireBadge = '<span class="badge bg-warning text-dark ms-3">↗ ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                                $expireBadge = '<span class="badge bg-warning text-dark ms-3"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
                                         }
                                         ?>
                                         <tr class="<?= $rowClass ?>"
@@ -730,7 +730,7 @@ if (count($joueurs) > 0) {
                                 document.getElementById(id).value = '';
                             });
                             sortCol = null; sortAsc = true;
-                            document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.textContent = '↕');
+                            document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.setAttribute('name', 'swap-vertical-outline'));
                             Array.from(tbody.querySelectorAll('tr'))
                                 .sort((a, b) => parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent))
                                 .forEach(r => tbody.appendChild(r));
@@ -751,8 +751,8 @@ if (count($joueurs) > 0) {
                                 const type = th.dataset.sort;
                                 if (sortCol === col) sortAsc = !sortAsc;
                                 else { sortCol = col; sortAsc = true; }
-                                document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.textContent = '↕');
-                                th.querySelector('.sort-icon').textContent = sortAsc ? '↑' : '↓';
+                                document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.setAttribute('name', 'swap-vertical-outline'));
+                                th.querySelector('.sort-icon').setAttribute('name', sortAsc ? 'arrow-up-outline' : 'arrow-down-outline');
                                 const allRows = Array.from(tbody.querySelectorAll('tr'));
                                 allRows.sort((a, b) => {
                                     let va = a.cells[col]?.textContent.trim() ?? '';

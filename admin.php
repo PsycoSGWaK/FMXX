@@ -23,10 +23,8 @@ if ($userType !== '1') {
 
 $tab = $_GET['tab'] ?? 'users';
 ?>
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
     <h2 class="fw-bold mb-3" style="color:var(--ink);">Administration</h2>
 
     <?php if (isset($_GET['msg'])): ?>

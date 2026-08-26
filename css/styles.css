@@ -163,6 +163,22 @@ html {
     --bs-table-accent-bg: rgba(213, 34, 44, .05);
 }
 
+/* ---------- Densité / rythme vertical ---------- */
+
+.page-content {
+    padding-top: 1.75rem !important;
+    padding-bottom: 2.5rem !important;
+}
+
+.tab-content {
+    padding: 1.5rem !important;
+}
+
+.sort-icon {
+    font-size: .85rem;
+    vertical-align: -0.1em;
+}
+
 /* ---------- Navbar ---------- */
 
 .navbar {

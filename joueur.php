@@ -30,7 +30,7 @@ if (!$j) {
 $saved = isset($_GET['saved']);
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <div class="mb-3">
         <a href="index.php?tab=effectif" class="btn btn-sm btn-outline-secondary"><?= $t['player_back'] ?></a>

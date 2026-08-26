@@ -35,7 +35,7 @@ function formatBudget(int $val): string {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="alert alert-success alert-dismissible fade show">

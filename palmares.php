@@ -59,7 +59,7 @@ function trophees(array $objectifs): array {
 }
 ?>
 <body>
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-4 py-3 page-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0"><?= $t['pal_title'] ?></h2>
