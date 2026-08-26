@@ -188,8 +188,8 @@ function trophees(array $objectifs): array {
             $pctColor = $pct === null ? 'secondary' : ($pct >= 75 ? 'success' : ($pct >= 50 ? 'warning' : 'danger'));
         ?>
         <div class="card mb-3">
-            <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
-                <div class="d-flex align-items-center gap-3">
+            <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
                     <span class="fw-bold fs-5"><?= htmlspecialchars($s['saison']) ?></span>
                     <?php if ($s['club']): ?>
                         <span class="badge bg-secondary"><?= htmlspecialchars($s['club']) ?></span>

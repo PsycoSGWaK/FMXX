@@ -8,7 +8,7 @@ if (!isset($_SESSION['mail'])) {
     ?>
     <div class="hero-dark">
         <div class="container py-5">
-            <div class="row align-items-center g-5">
+            <div class="row align-items-center g-4 g-lg-5">
 
                 <!-- Texte + CTA + features -->
                 <div class="col-lg-6">
@@ -19,7 +19,7 @@ if (!isset($_SESSION['mail'])) {
                     <p class="lead mb-4" style="color:#a8c0e8; max-width:480px;">
                         <?= $t['landing_tagline'] ?>
                     </p>
-                    <div class="d-flex gap-3 mb-5">
+                    <div class="d-grid d-sm-flex gap-3 mb-5">
                         <button class="btn btn-lg btn-primary px-4 fw-semibold"
                                 data-bs-toggle="modal" data-bs-target="#LoginModal">
                             <?= $t['landing_login'] ?>
@@ -398,7 +398,7 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">
             <div class="card">
-                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
+                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                         <span class="fs-4 fw-bold"><?= $t['card_objectives'] ?></span>
                         <span class="badge bg-light text-dark fw-bold fs-6"><?= htmlspecialchars($saison) ?></span>
@@ -573,7 +573,7 @@ if (count($joueurs) > 0) {
 
             <!-- Tableau effectif -->
             <div class="card">
-                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
+                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_squad'] ?></span>
                     <div class="d-flex gap-2">
                         <?php if (count($joueurs) > 0): ?>
@@ -788,9 +788,9 @@ if (count($joueurs) > 0) {
         <!-- ===================== ONGLET TACTIC SUB ===================== -->
         <div class="tab-pane <?= $activeTab === 'tactic' ? 'show active' : '' ?>" id="pane-tactic">
             <div class="card">
-                <div class="card-header card-header-brand d-flex justify-content-between align-items-center py-2">
+                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
                     <span class="fs-4 fw-bold"><?= $t['card_tactic'] ?></span>
-                    <div class="d-flex gap-1">
+                    <div class="d-flex flex-wrap gap-1">
                         <?php foreach (['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-2-1-2'] as $f): ?>
                             <form action="formation_post.php" method="post" style="display:contents">
                                 <input type="hidden" name="formation" value="<?= $f ?>">
