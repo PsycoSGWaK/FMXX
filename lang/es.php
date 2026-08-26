@@ -55,6 +55,11 @@ $t = [
     'pwd_strength_medium' => 'Medio',
     'pwd_strength_strong' => 'Fuerte',
 
+    // Página 404
+    'page404_title' => 'Fuera de juego.',
+    'page404_text'  => 'Esta página no existe o ha sido movida.',
+    'page404_home'  => 'Volver al juego',
+
     // Modal de confirmación genérico
     'confirm_title'  => 'Confirmación',
     'confirm_cancel' => 'Cancelar',

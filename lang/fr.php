@@ -55,6 +55,11 @@ $t = [
     'pwd_strength_medium' => 'Moyen',
     'pwd_strength_strong' => 'Fort',
 
+    // Page 404
+    'page404_title' => 'Hors-jeu.',
+    'page404_text'  => 'Cette page n\'existe pas ou a été déplacée.',
+    'page404_home'  => 'Retour au jeu',
+
     // Modale de confirmation générique
     'confirm_title'  => 'Confirmation',
     'confirm_cancel' => 'Annuler',

@@ -34,3 +34,6 @@ Options -Indexes
 
 # --- Page d'accueil ---
 DirectoryIndex index.php
+
+# --- Page 404 personnalisée ---
+ErrorDocument 404 /404.php
