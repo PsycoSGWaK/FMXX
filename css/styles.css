@@ -361,10 +361,16 @@ footer a.text-secondary:hover {
     margin-bottom: .6rem;
 }
 
-/* ---------- Modales d'authentification ---------- */
+/* ---------- Modales ---------- */
 
-.auth-modal {
+.modal-content {
     border-top: 3px solid var(--brand);
+}
+
+.setting-group + .setting-group {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
 }
 
 /* ---------- Divider (existant) ---------- */
