@@ -151,7 +151,9 @@ function formatBudget(int $val): string {
     <div class="card-header card-header-brand py-2 d-flex justify-content-between align-items-center">
         <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
         <?php if (!empty($arrivees)): ?>
-            <form action="mercato_arrivee_post.php" method="post" onsubmit="return confirm('<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>')">
+            <form action="mercato_arrivee_post.php" method="post"
+                  data-confirm="<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>"
+                  data-confirm-variant="danger">
                 <?= csrf_field() ?>
                 <input type="hidden" name="delete_all" value="1">
                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -203,7 +205,7 @@ function formatBudget(int $val): string {
                                         <ion-icon name="pencil-outline"></ion-icon>
                                     </button>
                                     <form action="mercato_arrivee_post.php" method="post" style="display:contents"
-                                          onsubmit="return confirm('Supprimer ?')">
+                                          data-confirm="Supprimer ?" data-confirm-variant="danger">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="delete_id" value="<?= $a['idArrivee'] ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
