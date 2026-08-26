@@ -408,7 +408,7 @@ $tab = $_GET['tab'] ?? 'users';
     <div class="card">
         <div class="card-header card-header-brand d-flex justify-content-between align-items-center fw-bold">
             <span>Clubs (<?= count($clubs) ?>)</span>
-            <input type="text" id="filterClub" class="form-control form-control-sm ms-3" placeholder="Rechercher…" style="max-width:200px; color:#000;">
+            <input type="text" id="filterClub" class="form-control form-control-sm ms-3" placeholder="Rechercher…" style="max-width:200px;">
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
