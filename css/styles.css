@@ -189,20 +189,100 @@ footer a.text-secondary:hover {
     align-items: center;
 }
 
-.hero-feature-card {
-    background: rgba(255, 255, 255, .06);
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: .75rem;
-    transition: transform .18s ease, background-color .18s ease;
+.hero-feature-list {
+    border-top: 1px solid rgba(255, 255, 255, .14);
+    max-width: 480px;
 }
 
-.hero-feature-card:hover {
-    background: rgba(255, 255, 255, .1);
-    transform: translateY(-3px);
+.hero-feature-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
 }
 
-.hero-feature-card h5 {
+.hero-feature-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 2.25rem;
+    flex-shrink: 0;
+}
+
+.hero-feature-item h6 {
     color: #fff;
+}
+
+.hero-feature-item p {
+    color: #a8c0e8;
+}
+
+.pitch-panel {
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 1rem;
+    padding: 1.75rem 2.25rem;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.pitch-panel svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.pitch-line {
+    stroke: rgba(255, 255, 255, .35);
+    fill: none;
+    stroke-width: 2;
+}
+
+.pitch-dot {
+    fill: #fff;
+}
+
+.pitch-dot-gk {
+    fill: var(--brand);
+}
+
+/* ---------- Barre de statistiques ---------- */
+
+.stat-bar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    flex: 1 1 0;
+    min-width: 110px;
+    text-align: center;
+    padding: 1.1rem .75rem;
+    border-right: 1px solid var(--border);
+}
+
+.stat-item:last-child {
+    border-right: none;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.stat-label {
+    font-size: .72rem;
+    color: #5a6478;
+    margin-top: .3rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.stat-sub {
+    font-size: .68rem;
+    color: #8891a3;
+    margin-top: .2rem;
 }
 
 /* ---------- Hub ---------- */

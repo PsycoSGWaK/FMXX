@@ -667,28 +667,26 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY nb_joueurs DESC
     ")->fetchAll();
     ?>
-    <div class="row g-3 mb-4">
-        <?php
-        $cards = [
-            ['Utilisateurs',     $nbUsers,     'primary'],
-            ['Joueurs importés', $nbJoueurs,   'info'],
-            ['Clubs',            $nbClubs,     'secondary'],
-            ['Compétitions',     $nbComps,     'warning'],
-            ['Pays',             $nbPays,      'dark'],
-            ['Saisons jouées',   $nbSaisons,   'success'],
-            ['Objectifs',        $nbObjectifs, 'danger'],
-        ];
-        foreach ($cards as [$label, $val, $color]):
-        ?>
-        <div class="col-6 col-md-3">
-            <div class="card border-<?= $color ?> text-center">
-                <div class="card-body py-3">
-                    <div class="fs-1 fw-bold text-<?= $color ?>"><?= $val ?></div>
-                    <div class="small text-muted"><?= $label ?></div>
-                </div>
+    <?php
+    $cards = [
+        ['Utilisateurs',     $nbUsers,     'primary'],
+        ['Joueurs importés', $nbJoueurs,   'info'],
+        ['Clubs',            $nbClubs,     'secondary'],
+        ['Compétitions',     $nbComps,     'warning'],
+        ['Pays',             $nbPays,      'dark'],
+        ['Saisons jouées',   $nbSaisons,   'success'],
+        ['Objectifs',        $nbObjectifs, 'danger'],
+    ];
+    ?>
+    <div class="card mb-4">
+        <div class="stat-bar">
+            <?php foreach ($cards as [$label, $val, $color]): ?>
+            <div class="stat-item">
+                <div class="stat-value text-<?= $color ?>"><?= $val ?></div>
+                <div class="stat-label"><?= $label ?></div>
             </div>
+            <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
     </div>
     <div class="card">
         <div class="card-header card-header-brand fw-bold">Effectifs par utilisateur</div>

@@ -8,55 +8,83 @@ if (!isset($_SESSION['mail'])) {
     ?>
     <div class="hero-dark">
         <div class="container py-5">
+            <div class="row align-items-center g-5">
 
-            <!-- Hero -->
-            <div class="text-center mb-5">
-                <div class="mb-3">
-                    <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="100" style="object-fit:contain;">
+                <!-- Texte + CTA + features -->
+                <div class="col-lg-6">
+                    <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="72" style="object-fit:contain;" class="mb-4">
+                    <h1 class="display-4 fw-bold mb-3" style="color:#fff;">
+                        iDev <span class="text-brand">Compagnon</span>
+                    </h1>
+                    <p class="lead mb-4" style="color:#a8c0e8; max-width:480px;">
+                        <?= $t['landing_tagline'] ?>
+                    </p>
+                    <div class="d-flex gap-3 mb-5">
+                        <button class="btn btn-lg btn-primary px-4 fw-semibold"
+                                data-bs-toggle="modal" data-bs-target="#LoginModal">
+                            <?= $t['landing_login'] ?>
+                        </button>
+                        <button class="btn btn-lg px-4 fw-semibold btn-outline-light"
+                                data-bs-toggle="modal" data-bs-target="#SignupModal">
+                            <?= $t['landing_signup'] ?>
+                        </button>
+                    </div>
+
+                    <div class="hero-feature-list">
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">🎯</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat1_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat1_text'] ?></p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">🗂️</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat2_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat2_text'] ?></p>
+                            </div>
+                        </div>
+                        <div class="hero-feature-item">
+                            <span class="hero-feature-icon">📋</span>
+                            <div>
+                                <h6 class="fw-bold mb-1"><?= $t['landing_feat3_title'] ?></h6>
+                                <p class="mb-0 small"><?= $t['landing_feat3_text'] ?></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="display-4 fw-bold mb-2" style="color:#fff;">
-                    iDev <span class="text-brand">Compagnon</span>
-                </h1>
-                <p class="lead mb-4" style="color:#a8c0e8; max-width:520px; margin:0 auto;">
-                    <?= $t['landing_tagline'] ?>
-                </p>
-                <div class="d-flex gap-3 justify-content-center">
-                    <button class="btn btn-lg btn-primary px-4 fw-semibold"
-                            data-bs-toggle="modal" data-bs-target="#LoginModal">
-                        <?= $t['landing_login'] ?>
-                    </button>
-                    <button class="btn btn-lg px-4 fw-semibold btn-outline-light"
-                            data-bs-toggle="modal" data-bs-target="#SignupModal">
-                        <?= $t['landing_signup'] ?>
-                    </button>
+
+                <!-- Visuel : plan tactique -->
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="pitch-panel">
+                        <svg viewBox="0 0 260 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="6" y="6" width="248" height="368" rx="10" class="pitch-line"/>
+                            <line x1="6" y1="190" x2="254" y2="190" class="pitch-line"/>
+                            <circle cx="130" cy="190" r="38" class="pitch-line"/>
+                            <rect x="65" y="6" width="130" height="55" class="pitch-line"/>
+                            <rect x="65" y="319" width="130" height="55" class="pitch-line"/>
+                            <rect x="100" y="6" width="60" height="22" class="pitch-line"/>
+                            <rect x="100" y="352" width="60" height="22" class="pitch-line"/>
+                            <circle cx="130" cy="350" r="7" class="pitch-dot-gk"/>
+                            <circle cx="40" cy="290" r="7" class="pitch-dot"/>
+                            <circle cx="100" cy="300" r="7" class="pitch-dot"/>
+                            <circle cx="160" cy="300" r="7" class="pitch-dot"/>
+                            <circle cx="220" cy="290" r="7" class="pitch-dot"/>
+                            <circle cx="70" cy="210" r="7" class="pitch-dot"/>
+                            <circle cx="130" cy="220" r="7" class="pitch-dot"/>
+                            <circle cx="190" cy="210" r="7" class="pitch-dot"/>
+                            <circle cx="60" cy="110" r="7" class="pitch-dot"/>
+                            <circle cx="130" cy="90" r="7" class="pitch-dot"/>
+                            <circle cx="200" cy="110" r="7" class="pitch-dot"/>
+                        </svg>
+                        <div class="text-center mt-2">
+                            <span class="badge bg-secondary">4-3-3</span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-
-            <!-- Feature cards -->
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="hero-feature-card p-4 h-100">
-                        <div class="fs-2 mb-2">🎯</div>
-                        <h5 class="fw-bold mb-1"><?= $t['landing_feat1_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat1_text'] ?></p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="hero-feature-card p-4 h-100">
-                        <div class="fs-2 mb-2">🗂️</div>
-                        <h5 class="fw-bold mb-1"><?= $t['landing_feat2_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat2_text'] ?></p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="hero-feature-card p-4 h-100">
-                        <div class="fs-2 mb-2">📋</div>
-                        <h5 class="fw-bold mb-1"><?= $t['landing_feat3_title'] ?></h5>
-                        <p class="mb-0 small" style="color:#a8c0e8;"><?= $t['landing_feat3_text'] ?></p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <?php
