@@ -127,6 +127,9 @@ html {
 
 .nav-tabs {
     border-bottom-color: var(--border);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .nav-tabs .nav-link {
@@ -136,6 +139,7 @@ html {
     border-bottom: 3px solid transparent;
     border-radius: 0;
     padding-bottom: .6rem;
+    white-space: nowrap;
 }
 
 .nav-tabs .nav-link:hover {
