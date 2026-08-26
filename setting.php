@@ -24,6 +24,7 @@ $currentOverride = $currentOverride->fetchColumn();
         <div class="modal-body">
             <form action="setting_post.php" method="post">
                 <?= csrf_field() ?>
+                <div class="setting-group">
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_country'] ?></label>
                     <select class="form-select" name="idPays" id="settingPays">
@@ -75,6 +76,9 @@ $currentOverride = $currentOverride->fetchColumn();
                         <?php endforeach; ?>
                     </select>
                 </div>
+                </div>
+
+                <div class="setting-group">
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_season'] ?></label>
                     <?php $debutSaison = (int)explode('/', $currentSaison)[0]; ?>
@@ -82,6 +86,9 @@ $currentOverride = $currentOverride->fetchColumn();
                            value="<?= $debutSaison ?>" min="2000" max="2100" placeholder="<?= $t['setting_season_example'] ?>">
                     <div class="form-text"><?= $t['setting_season_hint'] ?> <?= $debutSaison ?>/<?= $debutSaison + 1 ?>.</div>
                 </div>
+                </div>
+
+                <div class="setting-group">
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_europe_comp'] ?></label>
                     <select class="form-select" name="comp_europe_override" id="settingEuropeComp">
@@ -95,7 +102,9 @@ $currentOverride = $currentOverride->fetchColumn();
                     </select>
                     <div class="form-text"><?= $t['setting_europe_hint'] ?></div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100"><?= $t['btn_save'] ?></button>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-2"><?= $t['btn_save'] ?></button>
             </form>
 
         </div>

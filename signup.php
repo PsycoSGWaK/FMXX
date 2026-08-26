@@ -7,7 +7,7 @@ unset($_SESSION['signup_error_code'], $_SESSION['signup_old']);
 $signupErrCode = $_GET['error'] ?? '';
 ?>
 <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content auth-modal">
+    <div class="modal-content">
         <div class="modal-header border-0">
             <div class="d-flex align-items-center gap-2">
                 <img src="assets/pictures/fmxx_logo.png" alt="" height="28" style="object-fit:contain;">
