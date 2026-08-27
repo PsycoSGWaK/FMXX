@@ -19,6 +19,7 @@ $t = [
     'nav_admin'        => 'Admin',
     'nav_logout'       => 'Déconnexion',
     'nav_signup'       => 'S\'inscrire',
+    'nav_theme_toggle' => 'Basculer le thème sombre',
     'nav_login'        => 'Se connecter',
 
     // Auth

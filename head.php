@@ -3,6 +3,15 @@ require_once(__DIR__ . "/csrf.php");
 require_once(__DIR__ . "/lang.php");
 ?>
 <head>
+    <script>
+    (function () {
+        try {
+            var t = localStorage.getItem('idev-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-bs-theme', t);
+        } catch (e) {}
+    })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>iDev Compagnon</title>
@@ -32,6 +41,7 @@ require_once(__DIR__ . "/lang.php");
     <link href="css/styles.css" rel="stylesheet" />
     <script src="js/password-strength.js"></script>
     <script src="js/confirm-modal.js"></script>
+    <script src="js/theme-toggle.js"></script>
     <style>
         html, body { height: 100%; }
         body { display: flex; flex-direction: column; min-height: 100dvh; }

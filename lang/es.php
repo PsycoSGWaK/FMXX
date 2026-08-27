@@ -19,6 +19,7 @@ $t = [
     'nav_admin'        => 'Admin',
     'nav_logout'       => 'Cerrar sesión',
     'nav_signup'       => 'Registrarse',
+    'nav_theme_toggle' => 'Alternar tema oscuro',
     'nav_login'        => 'Iniciar sesión',
 
     // Auth

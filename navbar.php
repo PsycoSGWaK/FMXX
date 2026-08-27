@@ -5,7 +5,7 @@ function navActive(string $page, string $current): string {
 }
 ?>
 <?php if (isset($_SESSION['mail'])) { ?>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="hub.php">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
@@ -42,7 +42,7 @@ function navActive(string $page, string $current): string {
                 </ul>
                 <div class="d-flex align-items-center gap-3 ms-auto">
                     <div class="dropdown">
-                        <a href="#" class="fw-semibold text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
+                        <a href="#" class="fw-semibold text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
                             👤 <?= htmlspecialchars($_SESSION['username'] ?? '') ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -75,12 +75,15 @@ function navActive(string $page, string $current): string {
                         <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
                         <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
                     </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 <?php } else { ?>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
@@ -106,6 +109,9 @@ function navActive(string $page, string $current): string {
                         <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
                         <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
                     </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
                 </div>
             </div>
         </div>

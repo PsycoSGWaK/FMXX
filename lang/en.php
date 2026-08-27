@@ -19,6 +19,7 @@ $t = [
     'nav_admin'        => 'Admin',
     'nav_logout'       => 'Log out',
     'nav_signup'       => 'Sign up',
+    'nav_theme_toggle' => 'Toggle dark theme',
     'nav_login'        => 'Log in',
 
     // Auth
