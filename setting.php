@@ -25,6 +25,7 @@ $currentOverride = $currentOverride->fetchColumn();
             <form action="setting_post.php" method="post">
                 <?= csrf_field() ?>
                 <div class="setting-group">
+                <div class="setting-group-title"><?= $t['setting_group_club'] ?></div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_country'] ?></label>
                     <select class="form-select" name="idPays" id="settingPays">
@@ -79,6 +80,7 @@ $currentOverride = $currentOverride->fetchColumn();
                 </div>
 
                 <div class="setting-group">
+                <div class="setting-group-title"><?= $t['setting_group_season'] ?></div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_season'] ?></label>
                     <?php $debutSaison = (int)explode('/', $currentSaison)[0]; ?>
@@ -89,6 +91,7 @@ $currentOverride = $currentOverride->fetchColumn();
                 </div>
 
                 <div class="setting-group">
+                <div class="setting-group-title"><?= $t['setting_group_europe'] ?></div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><?= $t['setting_europe_comp'] ?></label>
                     <select class="form-select" name="comp_europe_override" id="settingEuropeComp">
