@@ -25,7 +25,7 @@ $tab = $_GET['tab'] ?? 'users';
 ?>
 <body>
 <div class="container-fluid px-4 py-3 page-content">
-    <h2 class="fw-bold mb-3" style="color:var(--ink);">Administration</h2>
+    <h2 class="fw-bold mb-3" style="color:var(--heading);">Administration</h2>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">

@@ -393,7 +393,7 @@ if (count($joueurs) > 0) {
         </li>
     </ul>
 
-    <div class="tab-content border border-top-0 rounded-bottom p-3 mb-4 bg-white">
+    <div class="tab-content border border-top-0 rounded-bottom p-3 mb-4 bg-body">
 
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">

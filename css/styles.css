@@ -12,6 +12,22 @@
     --surface: #f6f7fb;
     --border: #e3e6ee;
     --shadow-color: 220 40% 20%;
+    --text: #1c2333;
+    --muted: #5a6478;
+    --muted-soft: #8891a3;
+    --heading: var(--ink);
+}
+
+/* ---------- Mode sombre ---------- */
+
+[data-bs-theme="dark"] {
+    --surface: #10141f;
+    --border: #2a3040;
+    --shadow-color: 220 60% 2%;
+    --text: #d8dce6;
+    --muted: #99a2b8;
+    --muted-soft: #7b8399;
+    --heading: #eef1f8;
 }
 
 /* ---------- Typographie ---------- */
@@ -19,7 +35,7 @@
 body {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--surface);
-    color: #1c2333;
+    color: var(--text);
 }
 
 h1, h2, h3, h4, h5, h6,
@@ -133,7 +149,7 @@ html {
 }
 
 .nav-tabs .nav-link {
-    color: #5a6478;
+    color: var(--muted);
     font-weight: 600;
     border: none;
     border-bottom: 3px solid transparent;
@@ -143,12 +159,12 @@ html {
 }
 
 .nav-tabs .nav-link:hover {
-    color: var(--ink);
+    color: var(--heading);
     border-color: transparent;
 }
 
 .nav-tabs .nav-link.active {
-    color: var(--ink);
+    color: var(--heading);
     background: transparent;
     border-bottom-color: var(--brand);
 }
@@ -178,6 +194,27 @@ html {
 
 .table-hover > tbody > tr:hover > * {
     --bs-table-accent-bg: rgba(213, 34, 44, .05);
+}
+
+/* Bootstrap fige les couleurs de .table-danger/.table-primary en dur,
+   sans variante sombre : on les resurcharge nous-mêmes. */
+[data-bs-theme="dark"] .table-danger,
+[data-bs-theme="dark"] .table-primary {
+    --bs-table-color: var(--text);
+}
+
+[data-bs-theme="dark"] .table-danger {
+    --bs-table-bg: #3a1418;
+    --bs-table-striped-bg: #421619;
+    --bs-table-hover-bg: #47181c;
+    --bs-table-border-color: #5c2226;
+}
+
+[data-bs-theme="dark"] .table-primary {
+    --bs-table-bg: #10233f;
+    --bs-table-striped-bg: #142846;
+    --bs-table-hover-bg: #172c4d;
+    --bs-table-border-color: #23375a;
 }
 
 /* ---------- Densité / rythme vertical ---------- */
@@ -306,7 +343,7 @@ footer a.text-secondary:hover {
 
 .stat-label {
     font-size: .72rem;
-    color: #5a6478;
+    color: var(--muted);
     margin-top: .3rem;
     text-transform: uppercase;
     letter-spacing: .05em;
@@ -314,7 +351,7 @@ footer a.text-secondary:hover {
 
 .stat-sub {
     font-size: .68rem;
-    color: #8891a3;
+    color: var(--muted-soft);
     margin-top: .2rem;
 }
 
@@ -414,7 +451,7 @@ footer a.text-secondary:hover {
 }
 
 .divider-custom .divider-custom-icon {
-    color: var(--ink) !important;
+    color: var(--heading) !important;
     font-size: 2rem;
 }
 
