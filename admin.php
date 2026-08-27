@@ -145,11 +145,11 @@ $tab = $_GET['tab'] ?? 'users';
                     <div class="modal-body">
                         <p class="text-muted small mb-3">Utilisateur : <strong id="resetPwdName"></strong></p>
                         <div class="mb-3">
-                            <label class="form-label">Nouveau mot de passe</label>
+                            <label class="form-label fw-semibold">Nouveau mot de passe</label>
                             <input type="password" name="new_password" class="form-control" required minlength="6">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Confirmer</label>
+                            <label class="form-label fw-semibold">Confirmer</label>
                             <input type="password" name="confirm_password" class="form-control" required minlength="6">
                         </div>
                     </div>
@@ -296,46 +296,52 @@ $tab = $_GET['tab'] ?? 'users';
                     <?= csrf_field() ?>
                     <input type="hidden" name="action" value="edit_competition">
                     <input type="hidden" name="idCompetition" id="editCompId">
-                    <div class="modal-body row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Nom</label>
-                            <input type="text" name="nomCompetition" id="editCompNom" class="form-control" required>
+                    <div class="modal-body">
+                        <div class="setting-group row g-3">
+                            <div class="setting-group-title col-12">Identité</div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Nom</label>
+                                <input type="text" name="nomCompetition" id="editCompNom" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Type</label>
+                                <select name="typeCompetition" id="editCompType" class="form-select" required>
+                                    <option>Championnat</option><option>Ligue</option>
+                                    <option>Nationale</option><option>Continentale</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Pays</label>
+                                <select name="idPays" id="editCompPays" class="form-select" required>
+                                    <?php foreach ($pays_list as $p): ?>
+                                        <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <label class="form-label">Type</label>
-                            <select name="typeCompetition" id="editCompType" class="form-select" required>
-                                <option>Championnat</option><option>Ligue</option>
-                                <option>Nationale</option><option>Continentale</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Pays</label>
-                            <select name="idPays" id="editCompPays" class="form-select" required>
-                                <?php foreach ($pays_list as $p): ?>
-                                    <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Division</label>
-                            <select name="division" id="editCompDiv" class="form-select">
-                                <option value="">—</option>
-                                <option>D1</option><option>D2</option><option>D3</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Genre</label>
-                            <select name="genre" id="editCompGenre" class="form-select" required>
-                                <option value="M">M</option><option value="F">F</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Qualif. rang min</label>
-                            <input type="number" name="qualif_rang_min" id="editCompQualifMin" class="form-control" min="1" max="20" placeholder="ex: 1">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Qualif. rang max</label>
-                            <input type="number" name="qualif_rang_max" id="editCompQualifMax" class="form-control" min="1" max="20" placeholder="ex: 3">
+                        <div class="setting-group row g-3">
+                            <div class="setting-group-title col-12">Qualification</div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Division</label>
+                                <select name="division" id="editCompDiv" class="form-select">
+                                    <option value="">—</option>
+                                    <option>D1</option><option>D2</option><option>D3</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Genre</label>
+                                <select name="genre" id="editCompGenre" class="form-select" required>
+                                    <option value="M">M</option><option value="F">F</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Qualif. rang min</label>
+                                <input type="number" name="qualif_rang_min" id="editCompQualifMin" class="form-control" min="1" max="20" placeholder="ex: 1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Qualif. rang max</label>
+                                <input type="number" name="qualif_rang_max" id="editCompQualifMax" class="form-control" min="1" max="20" placeholder="ex: 3">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -481,11 +487,11 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="hidden" name="idEquipe" id="editClubId">
                     <div class="modal-body row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nom du club</label>
+                            <label class="form-label fw-semibold">Nom du club</label>
                             <input type="text" name="nomEquipe" id="editClubNom" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Pays</label>
+                            <label class="form-label fw-semibold">Pays</label>
                             <select name="idPays" id="editClubPays" class="form-select" required>
                                 <?php foreach ($pays_list as $p): ?>
                                     <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
@@ -493,13 +499,13 @@ $tab = $_GET['tab'] ?? 'users';
                             </select>
                         </div>
                         <div class="col-3">
-                            <label class="form-label">Genre</label>
+                            <label class="form-label fw-semibold">Genre</label>
                             <select name="genre" id="editClubGenre" class="form-select" required>
                                 <option value="M">M</option><option value="F">F</option>
                             </select>
                         </div>
                         <div class="col-3">
-                            <label class="form-label">Division</label>
+                            <label class="form-label fw-semibold">Division</label>
                             <select name="division" id="editClubDiv" class="form-select" required>
                                 <option>D1</option><option>D2</option><option>D3</option><option>D4</option>
                             </select>
@@ -618,19 +624,19 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="hidden" name="idPays" id="editPaysId">
                     <div class="modal-body row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nom</label>
+                            <label class="form-label fw-semibold">Nom</label>
                             <input type="text" name="nomPays" id="editPaysNom" class="form-control" required>
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code A2</label>
+                            <label class="form-label fw-semibold">Code A2</label>
                             <input type="text" name="paysA2C" id="editPaysA2" class="form-control" maxlength="2" required>
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code A3</label>
+                            <label class="form-label fw-semibold">Code A3</label>
                             <input type="text" name="paysA3C" id="editPaysA3" class="form-control" maxlength="3">
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code numérique</label>
+                            <label class="form-label fw-semibold">Code numérique</label>
                             <input type="number" name="paysNum" id="editPaysNum" class="form-control">
                         </div>
                     </div>
