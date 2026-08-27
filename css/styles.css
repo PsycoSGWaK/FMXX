@@ -373,6 +373,15 @@ footer a.text-secondary:hover {
     border-top: 1px solid var(--border);
 }
 
+.setting-group-title {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--brand);
+    margin-bottom: .6rem;
+}
+
 /* ---------- Divider (existant) ---------- */
 
 .divider-custom {
