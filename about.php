@@ -3,7 +3,6 @@ session_start();
 require_once("head.php");
 require_once("navbar.php");
 ?>
-<body>
 <div class="container py-5" style="max-width:760px">
 
     <h1 class="fw-bold mb-1">iDev <span class="text-brand">Compagnon</span></h1>
@@ -151,4 +150,3 @@ require_once("navbar.php");
 
 </div>
 <?php require_once("footer.php"); ?>
-</body>

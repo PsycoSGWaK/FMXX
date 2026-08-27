@@ -20,6 +20,8 @@ $t = [
     'nav_logout'       => 'Log out',
     'nav_signup'       => 'Sign up',
     'nav_theme_toggle' => 'Toggle dark theme',
+    'nav_theme_dark'   => 'Dark mode',
+    'nav_theme_light'  => 'Light mode',
     'nav_login'        => 'Log in',
 
     // Auth
@@ -107,6 +109,10 @@ $t = [
     'obj_type_cup_continental' => 'Continental Cup',
     'obj_placeholder'        => '— Target —',
     'obj_result_placeholder' => '— Result —',
+    'obj_status_exceeded'    => 'Exceeded',
+    'obj_status_success'     => 'Achieved',
+    'obj_status_failed'      => 'Missed',
+    'obj_status_pending'     => 'Pending',
 
     // Budget
     'card_budget'      => 'BUDGET',

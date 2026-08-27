@@ -58,7 +58,6 @@ function trophees(array $objectifs): array {
     return array_filter($objectifs, fn($o) => in_array($o['resultat'], ['1er', 'Gagner']));
 }
 ?>
-<body>
 <div class="container-fluid px-4 py-3 page-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -247,4 +246,3 @@ function trophees(array $objectifs): array {
     <?php endif; ?>
 </div>
 <?php require_once("footer.php"); ?>
-</body>
