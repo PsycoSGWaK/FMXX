@@ -23,8 +23,8 @@ if ($userType !== '1') {
 
 $tab = $_GET['tab'] ?? 'users';
 ?>
-<div class="container-fluid px-4 py-3 page-content">
-    <h2 class="fw-bold mb-3" style="color:var(--heading);">Administration</h2>
+<div class="main-content">
+    <div class="context-title">Administration</div>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -39,27 +39,26 @@ $tab = $_GET['tab'] ?? 'users';
         </div>
     <?php endif; ?>
 
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a class="nav-link <?= $tab === 'users'        ? 'active' : '' ?>" href="admin.php?tab=users">Utilisateurs</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'competitions' ? 'active' : '' ?>" href="admin.php?tab=competitions">Compétitions</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'clubs'        ? 'active' : '' ?>" href="admin.php?tab=clubs">Clubs</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'pays'         ? 'active' : '' ?>" href="admin.php?tab=pays">Pays</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'stats'        ? 'active' : '' ?>" href="admin.php?tab=stats">Stats</a></li>
-    </ul>
+    <div class="segmented">
+        <a class="<?= $tab === 'users'        ? 'active' : '' ?>" href="admin.php?tab=users">Utilisateurs</a>
+        <a class="<?= $tab === 'competitions' ? 'active' : '' ?>" href="admin.php?tab=competitions">Compétitions</a>
+        <a class="<?= $tab === 'clubs'        ? 'active' : '' ?>" href="admin.php?tab=clubs">Clubs</a>
+        <a class="<?= $tab === 'pays'         ? 'active' : '' ?>" href="admin.php?tab=pays">Pays</a>
+        <a class="<?= $tab === 'stats'        ? 'active' : '' ?>" href="admin.php?tab=stats">Stats</a>
+    </div>
 
     <?php if ($tab === 'users'): ?>
     <!-- ===================== UTILISATEURS ===================== -->
     <?php
     $users = $pdo->query("SELECT idUser, username, mail, type, saison_active, club, division, genre FROM user ORDER BY idUser")->fetchAll();
     ?>
-    <div class="card">
-        <div class="card-header card-header-brand fw-bold">
-            Utilisateurs (<?= count($users) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Utilisateurs (<?= count($users) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Nom</th>
@@ -126,7 +125,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal reset password -->
@@ -180,11 +178,11 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY p.nomPays, c.genre, c.typeCompetition, c.division
     ")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header card-header-brand fw-bold">
-            Ajouter une compétition
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter une compétition</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_competition">
@@ -219,19 +217,18 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header card-header-brand fw-bold">
-            Compétitions (<?= count($comps) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Compétitions (<?= count($comps) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>Type</th><th>Pays</th>
                             <th>Division</th><th>Genre</th><th>Qualif.</th><th>Actions</th>
@@ -280,7 +277,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal edit compétition -->
@@ -376,11 +372,11 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY p.nomPays, e.genre, e.division, e.nomEquipe
     ")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header card-header-brand fw-bold">
-            Ajouter un club
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter un club</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_club">
@@ -408,20 +404,19 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center fw-bold">
-            <span>Clubs (<?= count($clubs) ?>)</span>
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Clubs (<?= count($clubs) ?>)</span></span>
             <input type="text" id="filterClub" class="form-control form-control-sm" placeholder="Rechercher…" style="max-width:200px;">
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0" id="clubTable">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table" id="clubTable">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>Pays</th><th>Genre</th>
                             <th>Division</th><th>Actions</th>
@@ -461,7 +456,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
     <script>
     document.getElementById('filterClub').addEventListener('input', function() {
@@ -534,11 +528,11 @@ $tab = $_GET['tab'] ?? 'users';
     <?php
     $paysList = $pdo->query("SELECT * FROM pays ORDER BY nomPays")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header card-header-brand fw-bold">
-            Ajouter un pays
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter un pays</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_pays">
@@ -555,19 +549,18 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="number" name="paysNum" class="form-control form-control-sm" placeholder="Code numérique">
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header card-header-brand fw-bold">
-            Pays (<?= count($paysList) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Pays (<?= count($paysList) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>A2</th><th>A3</th><th>Num</th><th>Actions</th>
                         </tr>
@@ -606,7 +599,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal edit pays -->
@@ -687,7 +679,7 @@ $tab = $_GET['tab'] ?? 'users';
         ['Objectifs',        $nbObjectifs, 'danger'],
     ];
     ?>
-    <div class="card mb-4">
+    <div class="table-panel mb-4">
         <div class="stat-bar">
             <?php foreach ($cards as [$label, $val, $color]): ?>
             <div class="stat-item">
@@ -697,11 +689,13 @@ $tab = $_GET['tab'] ?? 'users';
             <?php endforeach; ?>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header card-header-brand fw-bold">Effectifs par utilisateur</div>
-        <div class="card-body p-0">
-            <table class="table table-sm table-striped mb-0">
-                <thead class="table-dark">
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Effectifs par utilisateur</span></span>
+        </div>
+            <div class="table-scroll">
+            <table class="table table-sm table-striped mb-0 data-table">
+                <thead>
                     <tr><th>Utilisateur</th><th>Email</th><th>Joueurs importés</th></tr>
                 </thead>
                 <tbody>
@@ -714,7 +708,7 @@ $tab = $_GET['tab'] ?? 'users';
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+            </div>
     </div>
     <?php endif; ?>
 
