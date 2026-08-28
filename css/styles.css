@@ -730,6 +730,8 @@ footer a.text-secondary:hover {
 }
 
 .pill-success { color: var(--success); background: var(--success-bg); border-color: transparent; }
+.pill-warning { color: var(--warning-color); background: var(--warning-bg); border-color: transparent; }
+.pill-danger { color: var(--brand); background: var(--panel-2); border-color: transparent; }
 
 .segmented {
     display: inline-flex;
@@ -829,6 +831,12 @@ footer a.text-secondary:hover {
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: .3rem;
+}
+
+.field-value {
+    font-weight: 600;
+    font-size: .9rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .obj-select {
