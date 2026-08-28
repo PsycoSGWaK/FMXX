@@ -373,7 +373,6 @@ if (count($joueurs) > 0) {
     <!-- CONTEXTE -->
     <div class="context-bar">
         <div class="context-left">
-            <div class="crest">🔴</div>
             <div>
                 <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
                 <div class="context-meta">
