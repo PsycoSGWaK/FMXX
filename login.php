@@ -13,6 +13,10 @@
                 <div class="alert alert-danger py-2"><?= $t['alert_login_error'] ?></div>
             <?php elseif ($loginError === 'form'): ?>
                 <div class="alert alert-danger py-2"><?= $t['alert_login_missing'] ?></div>
+            <?php elseif ($loginError === 'session_expired'): ?>
+                <div class="alert alert-warning py-2"><?= $t['alert_session_expired'] ?></div>
+            <?php elseif ($loginError === 'too_many_attempts'): ?>
+                <div class="alert alert-danger py-2"><?= $t['alert_login_ratelimited'] ?></div>
             <?php endif; ?>
             <form class="form-login" action="login_post.php" method="post">
                 <?= csrf_field() ?>

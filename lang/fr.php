@@ -89,6 +89,8 @@ $t = [
     'alert_mercato_saved'   => 'Statuts mercato sauvegardés.',
     'alert_login_error'     => 'Email ou mot de passe incorrect.',
     'alert_login_missing'   => 'Merci de renseigner votre email et votre mot de passe.',
+    'alert_session_expired' => 'Votre session a expiré par inactivité. Merci de vous reconnecter.',
+    'alert_login_ratelimited' => 'Trop de tentatives. Merci de réessayer dans quelques minutes.',
     'alert_format_error'    => 'Format de fichier non supporté. Utilisez un fichier .html ou .csv.',
 
     // Onglets index
