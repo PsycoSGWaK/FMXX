@@ -21,12 +21,17 @@ if (!function_exists('fmxx_base_url')) {
 
 if (!function_exists('fmxx_send_mail')) {
     function fmxx_send_mail(string $to, string $subject, string $htmlBody): bool {
+        $sender  = 'no-reply@idevnormandie.fr';
         $headers = [
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
-            'From: iDev Compagnon <no-reply@idevnormandie.fr>',
+            'From: iDev Compagnon <' . $sender . '>',
         ];
-        return @mail($to, mb_encode_mimeheader($subject, 'UTF-8'), $htmlBody, implode("\r\n", $headers));
+        // Sans -f, l'enveloppe (Return-Path) part avec l'adresse système du compte
+        // cPanel plutôt que ce domaine, ce qui fait échouer l'alignement SPF côté
+        // destinataire (le domaine passe pourtant "Valid" dans Email Deliverability :
+        // ce contrôle-là est sur l'enveloppe, pas sur le header From).
+        return @mail($to, mb_encode_mimeheader($subject, 'UTF-8'), $htmlBody, implode("\r\n", $headers), '-f' . $sender);
     }
 }
 
