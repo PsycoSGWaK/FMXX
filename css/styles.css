@@ -215,6 +215,9 @@ html {
 [data-bs-theme="dark"] .table-primary,
 [data-bs-theme="dark"] .table-secondary {
     --bs-table-color: var(--text);
+    --bs-table-striped-color: var(--text);
+    --bs-table-active-color: var(--text);
+    --bs-table-hover-color: var(--text);
 }
 
 [data-bs-theme="dark"] .table-danger {
