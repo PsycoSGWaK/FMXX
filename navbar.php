@@ -267,7 +267,9 @@ document.addEventListener('DOMContentLoaded', function () {
     <?php require_once("login.php"); ?>
 </div>
 
-<?php if (in_array($_GET['error'] ?? '', ['login', 'form', 'session_expired', 'too_many_attempts'])): ?>
+<?php if (in_array($_GET['error'] ?? '', ['login', 'form', 'session_expired', 'too_many_attempts', 'unverified', 'confirm_invalid'], true)
+       || ($_GET['confirmed'] ?? '') === 'ok'
+       || ($_GET['resend'] ?? '') === 'ok'): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     new bootstrap.Modal(document.getElementById('LoginModal')).show();
