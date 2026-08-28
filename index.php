@@ -141,6 +141,13 @@ $idPays   = $_SESSION['idPays']   ?? null;
 $genre    = $_SESSION['genre']    ?? 'M';
 $division = $_SESSION['division'] ?? null;
 
+$paysNom = null;
+if ($idPays) {
+    $pNomStmt = $pdo->prepare("SELECT nomPays FROM pays WHERE idPays = :id");
+    $pNomStmt->execute(['id' => $idPays]);
+    $paysNom = $pNomStmt->fetchColumn() ?: null;
+}
+
 // Budgets
 $bStmt = $pdo->prepare("SELECT budget_transfert, budget_salaires FROM user WHERE idUser = :id");
 $bStmt->execute(['id' => $idUser]);
@@ -312,8 +319,7 @@ if (count($joueurs) > 0) {
     ksort($parAge);
 }
 ?>
-<body>
-<div class="container-fluid px-4 py-3 page-content">
+<div class="main-content">
 
     <?php if (isset($_GET['account']) && $_GET['account'] === 'deleted'): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -364,152 +370,150 @@ if (count($joueurs) > 0) {
         </div>
     <?php endif; ?>
 
-    <!-- NAV TABS -->
-    <ul class="nav nav-tabs mb-0" id="mainTabs">
-        <li class="nav-item">
-            <a class="nav-link <?= $activeTab === 'objectifs' ? 'active' : '' ?>"
-               href="?tab=objectifs">
-                <?= $t['tab_objectives'] ?>
-                <?php if ($pct !== null): ?>
-                    <span class="badge bg-<?= $pctColor ?> ms-1"><?= $pct ?> %</span>
-                <?php endif; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?= $activeTab === 'effectif' ? 'active' : '' ?>"
-               href="?tab=effectif">
-                <?= $t['tab_squad'] ?>
-                <?php if (count($joueurs) > 0): ?>
-                    <span class="badge bg-secondary ms-1"><?= count($joueurs) ?></span>
-                <?php endif; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?= $activeTab === 'tactic' ? 'active' : '' ?>"
-               href="?tab=tactic">
-                <?= $t['tab_tactic'] ?>
-                <span class="badge bg-warning text-dark ms-1"><?= htmlspecialchars($formation) ?></span>
-            </a>
-        </li>
-    </ul>
+    <!-- CONTEXTE -->
+    <div class="context-bar">
+        <div class="context-left">
+            <div>
+                <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
+                <div class="context-meta">
+                    <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?>
+                </div>
+            </div>
+        </div>
+        <div class="context-right">
+            <span class="pill"><?= htmlspecialchars($saison) ?></span>
+            <?php if ($pct !== null): ?>
+                <span class="pill <?= $pct >= 50 ? 'pill-success' : '' ?>">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    <?= $pct ?>% <?= $t['obj_success_rate'] ?>
+                </span>
+            <?php endif; ?>
+            <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
+        </div>
+    </div>
 
-    <div class="tab-content border border-top-0 rounded-bottom p-3 mb-4 bg-body">
+    <!-- NAV TABS -->
+    <div class="segmented">
+        <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
+            <?= $t['tab_objectives'] ?>
+            <?php if ($pct !== null): ?><span class="count"><?= $pct ?>%</span><?php endif; ?>
+        </a>
+        <a class="<?= $activeTab === 'effectif' ? 'active' : '' ?>" href="?tab=effectif">
+            <?= $t['tab_squad'] ?>
+            <?php if (count($joueurs) > 0): ?><span class="count"><?= count($joueurs) ?></span><?php endif; ?>
+        </a>
+        <a class="<?= $activeTab === 'tactic' ? 'active' : '' ?>" href="?tab=tactic">
+            <?= $t['tab_tactic'] ?>
+            <span class="count"><?= htmlspecialchars($formation) ?></span>
+        </a>
+    </div>
+
+    <div class="tab-content">
 
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">
-            <div class="card">
-                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
-                        <span class="fs-4 fw-bold"><?= $t['card_objectives'] ?></span>
-                        <span class="badge bg-light text-dark fw-bold fs-6"><?= htmlspecialchars($saison) ?></span>
-                        <?php if ($nomClub): ?>
-                            <span class="badge bg-secondary"><?= htmlspecialchars($nomClub) ?></span>
-                        <?php endif; ?>
-                        <?php if ($pct !== null): ?>
-                            <span class="badge bg-<?= $pctColor ?> fs-6"><?= $pct ?> <?= $t['obj_success_rate'] ?></span>
-                        <?php endif; ?>
-                    </div>
-                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
-                </div>
-                <div class="card-body">
-                    <?php if (!$idPays || !$division): ?>
-                        <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal"><ion-icon name="open-outline"></ion-icon></a></p>
-                    <?php elseif (empty($competitions)): ?>
-                        <p class="text-muted mb-3"><?= $t['obj_no_competitions'] ?></p>
-                    <?php else: ?>
-                        <?php
-                        $typeLabels = [
-                            'Championnat'  => ['label' => $t['obj_type_league'],           'color' => 'primary'],
-                            'Ligue'        => ['label' => $t['obj_type_cup_league'],        'color' => 'info'],
-                            'Nationale'    => ['label' => $t['obj_type_cup_national'],      'color' => 'warning'],
-                            'Continentale' => ['label' => $t['obj_type_cup_continental'],   'color' => 'success'],
-                        ];
+            <?php if (!$idPays || !$division): ?>
+                <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal"><ion-icon name="open-outline"></ion-icon></a></p>
+            <?php elseif (empty($competitions)): ?>
+                <p class="text-muted mb-3"><?= $t['obj_no_competitions'] ?></p>
+            <?php else: ?>
+                <?php
+                $typeLabels = [
+                    'Championnat'  => $t['obj_type_league'],
+                    'Ligue'        => $t['obj_type_cup_league'],
+                    'Nationale'    => $t['obj_type_cup_national'],
+                    'Continentale' => $t['obj_type_cup_continental'],
+                ];
+                ?>
+                <form action="objectif_post.php" method="post">
+                    <input type="hidden" name="saison" value="<?= htmlspecialchars($saison) ?>">
+                    <?= csrf_field() ?>
+                    <div class="objectives">
+                        <?php foreach ($competitions as $c):
+                            $type  = $c['typeCompetition'];
+                            $label = $typeLabels[$type] ?? $type;
+                            $opts  = $optionsParType[$type] ?? $optionsParType['Nationale'];
+                            $rObj  = $ranking[$c['objectif']] ?? null;
+                            $rRes  = $ranking[$c['resultat']] ?? null;
+                            if ($rObj && $rRes) {
+                                $statusClass = $rRes <= $rObj ? 'status-success' : 'status-danger';
+                                $statusLabel = $rRes <= $rObj ? ($rRes < $rObj ? $t['obj_status_exceeded'] : $t['obj_status_success']) : $t['obj_status_failed'];
+                            } else {
+                                $statusClass = 'status-pending';
+                                $statusLabel = $t['obj_status_pending'];
+                            }
                         ?>
-                        <form action="objectif_post.php" method="post">
-                            <input type="hidden" name="saison" value="<?= htmlspecialchars($saison) ?>">
-                            <?= csrf_field() ?>
-                            <div class="row g-3">
-                                <?php foreach ($competitions as $c):
-                                    $type       = $c['typeCompetition'];
-                                    $meta       = $typeLabels[$type] ?? ['label' => $type, 'color' => 'secondary'];
-                                    $opts       = $optionsParType[$type] ?? $optionsParType['Nationale'];
-                                    $rObj       = $ranking[$c['objectif']] ?? null;
-                                    $rRes       = $ranking[$c['resultat']] ?? null;
-                                    $cardBorder = $meta['color'];
-                                    if ($rObj && $rRes) {
-                                        $cardBorder = $rRes <= $rObj ? 'success' : 'danger';
-                                    }
-                                ?>
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="card h-100 border-<?= $cardBorder ?>">
-                                        <div class="card-body p-3">
-                                            <div class="small text-<?= $meta['color'] ?> fw-semibold mb-1"><?= $meta['label'] ?></div>
-                                            <div class="fw-bold mb-2"><?= htmlspecialchars($c['nomCompetition']) ?></div>
-                                            <label class="form-label small text-muted mb-1"><?= $t['obj_target'] ?></label>
-                                            <select class="form-select form-select-sm mb-2" name="objectif[<?= $c['idCompetition'] ?>]">
-                                                <?php foreach ($opts as $label => $rank): ?>
-                                                    <option value="<?= $label ?>" <?= $c['objectif'] === $label ? 'selected' : '' ?>>
-                                                        <?= $label ?: $t['obj_placeholder'] ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <label class="form-label small text-muted mb-1"><?= $t['obj_result'] ?></label>
-                                            <select class="form-select form-select-sm" name="resultat[<?= $c['idCompetition'] ?>]">
-                                                <?php foreach ($opts as $label => $rank): ?>
-                                                    <option value="<?= $label ?>" <?= ($c['resultat'] ?? '') === $label ? 'selected' : '' ?>>
-                                                        <?= $label ?: $t['obj_result_placeholder'] ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
+                        <div class="objective-row">
+                            <div class="objective-comp">
+                                <span class="objective-type"><?= $label ?></span>
+                                <span class="objective-name"><?= htmlspecialchars($c['nomCompetition']) ?></span>
                             </div>
-                            <div class="mt-3 d-flex gap-2">
-                                <button type="submit" class="btn btn-sm btn-primary"><?= $t['btn_save'] ?></button>
-                                <a href="saison_next.php" class="btn btn-sm btn-outline-secondary"
-                                   data-confirm="<?= htmlspecialchars($t['confirm_next_season'], ENT_QUOTES) ?>"
-                                   data-confirm-variant="warning">
-                                    <?= $t['btn_next_season'] ?>
-                                </a>
+                            <div>
+                                <div class="field-label"><?= $t['obj_target'] ?></div>
+                                <select class="obj-select" name="objectif[<?= $c['idCompetition'] ?>]">
+                                    <?php foreach ($opts as $optLabel => $rank): ?>
+                                        <option value="<?= $optLabel ?>" <?= $c['objectif'] === $optLabel ? 'selected' : '' ?>>
+                                            <?= $optLabel ?: $t['obj_placeholder'] ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
-                        </form>
-                    <?php endif; ?>
-                </div>
-            </div>
+                            <div>
+                                <div class="field-label"><?= $t['obj_result'] ?></div>
+                                <select class="obj-select" name="resultat[<?= $c['idCompetition'] ?>]">
+                                    <?php foreach ($opts as $optLabel => $rank): ?>
+                                        <option value="<?= $optLabel ?>" <?= ($c['resultat'] ?? '') === $optLabel ? 'selected' : '' ?>>
+                                            <?= $optLabel ?: $t['obj_result_placeholder'] ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <span class="status-chip <?= $statusClass ?>">
+                                <?php if ($statusClass === 'status-success'): ?>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                <?php endif; ?>
+                                <?= $statusLabel ?>
+                            </span>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="mt-3 d-flex gap-2">
+                        <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                        <a href="saison_next.php" class="btn-ghost"
+                           data-confirm="<?= htmlspecialchars($t['confirm_next_season'], ENT_QUOTES) ?>"
+                           data-confirm-variant="warning">
+                            <?= $t['btn_next_season'] ?>
+                        </a>
+                    </div>
+                </form>
+            <?php endif; ?>
 
             <!-- BUDGET -->
-            <div class="card mt-3">
-                <div class="card-header card-header-brand py-2">
-                    <span class="fs-4 fw-bold"><?= $t['card_budget'] ?></span>
-                </div>
-                <div class="card-body">
-                    <form action="budget_post.php" method="post" class="row g-3 align-items-end">
-                        <?= csrf_field() ?>
-                        <div class="col-md-3 col-sm-6">
-                            <label class="form-label small text-muted mb-1"><?= $t['budget_transfer'] ?></label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" name="budget_transfert" class="form-control"
-                                       value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>"
-                                       placeholder="ex : 5000000" min="0">
-                                <span class="input-group-text">€</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label class="form-label small text-muted mb-1"><?= $t['budget_wages'] ?></label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" name="budget_salaires" class="form-control"
-                                       value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>"
-                                       placeholder="ex : 200000" min="0">
-                                <span class="input-group-text">€</span>
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-sm btn-primary"><?= $t['btn_save'] ?></button>
-                        </div>
-                    </form>
-                </div>
+            <div class="budget-strip mt-3">
+                <form class="budget-field" action="budget_post.php" method="post">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="budget_salaires" value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>">
+                    <span class="budget-label"><?= $t['budget_transfer'] ?></span>
+                    <div class="budget-input-row">
+                        <input type="number" name="budget_transfert" class="budget-input"
+                               value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>"
+                               placeholder="0" min="0">
+                        <span>€</span>
+                    </div>
+                    <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                </form>
+                <form class="budget-field" action="budget_post.php" method="post">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="budget_transfert" value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>">
+                    <span class="budget-label"><?= $t['budget_wages'] ?></span>
+                    <div class="budget-input-row">
+                        <input type="number" name="budget_salaires" class="budget-input"
+                               value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>"
+                               placeholder="0" min="0">
+                        <span>€</span>
+                    </div>
+                    <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                </form>
             </div>
         </div>
 
@@ -572,23 +576,20 @@ if (count($joueurs) > 0) {
             <?php endif; ?>
 
             <!-- Tableau effectif -->
-            <div class="card">
-                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
-                    <span class="fs-4 fw-bold"><?= $t['card_squad'] ?></span>
-                    <div class="d-flex gap-2">
-                        <?php if (count($joueurs) > 0): ?>
-                            <form action="deleteData.php" method="post" style="display:contents"
-                                  data-confirm="<?= htmlspecialchars($t['confirm_clear_squad'], ENT_QUOTES) ?>"
-                                  data-confirm-variant="danger">
-                                <?= csrf_field() ?>
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><?= $t['btn_clear'] ?></button>
-                            </form>
-                        <?php else: ?>
-                            <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#uploadModal"><?= $t['btn_import'] ?></button>
-                        <?php endif; ?>
-                    </div>
+            <div class="table-panel">
+                <div class="table-panel-head">
+                    <span class="section-title"><span style="color:var(--heading)"><?= $t['card_squad'] ?></span></span>
+                    <?php if (count($joueurs) > 0): ?>
+                        <form action="deleteData.php" method="post"
+                              data-confirm="<?= htmlspecialchars($t['confirm_clear_squad'], ENT_QUOTES) ?>"
+                              data-confirm-variant="danger">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn-danger-ghost"><?= $t['btn_clear'] ?></button>
+                        </form>
+                    <?php else: ?>
+                        <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#uploadModal"><?= $t['btn_import'] ?></button>
+                    <?php endif; ?>
                 </div>
-                <div class="card-body p-0">
                     <?php if (count($joueurs) > 0): ?>
                         <?php
                         $expiresUrgent = array_filter($joueurs, function($j) use ($saisonFin) {
@@ -613,32 +614,35 @@ if (count($joueurs) > 0) {
                         }, $joueurs)));
                         sort($annees);
                         ?>
-                        <div class="p-2 border-bottom d-flex flex-wrap gap-2 align-items-center">
-                            <input type="text" id="filterNom" class="form-control form-control-sm" placeholder="<?= htmlspecialchars($t['squad_filter_name']) ?>" style="max-width:180px">
-                            <select id="filterPoste" class="form-select form-select-sm" style="max-width:160px">
+                        <div class="table-toolbar">
+                            <div class="search-field">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                                <input type="text" id="filterNom" placeholder="<?= htmlspecialchars($t['squad_filter_name']) ?>">
+                            </div>
+                            <select id="filterPoste" class="btn-ghost">
                                 <option value=""><?= $t['squad_filter_position'] ?></option>
                                 <?php foreach ($postes as $p): ?>
                                     <option><?= htmlspecialchars($p) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <select id="filterExpire" class="form-select form-select-sm" style="max-width:160px">
+                            <select id="filterExpire" class="btn-ghost">
                                 <option value=""><?= $t['squad_filter_expiry'] ?></option>
                                 <?php foreach ($annees as $a): ?>
                                     <option><?= htmlspecialchars($a) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <select id="filterStatut" class="form-select form-select-sm" style="max-width:160px">
+                            <select id="filterStatut" class="btn-ghost">
                                 <option value=""><?= $t['squad_filter_status'] ?></option>
                                 <option value="sell"><?= $t['squad_status_sell'] ?></option>
                                 <option value="loan"><?= $t['squad_status_loan'] ?></option>
                                 <option value="free"><?= $t['squad_status_free'] ?></option>
                             </select>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="resetFilters()"><?= $t['btn_reset_filters'] ?></button>
+                            <button class="btn-ghost" onclick="resetFilters()"><?= $t['btn_reset_filters'] ?></button>
                             <span id="filterCount" class="text-muted small ms-1"></span>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover table-striped mb-0" id="effectifTable">
-                                <thead class="table-dark">
+                        <div class="table-scroll">
+                            <table class="table table-sm table-hover table-striped mb-0 data-table" id="effectifTable">
+                                <thead>
                                     <tr>
                                         <th>#</th>
                                         <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
@@ -781,32 +785,28 @@ if (count($joueurs) > 0) {
                             <?= $t['squad_empty'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><?= $t['squad_import_link'] ?></a>
                         </div>
                     <?php endif; ?>
-                </div>
             </div>
         </div>
 
         <!-- ===================== ONGLET TACTIC SUB ===================== -->
         <div class="tab-pane <?= $activeTab === 'tactic' ? 'show active' : '' ?>" id="pane-tactic">
-            <div class="card">
-                <div class="card-header card-header-brand d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
-                    <span class="fs-4 fw-bold"><?= $t['card_tactic'] ?></span>
-                    <div class="d-flex flex-wrap gap-1">
+            <div class="table-panel">
+                <div class="table-panel-head">
+                    <span class="section-title"><span style="color:var(--heading)"><?= $t['card_tactic'] ?></span></span>
+                    <div class="segmented" style="align-self:auto;">
                         <?php foreach (['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-2-1-2'] as $f): ?>
                             <form action="formation_post.php" method="post" style="display:contents">
                                 <input type="hidden" name="formation" value="<?= $f ?>">
                                 <input type="hidden" name="redirect" value="index.php?tab=tactic">
-                                <button type="submit"
-                                    class="btn btn-xs <?= $formation === $f ? 'btn-warning' : 'btn-outline-light' ?>"
-                                    style="font-size:.75rem; padding:2px 7px;">
+                                <button type="submit" class="<?= $formation === $f ? 'active' : '' ?>" style="text-transform:none; font-size:.8rem; padding:.35rem .7rem;">
                                     <?= $f ?>
                                 </button>
                             </form>
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="card-body">
                     <?php if (count($joueurs) === 0): ?>
-                        <p class="text-muted"><?= $t['tactic_no_squad'] ?></p>
+                        <p class="text-muted p-3 mb-0"><?= $t['tactic_no_squad'] ?></p>
                     <?php else: ?>
                         <?php
                         $tacticsStmt = $pdo->prepare("SELECT * FROM tactic WHERE idUser = :idUser ORDER BY position");
@@ -818,9 +818,9 @@ if (count($joueurs) > 0) {
                         ?>
                         <form action="tactic_post.php" method="post">
                             <?= csrf_field() ?>
-                            <div class="table-responsive">
-                                <table class="table table-sm align-middle">
-                                    <thead class="table-dark">
+                            <div class="table-scroll">
+                                <table class="table table-sm align-middle mb-0 data-table">
+                                    <thead>
                                         <tr>
                                             <th style="width:60px"><?= $t['tactic_position'] ?></th>
                                             <th><?= $t['tactic_starter'] ?></th>
@@ -831,7 +831,7 @@ if (count($joueurs) > 0) {
                                     <tbody>
                                         <?php for ($i = 1; $i <= 11; $i++): ?>
                                             <tr>
-                                                <td><span class="badge bg-secondary"><?= $positions[$i-1] ?></span></td>
+                                                <td><span class="pos-tag"><?= $positions[$i-1] ?></span></td>
                                                 <?php foreach (['titulaire','remplacant','supersub'] as $role): ?>
                                                     <td>
                                                         <select class="form-select form-select-sm" name="line_<?= $i ?>_<?= $role ?>">
@@ -850,10 +850,11 @@ if (count($joueurs) > 0) {
                                     </tbody>
                                 </table>
                             </div>
-                            <button type="submit" class="btn btn-primary"><?= $t['btn_save'] ?></button>
+                            <div class="p-3">
+                                <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                            </div>
                         </form>
                     <?php endif; ?>
-                </div>
             </div>
         </div>
 
@@ -889,4 +890,3 @@ if (count($joueurs) > 0) {
 </div>
 
 <?php require_once("footer.php"); ?>
-</body>

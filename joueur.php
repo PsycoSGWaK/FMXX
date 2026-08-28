@@ -29,7 +29,6 @@ if (!$j) {
 
 $saved = isset($_GET['saved']);
 ?>
-<body>
 <div class="container-fluid px-4 py-3 page-content">
 
     <div class="mb-3">
@@ -162,4 +161,3 @@ $saved = isset($_GET['saved']);
 
 </div>
 <?php require_once("footer.php"); ?>
-</body>

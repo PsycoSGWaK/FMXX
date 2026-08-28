@@ -23,7 +23,6 @@ if ($userType !== '1') {
 
 $tab = $_GET['tab'] ?? 'users';
 ?>
-<body>
 <div class="container-fluid px-4 py-3 page-content">
     <h2 class="fw-bold mb-3" style="color:var(--heading);">Administration</h2>
 
@@ -721,4 +720,3 @@ $tab = $_GET['tab'] ?? 'users';
 
 </div>
 <?php require_once("footer.php"); ?>
-</body>

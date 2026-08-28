@@ -34,7 +34,6 @@ function formatBudget(int $val): string {
     return number_format($val, 0, ',', ' ') . ' €';
 }
 ?>
-<body>
 <div class="container-fluid px-4 py-3 page-content">
 
     <?php if (isset($_GET['saved'])): ?>
@@ -302,4 +301,3 @@ document.getElementById('editArriveeModal').addEventListener('show.bs.modal', fu
 </script>
 
 <?php require_once("footer.php"); ?>
-</body>

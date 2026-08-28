@@ -20,6 +20,8 @@ $t = [
     'nav_logout'       => 'Cerrar sesión',
     'nav_signup'       => 'Registrarse',
     'nav_theme_toggle' => 'Alternar tema oscuro',
+    'nav_theme_dark'   => 'Modo oscuro',
+    'nav_theme_light'  => 'Modo claro',
     'nav_login'        => 'Iniciar sesión',
 
     // Auth
@@ -107,6 +109,10 @@ $t = [
     'obj_type_cup_continental' => 'Copa Continental',
     'obj_placeholder'        => '— Objetivo —',
     'obj_result_placeholder' => '— Resultado —',
+    'obj_status_exceeded'    => 'Superado',
+    'obj_status_success'     => 'Logrado',
+    'obj_status_failed'      => 'Fallido',
+    'obj_status_pending'     => 'Pendiente',
 
     // Presupuesto
     'card_budget'      => 'PRESUPUESTO',
