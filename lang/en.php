@@ -41,7 +41,7 @@ $t = [
     'signup_err_username'   => 'This username is already taken.',
     'signup_err_mail'       => 'This email address is already in use.',
     'signup_err_missing'    => 'Please fill in all fields.',
-    'signup_ok'             => 'Account created! You can now log in.',
+    'signup_ok'             => 'Account created! Check your email to confirm your address before logging in.',
 
     // Validation (password / email)
     'val_pwd_policy'   => 'At least %d characters, including one uppercase letter, one lowercase letter, one digit and one special character.',
@@ -91,6 +91,11 @@ $t = [
     'alert_login_missing'   => 'Please enter your email and password.',
     'alert_session_expired' => 'Your session expired due to inactivity. Please log in again.',
     'alert_login_ratelimited' => 'Too many attempts. Please try again in a few minutes.',
+    'alert_login_unverified' => 'Please confirm your email address (link sent at signup) before logging in.',
+    'alert_confirm_invalid'  => 'This confirmation link is invalid or has expired.',
+    'alert_email_confirmed'  => 'Address confirmed! You can now log in.',
+    'alert_resend_sent'      => 'If an account exists with this address, a new confirmation email has just been sent.',
+    'login_resend_confirmation' => 'Resend confirmation email',
     'alert_format_error'    => 'Unsupported file format. Please use an .html or .csv file.',
 
     // Index tabs

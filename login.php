@@ -8,7 +8,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <?php $loginError = $_GET['error'] ?? ''; ?>
+            <?php
+            $loginError    = $_GET['error'] ?? '';
+            $unverifiedMail = $_SESSION['unverified_mail'] ?? '';
+            unset($_SESSION['unverified_mail']);
+            ?>
             <?php if ($loginError === 'login'): ?>
                 <div class="alert alert-danger py-2"><?= $t['alert_login_error'] ?></div>
             <?php elseif ($loginError === 'form'): ?>
@@ -17,6 +21,23 @@
                 <div class="alert alert-warning py-2"><?= $t['alert_session_expired'] ?></div>
             <?php elseif ($loginError === 'too_many_attempts'): ?>
                 <div class="alert alert-danger py-2"><?= $t['alert_login_ratelimited'] ?></div>
+            <?php elseif ($loginError === 'unverified'): ?>
+                <div class="alert alert-warning py-2">
+                    <?= $t['alert_login_unverified'] ?>
+                    <form action="resend_confirmation_post.php" method="post" class="mt-2">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="mail" value="<?= htmlspecialchars($unverifiedMail) ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary"><?= $t['login_resend_confirmation'] ?></button>
+                    </form>
+                </div>
+            <?php elseif ($loginError === 'confirm_invalid'): ?>
+                <div class="alert alert-danger py-2"><?= $t['alert_confirm_invalid'] ?></div>
+            <?php endif; ?>
+            <?php if (($_GET['confirmed'] ?? '') === 'ok'): ?>
+                <div class="alert alert-success py-2"><?= $t['alert_email_confirmed'] ?></div>
+            <?php endif; ?>
+            <?php if (($_GET['resend'] ?? '') === 'ok'): ?>
+                <div class="alert alert-success py-2"><?= $t['alert_resend_sent'] ?></div>
             <?php endif; ?>
             <form class="form-login" action="login_post.php" method="post">
                 <?= csrf_field() ?>

@@ -31,13 +31,19 @@ if ((int)$attemptsStmt->fetchColumn() >= LOGIN_RATE_LIMIT_MAX) {
     exit;
 }
 
-$req = $pdo->prepare('SELECT idUser, username, club, division, mail, password, pourcentage, type FROM user WHERE mail = ?');
+$req = $pdo->prepare('SELECT idUser, username, club, division, mail, password, pourcentage, type, email_verified_at FROM user WHERE mail = ?');
 $req->execute([$_POST['mail']]);
 $resultat = $req->fetch();
 
 if ($resultat && password_verify($_POST['password'], $resultat['password'])) {
     $pdo->prepare("DELETE FROM login_attempts WHERE ip_address = :ip AND mail = :mail")
         ->execute(['ip' => $clientIp, 'mail' => $mailAttempt]);
+
+    if ($resultat['email_verified_at'] === null) {
+        $_SESSION['unverified_mail'] = $resultat['mail'];
+        header('Location: index.php?error=unverified');
+        exit;
+    }
 
     session_regenerate_id(true);
     $_SESSION['idUser']   = $resultat['idUser'];
@@ -51,18 +57,12 @@ if ($resultat && password_verify($_POST['password'], $resultat['password'])) {
     $token  = bin2hex(random_bytes(64));
     $expiry = time() + (86400 * 30);
 
-    // HTTPS direct OU via le proxy Cloudflare (X-Forwarded-Proto / Cf-Visitor),
-    // pour que le cookie soit marqué « secure » même quand l'origine reçoit du HTTP.
-    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
-        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
-        || (strpos($_SERVER['HTTP_CF_VISITOR'] ?? '', 'https') !== false);
-
     setcookie("auth_token", $token, [
         'expires'  => $expiry,
         'path'     => '/',
         'httponly' => true,
         'samesite' => 'Lax',
-        'secure'   => $isHttps,
+        'secure'   => fmxx_is_https(),
     ]);
 
     $pdo->prepare("UPDATE user SET auth_token = :token, token_expiry = FROM_UNIXTIME(:expiry) WHERE idUser = :id")
