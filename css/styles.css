@@ -209,10 +209,11 @@ html {
     --bs-table-accent-bg: rgba(213, 34, 44, .05);
 }
 
-/* Bootstrap fige les couleurs de .table-danger/.table-primary en dur,
-   sans variante sombre : on les resurcharge nous-mêmes. */
+/* Bootstrap fige les couleurs de .table-danger/.table-primary/.table-secondary
+   en dur, sans variante sombre : on les resurcharge nous-mêmes. */
 [data-bs-theme="dark"] .table-danger,
-[data-bs-theme="dark"] .table-primary {
+[data-bs-theme="dark"] .table-primary,
+[data-bs-theme="dark"] .table-secondary {
     --bs-table-color: var(--text);
 }
 
@@ -228,6 +229,35 @@ html {
     --bs-table-striped-bg: #142846;
     --bs-table-hover-bg: #172c4d;
     --bs-table-border-color: #23375a;
+}
+
+[data-bs-theme="dark"] .table-secondary {
+    --bs-table-bg: var(--panel-2);
+    --bs-table-striped-bg: var(--panel-2);
+    --bs-table-hover-bg: var(--panel-2);
+    --bs-table-border-color: var(--border);
+}
+
+/* ---------- Tableau de données (effectif, tactique) ---------- */
+
+.data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--panel);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: .74rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.data-table th[data-sort]:hover,
+.data-table th[data-sort]:hover .sort-icon {
+    color: var(--brand) !important;
 }
 
 /* ---------- Densité / rythme vertical ---------- */
@@ -708,7 +738,8 @@ footer a.text-secondary:hover {
     flex-wrap: wrap;
 }
 
-.segmented a {
+.segmented a,
+.segmented button {
     border: none;
     background: transparent;
     color: var(--muted);
@@ -727,7 +758,8 @@ footer a.text-secondary:hover {
     transition: background-color .15s ease, color .15s ease;
 }
 
-.segmented a.active {
+.segmented a.active,
+.segmented button.active {
     background: var(--panel);
     color: var(--heading);
     box-shadow: 0 .2rem .5rem -.3rem hsl(var(--shadow-color) / .3);
@@ -741,7 +773,8 @@ footer a.text-secondary:hover {
     font-size: .68rem;
 }
 
-.segmented a.active .count { background: var(--brand); color: #fff; }
+.segmented a.active .count,
+.segmented button.active .count { background: var(--brand); color: #fff; }
 
 .section-title {
     font-family: var(--font-display);
@@ -923,3 +956,88 @@ footer a.text-secondary:hover {
 }
 
 .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+select.btn-ghost {
+    padding-right: 1.8rem;
+    cursor: pointer;
+}
+
+.btn-danger-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem 1rem;
+    border-radius: .55rem;
+    font-weight: 600;
+    font-size: .84rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--brand);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-danger-ghost:hover { background: var(--panel-2); color: var(--brand); }
+
+/* ---------- Panneau tableau (effectif, listes de données) ---------- */
+
+.table-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: .9rem;
+    overflow: hidden;
+}
+
+.table-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: 1rem 1.3rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .8rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.search-field {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--panel-2);
+    border-radius: .5rem;
+    padding: .4rem .7rem;
+    flex: 1;
+    min-width: 160px;
+}
+
+.search-field svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+
+.search-field input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: .85rem;
+    width: 100%;
+}
+
+.table-scroll { overflow-x: auto; }
+
+.pos-tag {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .15rem .45rem;
+    border-radius: .3rem;
+    background: var(--panel-2);
+    color: var(--muted);
+}
