@@ -240,7 +240,7 @@ function formatBudget(int $val): string {
                 </select>
             </div>
             <div>
-                <button type="submit" class="btn-brand"><?= $t['mercato_arr_add'] ?></button>
+                <button type="submit" class="btn-brand btn-sm"><?= $t['mercato_arr_add'] ?></button>
             </div>
         </form>
 </div>

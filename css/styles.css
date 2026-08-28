@@ -951,6 +951,14 @@ footer a.text-secondary:hover {
 
 .btn-brand:hover { background: var(--brand-dark); color: #fff; }
 
+.btn-brand.btn-sm,
+.btn-ghost.btn-sm,
+.btn-danger-ghost.btn-sm {
+    padding: .25rem .75rem;
+    font-size: .82rem;
+    border-radius: .4rem;
+}
+
 .btn-ghost {
     display: inline-flex;
     align-items: center;

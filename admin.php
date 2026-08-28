@@ -217,7 +217,7 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn-brand">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
@@ -404,7 +404,7 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn-brand">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
@@ -549,7 +549,7 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="number" name="paysNum" class="form-control form-control-sm" placeholder="Code numérique">
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn-brand">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
