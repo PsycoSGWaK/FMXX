@@ -36,14 +36,14 @@ $signupErrCode = $_GET['error'] ?? '';
                            id="username" name="username" value="<?= htmlspecialchars($signupOld['username']) ?>">
                 </div>
                 <div class="mb-3">
-                    <label for="mail" class="form-label"><?= $t['signup_email'] ?></label>
+                    <label for="signupMail" class="form-label"><?= $t['signup_email'] ?></label>
                     <input type="email" class="form-control <?= in_array($signupErrCode, ['signup_mail', 'signup_mail_invalid'], true) ? 'is-invalid' : '' ?>"
-                           id="mail" name="mail" value="<?= htmlspecialchars($signupOld['mail']) ?>">
+                           id="signupMail" name="mail" value="<?= htmlspecialchars($signupOld['mail']) ?>">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label"><?= $t['signup_password'] ?></label>
+                    <label for="signupPassword" class="form-label"><?= $t['signup_password'] ?></label>
                     <input type="password" class="form-control <?= $signupErrCode === 'signup_pwd' ? 'is-invalid' : '' ?>"
-                           id="password" name="password" minlength="<?= PASSWORD_MIN_LEN ?>" autocomplete="new-password">
+                           id="signupPassword" name="password" minlength="<?= PASSWORD_MIN_LEN ?>" autocomplete="new-password">
                     <!-- Indicateur de robustesse -->
                     <div class="progress mt-2" style="height:6px; display:none;" id="pwdStrengthWrap">
                         <div class="progress-bar" id="pwdStrengthBar" role="progressbar" style="width:0%"></div>
@@ -68,7 +68,7 @@ $signupErrCode = $_GET['error'] ?? '';
 
 <script>
 FMXXInitPasswordStrength({
-    password: 'password',
+    password: 'signupPassword',
     confirm:  'password_confirm',
     wrap:     'pwdStrengthWrap',
     bar:      'pwdStrengthBar',
