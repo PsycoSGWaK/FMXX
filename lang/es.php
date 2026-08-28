@@ -41,7 +41,7 @@ $t = [
     'signup_err_username'   => 'Este nombre de usuario ya está en uso.',
     'signup_err_mail'       => 'Esta dirección de correo ya está en uso.',
     'signup_err_missing'    => 'Por favor, rellena todos los campos.',
-    'signup_ok'             => '¡Cuenta creada! Ya puedes iniciar sesión.',
+    'signup_ok'             => '¡Cuenta creada! Revisa tu correo para confirmar tu dirección antes de iniciar sesión.',
 
     // Validación (contraseña / correo)
     'val_pwd_policy'   => 'Mínimo %d caracteres, con al menos una mayúscula, una minúscula, un número y un carácter especial.',
@@ -91,6 +91,11 @@ $t = [
     'alert_login_missing'   => 'Por favor, introduce tu correo y contraseña.',
     'alert_session_expired' => 'Tu sesión ha expirado por inactividad. Vuelve a iniciar sesión.',
     'alert_login_ratelimited' => 'Demasiados intentos. Vuelve a intentarlo en unos minutos.',
+    'alert_login_unverified' => 'Confirma primero tu dirección de correo (enlace enviado al registrarte) antes de iniciar sesión.',
+    'alert_confirm_invalid'  => 'Este enlace de confirmación no es válido o ha caducado.',
+    'alert_email_confirmed'  => '¡Dirección confirmada! Ya puedes iniciar sesión.',
+    'alert_resend_sent'      => 'Si existe una cuenta con esta dirección, se acaba de enviar un nuevo correo de confirmación.',
+    'login_resend_confirmation' => 'Reenviar el correo de confirmación',
     'alert_format_error'    => 'Formato de archivo no compatible. Usa un archivo .html o .csv.',
 
     // Pestañas index

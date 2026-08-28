@@ -3,6 +3,7 @@ session_start();
 require_once("db.php");
 require_once("csrf.php");
 require_once("validation.php");
+require_once("mailer.php");
 
 csrf_verify();
 
@@ -61,10 +62,19 @@ if ($result['mail_taken']) {
     signup_fail('signup_mail');
 }
 
-// Création du compte
+// Création du compte, avec un jeton de confirmation d'email valable 24h
+// (le compte ne peut pas se connecter tant qu'il n'a pas cliqué le lien reçu).
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-$req = $pdo->prepare("INSERT INTO user (username, mail, password, type) VALUES (?, ?, ?, 0)");
-$req->execute([$username, $mail, $passwordHash]);
+$verifyToken  = bin2hex(random_bytes(32));
+$verifyExpiry = date('Y-m-d H:i:s', time() + 86400);
+
+$req = $pdo->prepare("
+    INSERT INTO user (username, mail, password, type, email_verify_token, email_verify_expiry)
+    VALUES (?, ?, ?, 0, ?, ?)
+");
+$req->execute([$username, $mail, $passwordHash, $verifyToken, $verifyExpiry]);
+
+fmxx_send_confirmation_email($mail, $verifyToken);
 
 unset($_SESSION['signup_old'], $_SESSION['signup_error_code']);
 header("Location: index.php?signup=ok");

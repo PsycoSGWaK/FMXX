@@ -14,6 +14,16 @@ if (!function_exists('fmxx_is_production')) {
     }
 }
 
+if (!function_exists('fmxx_is_https')) {
+    function fmxx_is_https(): bool {
+        // Derrière Cloudflare, HTTPS peut n'être vrai que jusqu'au proxy :
+        // on regarde aussi les en-têtes qu'il ajoute.
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+            || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+            || (strpos($_SERVER['HTTP_CF_VISITOR'] ?? '', 'https') !== false);
+    }
+}
+
 if (fmxx_is_production()) {
     ini_set('display_errors', '0');
     ini_set('display_startup_errors', '0');

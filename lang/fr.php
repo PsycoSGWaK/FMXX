@@ -41,7 +41,7 @@ $t = [
     'signup_err_username'   => 'Ce pseudo est déjà utilisé.',
     'signup_err_mail'       => 'Cette adresse email est déjà utilisée.',
     'signup_err_missing'    => 'Veuillez remplir tous les champs.',
-    'signup_ok'             => 'Inscription réussie ! Connectez-vous.',
+    'signup_ok'             => 'Inscription réussie ! Vérifiez vos emails pour confirmer votre adresse avant de vous connecter.',
 
     // Validation (mot de passe / email)
     'val_pwd_policy'   => '%d caractères minimum, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.',
@@ -91,6 +91,11 @@ $t = [
     'alert_login_missing'   => 'Merci de renseigner votre email et votre mot de passe.',
     'alert_session_expired' => 'Votre session a expiré par inactivité. Merci de vous reconnecter.',
     'alert_login_ratelimited' => 'Trop de tentatives. Merci de réessayer dans quelques minutes.',
+    'alert_login_unverified' => 'Confirmez d\'abord votre adresse email (lien envoyé à l\'inscription) avant de vous connecter.',
+    'alert_confirm_invalid'  => 'Ce lien de confirmation est invalide ou a expiré.',
+    'alert_email_confirmed'  => 'Adresse confirmée ! Vous pouvez maintenant vous connecter.',
+    'alert_resend_sent'      => 'Si un compte existe avec cette adresse, un nouvel email de confirmation vient d\'être envoyé.',
+    'login_resend_confirmation' => 'Renvoyer l\'email de confirmation',
     'alert_format_error'    => 'Format de fichier non supporté. Utilisez un fichier .html ou .csv.',
 
     // Onglets index
