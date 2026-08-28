@@ -533,6 +533,7 @@ footer a.text-secondary:hover {
     top: 0;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     background: var(--ink);
     color: #cdd7ee;
     display: flex;
@@ -664,6 +665,14 @@ footer a.text-secondary:hover {
 }
 
 .user-name { font-size: .82rem; font-weight: 600; color: #e6eaf6; }
+
+.sidebar .dropdown-menu {
+    max-width: 204px;
+}
+
+.sidebar .dropdown-item {
+    white-space: normal;
+}
 
 .user-role { font-size: .68rem; color: #7f8bb3; }
 
