@@ -6,6 +6,9 @@ api_key.txt
 *.env
 .env
 
+# --- Sauvegardes BDD (sql/backup_db.php, dossier local de secours) ---
+/backups/
+
 # --- Données personnelles / exports utilisateur ---
 # Effectifs exportés depuis FM26 (données perso, pas du code)
 Effectif_*.html
