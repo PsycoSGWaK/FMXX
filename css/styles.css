@@ -451,6 +451,7 @@ footer a.text-secondary:hover {
     height: 2.5rem;
     border-radius: 50%;
     background: rgba(213, 34, 44, .08);
+    color: var(--brand);
     font-size: 1.2rem;
     margin-bottom: .6rem;
 }
@@ -533,6 +534,7 @@ footer a.text-secondary:hover {
     top: 0;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     background: var(--ink);
     color: #cdd7ee;
     display: flex;
@@ -665,6 +667,16 @@ footer a.text-secondary:hover {
 
 .user-name { font-size: .82rem; font-weight: 600; color: #e6eaf6; }
 
+.sidebar .dropdown-menu {
+    max-width: 204px;
+}
+
+.sidebar .dropdown-item {
+    white-space: normal;
+    padding: .55rem 1rem;
+    line-height: 1.35;
+}
+
 .user-role { font-size: .68rem; color: #7f8bb3; }
 
 .main {
@@ -730,6 +742,8 @@ footer a.text-secondary:hover {
 }
 
 .pill-success { color: var(--success); background: var(--success-bg); border-color: transparent; }
+.pill-warning { color: var(--warning-color); background: var(--warning-bg); border-color: transparent; }
+.pill-danger { color: var(--brand); background: var(--panel-2); border-color: transparent; }
 
 .segmented {
     display: inline-flex;
@@ -829,6 +843,12 @@ footer a.text-secondary:hover {
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: .3rem;
+}
+
+.field-value {
+    font-weight: 600;
+    font-size: .9rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .obj-select {
@@ -942,6 +962,14 @@ footer a.text-secondary:hover {
 }
 
 .btn-brand:hover { background: var(--brand-dark); color: #fff; }
+
+.btn-brand.btn-sm,
+.btn-ghost.btn-sm,
+.btn-danger-ghost.btn-sm {
+    padding: .25rem .75rem;
+    font-size: .82rem;
+    border-radius: .4rem;
+}
 
 .btn-ghost {
     display: inline-flex;

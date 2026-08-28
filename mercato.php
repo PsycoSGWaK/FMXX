@@ -34,7 +34,7 @@ function formatBudget(int $val): string {
     return number_format($val, 0, ',', ' ') . ' €';
 }
 ?>
-<div class="container-fluid px-4 py-3 page-content">
+<div class="main-content">
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -44,7 +44,7 @@ function formatBudget(int $val): string {
     <?php endif; ?>
 
     <!-- Résumé -->
-    <div class="card mb-3">
+    <div class="table-panel">
         <div class="stat-bar">
             <div class="stat-item">
                 <div class="stat-value text-danger"><?= count($sells) ?></div>
@@ -79,11 +79,10 @@ function formatBudget(int $val): string {
     </div>
 
     <!-- Tableau mercato -->
-    <div class="card">
-        <div class="card-header card-header-brand py-2">
-            <span class="fs-4 fw-bold"><?= $t['mercato_title'] ?></span>
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)"><?= $t['mercato_title'] ?></span></span>
         </div>
-        <div class="card-body p-0">
             <?php if (count($joueurs) === 0): ?>
                 <div class="p-4 text-center text-muted">
                     <?= $t['mercato_empty'] ?> <a href="index.php"><?= $t['mercato_import_link'] ?></a>
@@ -91,9 +90,9 @@ function formatBudget(int $val): string {
             <?php else: ?>
                 <form action="mercato_post.php" method="post">
                     <?= csrf_field() ?>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0">
-                            <thead class="table-dark">
+                    <div class="table-scroll">
+                        <table class="table table-sm table-hover align-middle mb-0 data-table">
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th><?= $t['mercato_col_name'] ?></th>
@@ -138,30 +137,28 @@ function formatBudget(int $val): string {
                         </table>
                     </div>
                     <div class="p-3">
-                        <button type="submit" class="btn btn-primary"><?= $t['btn_save'] ?></button>
+                        <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
                     </div>
                 </form>
             <?php endif; ?>
-        </div>
     </div>
 
     <!-- Section Arrivées -->
-<div class="card mt-4">
-    <div class="card-header card-header-brand py-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
-        <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
+<div class="table-panel mt-4">
+    <div class="table-panel-head">
+        <span class="section-title"><span style="color:var(--heading)"><?= $t['mercato_arr_title'] ?></span></span>
         <?php if (!empty($arrivees)): ?>
             <form action="mercato_arrivee_post.php" method="post"
                   data-confirm="<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>"
                   data-confirm-variant="danger">
                 <?= csrf_field() ?>
                 <input type="hidden" name="delete_all" value="1">
-                <button type="submit" class="btn btn-sm btn-outline-danger">
+                <button type="submit" class="btn-danger-ghost">
                     <ion-icon name="trash-outline"></ion-icon> <?= $t['mercato_arr_delete_all'] ?>
                 </button>
             </form>
         <?php endif; ?>
     </div>
-    <div class="card-body p-0">
         <?php
         $statutColors = ['cible' => 'warning', 'nego' => 'info', 'signe' => 'success'];
         $statutLabels = [
@@ -173,9 +170,9 @@ function formatBudget(int $val): string {
         <?php if (empty($arrivees)): ?>
             <div class="p-3 text-muted small"><?= $t['mercato_arr_empty'] ?></div>
         <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover align-middle mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th><?= $t['mercato_arr_col_name'] ?></th>
@@ -243,10 +240,9 @@ function formatBudget(int $val): string {
                 </select>
             </div>
             <div>
-                <button type="submit" class="btn btn-sm btn-primary"><?= $t['mercato_arr_add'] ?></button>
+                <button type="submit" class="btn-brand btn-sm"><?= $t['mercato_arr_add'] ?></button>
             </div>
         </form>
-    </div>
 </div>
 
 </div>

@@ -27,7 +27,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">📋</div>
+                    <div class="feature-icon-badge"><ion-icon name="clipboard-outline"></ion-icon></div>
                     <h6 class="fw-bold">Squad</h6>
                     <p class="small mb-0">View your full squad with stats imported from FM. Filter by name, position, contract expiry, or transfer status. Players listed for sale or loan are highlighted automatically.</p>
                 </div>
@@ -36,7 +36,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">💰</div>
+                    <div class="feature-icon-badge"><ion-icon name="cash-outline"></ion-icon></div>
                     <h6 class="fw-bold">Transfer window</h6>
                     <p class="small mb-0">Mark players as <em>Sell</em> or <em>Loan</em>. Get a summary of how many players are leaving, how many you're keeping, and an estimate of your incoming transfer revenue.</p>
                 </div>
@@ -45,7 +45,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">🔄</div>
+                    <div class="feature-icon-badge"><ion-icon name="repeat-outline"></ion-icon></div>
                     <h6 class="fw-bold">Tactic Sub</h6>
                     <p class="small mb-0">Plan your starting XI, substitutes, and super subs for 6 formations (4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 5-3-2, 4-1-2-1-2). Players listed for sale or loan are automatically excluded from selection.</p>
                 </div>
@@ -54,7 +54,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">🎯</div>
+                    <div class="feature-icon-badge"><ion-icon name="flag-outline"></ion-icon></div>
                     <h6 class="fw-bold">Season objectives</h6>
                     <p class="small mb-0">Set a target and record your actual result for each competition (league, domestic cups, continental). Each objective is colour-coded green or red based on whether you met it, with an overall success rate.</p>
                 </div>
@@ -63,7 +63,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">🏆</div>
+                    <div class="feature-icon-badge"><ion-icon name="trophy-outline"></ion-icon></div>
                     <h6 class="fw-bold">Career history</h6>
                     <p class="small mb-0">Every completed season is saved in your career timeline. See total trophies won, seasons played, average success rate, and a breakdown of every objective season by season.</p>
                 </div>
@@ -72,7 +72,7 @@ require_once("navbar.php");
         <div class="col-md-6">
             <div class="card feature-tile h-100">
                 <div class="card-body">
-                    <div class="feature-icon-badge">⚙️</div>
+                    <div class="feature-icon-badge"><ion-icon name="settings-outline"></ion-icon></div>
                     <h6 class="fw-bold">Multi-season support</h6>
                     <p class="small mb-0">Move to the next season with one click. Change club or league between seasons — objectives and squad data are kept separate per season, so switching teams won't mix up your history.</p>
                 </div>
@@ -83,9 +83,9 @@ require_once("navbar.php");
     <!-- Squad import -->
     <h5 class="fw-bold mt-4 section-heading">Squad import — supported columns</h5>
     <p class="small text-muted">The importer detects column names automatically (FM English and French headers are both supported).</p>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered">
-            <thead class="table-dark">
+    <div class="table-scroll">
+        <table class="table table-sm table-bordered data-table">
+            <thead>
                 <tr><th>Field</th><th>Accepted header names</th></tr>
             </thead>
             <tbody class="small">
@@ -112,9 +112,11 @@ require_once("navbar.php");
 
     <!-- RGPD -->
     <h5 class="fw-bold mt-4 section-heading">Données personnelles & RGPD</h5>
-    <div class="card mt-2">
-        <div class="card-header card-header-brand py-2">Vos droits & notre engagement</div>
-        <div class="card-body small">
+    <div class="table-panel mt-2">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Vos droits & notre engagement</span></span>
+        </div>
+        <div class="p-3 small">
             <p class="mb-2">Conformément au <strong>Règlement Général sur la Protection des Données (RGPD — UE 2016/679)</strong>, vous êtes informé(e) des points suivants :</p>
 
             <p class="fw-semibold mb-1">Responsable du traitement</p>

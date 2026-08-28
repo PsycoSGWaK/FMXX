@@ -237,11 +237,11 @@ $t = [
     'pal_female'        => 'Féminin',
 
     // Dropdown user
-    'dropdown_edit_profile'   => '✏️ Modifier mon profil',
-    'dropdown_export'         => '⬇ Exporter mes données',
-    'dropdown_backup'         => '💾 Télécharger une sauvegarde',
-    'dropdown_restore_backup' => '📤 Restaurer une sauvegarde',
-    'dropdown_delete_account' => '🗑 Supprimer mon compte',
+    'dropdown_edit_profile'   => 'Modifier mon profil',
+    'dropdown_export'         => 'Exporter mes données',
+    'dropdown_backup'         => 'Télécharger une sauvegarde',
+    'dropdown_restore_backup' => 'Restaurer une sauvegarde',
+    'dropdown_delete_account' => 'Supprimer mon compte',
 
     // Modal profil
     'profile_title'           => 'Mon profil',

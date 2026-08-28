@@ -73,6 +73,7 @@ function navActive(string $page, string $current): string {
                             <?= $t['dropdown_edit_profile'] ?>
                         </a>
                     </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
                     <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
                     <li>
