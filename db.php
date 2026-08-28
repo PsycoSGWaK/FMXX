@@ -10,6 +10,8 @@
  * Voir config.example.php pour créer config.php en production.
  */
 
+require_once __DIR__ . '/env.php';
+
 $fmxxConfig = is_file(__DIR__ . '/config.php') ? require __DIR__ . '/config.php' : [];
 
 /** Résout une valeur : config.php > variable d'env > défaut local. */
