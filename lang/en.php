@@ -89,6 +89,8 @@ $t = [
     'alert_mercato_saved'   => 'Transfer statuses saved.',
     'alert_login_error'     => 'Incorrect email or password.',
     'alert_login_missing'   => 'Please enter your email and password.',
+    'alert_session_expired' => 'Your session expired due to inactivity. Please log in again.',
+    'alert_login_ratelimited' => 'Too many attempts. Please try again in a few minutes.',
     'alert_format_error'    => 'Unsupported file format. Please use an .html or .csv file.',
 
     // Index tabs

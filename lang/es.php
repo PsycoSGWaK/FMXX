@@ -89,6 +89,8 @@ $t = [
     'alert_mercato_saved'   => 'Estados de mercado guardados.',
     'alert_login_error'     => 'Correo o contraseña incorrectos.',
     'alert_login_missing'   => 'Por favor, introduce tu correo y contraseña.',
+    'alert_session_expired' => 'Tu sesión ha expirado por inactividad. Vuelve a iniciar sesión.',
+    'alert_login_ratelimited' => 'Demasiados intentos. Vuelve a intentarlo en unos minutos.',
     'alert_format_error'    => 'Formato de archivo no compatible. Usa un archivo .html o .csv.',
 
     // Pestañas index
