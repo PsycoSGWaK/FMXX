@@ -111,7 +111,7 @@ require_once("navbar.php");
     <p>All data is stored in your own MySQL database. Nothing is sent to any external server. Each user account can only access their own data.</p>
 
     <!-- RGPD -->
-    <h5 class="fw-bold mt-4 section-heading">Données personnelles & RGPD</h5>
+    <h5 id="rgpd" class="fw-bold mt-4 section-heading">Données personnelles & RGPD</h5>
     <div class="table-panel mt-2">
         <div class="table-panel-head">
             <span class="section-title"><span style="color:var(--heading)">Vos droits & notre engagement</span></span>
