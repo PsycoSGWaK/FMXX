@@ -83,9 +83,9 @@ require_once("navbar.php");
     <!-- Squad import -->
     <h5 class="fw-bold mt-4 section-heading">Squad import — supported columns</h5>
     <p class="small text-muted">The importer detects column names automatically (FM English and French headers are both supported).</p>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered">
-            <thead class="table-dark">
+    <div class="table-scroll">
+        <table class="table table-sm table-bordered data-table">
+            <thead>
                 <tr><th>Field</th><th>Accepted header names</th></tr>
             </thead>
             <tbody class="small">
@@ -112,9 +112,11 @@ require_once("navbar.php");
 
     <!-- RGPD -->
     <h5 class="fw-bold mt-4 section-heading">Données personnelles & RGPD</h5>
-    <div class="card mt-2">
-        <div class="card-header card-header-brand py-2">Vos droits & notre engagement</div>
-        <div class="card-body small">
+    <div class="table-panel mt-2">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Vos droits & notre engagement</span></span>
+        </div>
+        <div class="p-3 small">
             <p class="mb-2">Conformément au <strong>Règlement Général sur la Protection des Données (RGPD — UE 2016/679)</strong>, vous êtes informé(e) des points suivants :</p>
 
             <p class="fw-semibold mb-1">Responsable du traitement</p>
