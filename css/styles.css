@@ -672,6 +672,8 @@ footer a.text-secondary:hover {
 
 .sidebar .dropdown-item {
     white-space: normal;
+    padding: .55rem 1rem;
+    line-height: 1.35;
 }
 
 .user-role { font-size: .68rem; color: #7f8bb3; }
