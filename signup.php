@@ -8,8 +8,11 @@ $signupErrCode = $_GET['error'] ?? '';
 ?>
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title"><?= $t['nav_signup'] ?></h5>
+        <div class="modal-header border-0">
+            <div class="d-flex align-items-center gap-2">
+                <img src="assets/pictures/fmxx_logo.png" alt="" height="28" style="object-fit:contain;">
+                <h5 class="modal-title mb-0"><?= $t['nav_signup'] ?></h5>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

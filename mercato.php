@@ -34,8 +34,7 @@ function formatBudget(int $val): string {
     return number_format($val, 0, ',', ' ') . ' €';
 }
 ?>
-<body>
-<div class="container-fluid px-4 py-3">
+<div class="main-content">
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -45,70 +44,45 @@ function formatBudget(int $val): string {
     <?php endif; ?>
 
     <!-- Résumé -->
-    <div class="row mb-3 g-2">
-        <div class="col">
-            <div class="card text-center border-danger h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-danger"><?= count($sells) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_sell'] ?></div>
-                </div>
+    <div class="table-panel">
+        <div class="stat-bar">
+            <div class="stat-item">
+                <div class="stat-value text-danger"><?= count($sells) ?></div>
+                <div class="stat-label"><?= $t['mercato_sell'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-primary h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-primary"><?= count($loans) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_loan'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-primary"><?= count($loans) ?></div>
+                <div class="stat-label"><?= $t['mercato_loan'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-secondary h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold"><?= count($joueurs) - count($sells) - count($loans) - count($frees) ?></div>
-                    <div class="text-muted small"><?= $t['mercato_kept'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value"><?= count($joueurs) - count($sells) - count($loans) - count($frees) ?></div>
+                <div class="stat-label"><?= $t['mercato_kept'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-warning h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-warning"><?= $nbCibles ?></div>
-                    <div class="text-muted small"><?= $t['mercato_arr_targets'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-warning"><?= $nbCibles ?></div>
+                <div class="stat-label"><?= $t['mercato_arr_targets'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center border-success h-100">
-                <div class="card-body py-2">
-                    <div class="fs-4 fw-bold text-success"><?= $nbSignes ?></div>
-                    <div class="text-muted small"><?= $t['mercato_arr_signed'] ?></div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-value text-success"><?= $nbSignes ?></div>
+                <div class="stat-label"><?= $t['mercato_arr_signed'] ?></div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card text-center h-100 <?= $solde >= 0 ? 'border-success' : 'border-danger' ?>">
-                <div class="card-body py-2">
-                    <div class="fs-5 fw-bold <?= $solde >= 0 ? 'text-success' : 'text-danger' ?>">
-                        <?= $solde > 0 ? '+' : '' ?><?= formatBudget($solde) ?>
-                    </div>
-                    <div class="text-muted small"><?= $t['mercato_revenue'] ?></div>
-                    <?php if ($depenses > 0): ?>
-                        <div class="text-muted" style="font-size:.7rem;">
-                            +<?= formatBudget($recettes) ?> / −<?= formatBudget($depenses) ?>
-                        </div>
-                    <?php endif; ?>
+            <div class="stat-item">
+                <div class="stat-value <?= $solde >= 0 ? 'text-success' : 'text-danger' ?>">
+                    <?= $solde > 0 ? '+' : '' ?><?= formatBudget($solde) ?>
                 </div>
+                <div class="stat-label"><?= $t['mercato_revenue'] ?></div>
+                <?php if ($depenses > 0): ?>
+                    <div class="stat-sub">+<?= formatBudget($recettes) ?> / −<?= formatBudget($depenses) ?></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <!-- Tableau mercato -->
-    <div class="card">
-        <div class="card-header py-2" style="background:#091c3e; color:#16ffd0;">
-            <span class="fs-4 fw-bold"><?= $t['mercato_title'] ?></span>
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)"><?= $t['mercato_title'] ?></span></span>
         </div>
-        <div class="card-body p-0">
             <?php if (count($joueurs) === 0): ?>
                 <div class="p-4 text-center text-muted">
                     <?= $t['mercato_empty'] ?> <a href="index.php"><?= $t['mercato_import_link'] ?></a>
@@ -116,17 +90,17 @@ function formatBudget(int $val): string {
             <?php else: ?>
                 <form action="mercato_post.php" method="post">
                     <?= csrf_field() ?>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0">
-                            <thead class="table-dark">
+                    <div class="table-scroll">
+                        <table class="table table-sm table-hover align-middle mb-0 data-table">
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th><?= $t['mercato_col_name'] ?></th>
-                                    <th><?= $t['mercato_col_age'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_age'] ?></th>
                                     <th><?= $t['mercato_col_pos'] ?></th>
-                                    <th><?= $t['mercato_col_apps'] ?></th>
-                                    <th><?= $t['mercato_col_rating'] ?></th>
-                                    <th><?= $t['mercato_col_value'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_apps'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_rating'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_col_value'] ?></th>
                                     <th><?= $t['mercato_col_status'] ?></th>
                                 </tr>
                             </thead>
@@ -144,11 +118,11 @@ function formatBudget(int $val): string {
                                     <tr class="<?= $rowClass ?>">
                                         <td><?= $i + 1 ?></td>
                                         <td class="fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></td>
-                                        <td><?= $j['age'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['age'] ?? '' ?></td>
                                         <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
-                                        <td><?= $j['app'] ?? '' ?></td>
-                                        <td><?= $j['noteMoy'] ?? '' ?></td>
-                                        <td><?= $j['prixDemande'] !== null ? formatBudget((int)$j['prixDemande']) : '—' ?></td>
+                                        <td class="text-end"><?= $j['app'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
+                                        <td class="text-end"><?= $j['prixDemande'] !== null ? formatBudget((int)$j['prixDemande']) : '—' ?></td>
                                         <td>
                                             <select class="form-select form-select-sm" name="status[<?= $j['idJoueur'] ?>]" style="min-width:100px">
                                                 <option value=""     <?= $status === null   ? 'selected' : '' ?>>—</option>
@@ -163,28 +137,28 @@ function formatBudget(int $val): string {
                         </table>
                     </div>
                     <div class="p-3">
-                        <button type="submit" class="btn btn-primary"><?= $t['btn_save'] ?></button>
+                        <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
                     </div>
                 </form>
             <?php endif; ?>
-        </div>
     </div>
 
     <!-- Section Arrivées -->
-<div class="card mt-4">
-    <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#cdfb0a;">
-        <span class="fs-4 fw-bold"><?= $t['mercato_arr_title'] ?></span>
+<div class="table-panel mt-4">
+    <div class="table-panel-head">
+        <span class="section-title"><span style="color:var(--heading)"><?= $t['mercato_arr_title'] ?></span></span>
         <?php if (!empty($arrivees)): ?>
-            <form action="mercato_arrivee_post.php" method="post" onsubmit="return confirm('<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>')">
+            <form action="mercato_arrivee_post.php" method="post"
+                  data-confirm="<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>"
+                  data-confirm-variant="danger">
                 <?= csrf_field() ?>
                 <input type="hidden" name="delete_all" value="1">
-                <button type="submit" class="btn btn-sm btn-outline-danger">
+                <button type="submit" class="btn-danger-ghost">
                     <ion-icon name="trash-outline"></ion-icon> <?= $t['mercato_arr_delete_all'] ?>
                 </button>
             </form>
         <?php endif; ?>
     </div>
-    <div class="card-body p-0">
         <?php
         $statutColors = ['cible' => 'warning', 'nego' => 'info', 'signe' => 'success'];
         $statutLabels = [
@@ -196,14 +170,14 @@ function formatBudget(int $val): string {
         <?php if (empty($arrivees)): ?>
             <div class="p-3 text-muted small"><?= $t['mercato_arr_empty'] ?></div>
         <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover align-middle mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th><?= $t['mercato_arr_col_name'] ?></th>
                             <th><?= $t['mercato_arr_col_pos'] ?></th>
-                            <th><?= $t['mercato_arr_col_price'] ?></th>
+                            <th class="text-end"><?= $t['mercato_arr_col_price'] ?></th>
                             <th><?= $t['mercato_arr_col_status'] ?></th>
                             <th></th>
                         </tr>
@@ -214,10 +188,10 @@ function formatBudget(int $val): string {
                                 <td><?= $i + 1 ?></td>
                                 <td class="fw-semibold"><?= htmlspecialchars($a['nom']) ?></td>
                                 <td><?= htmlspecialchars($a['poste'] ?? '—') ?></td>
-                                <td><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
+                                <td class="text-end"><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
                                 <td><span class="badge bg-<?= $statutColors[$a['statut']] ?? 'secondary' ?>"><?= $statutLabels[$a['statut']] ?? $a['statut'] ?></span></td>
                                 <td class="d-flex gap-1 align-items-center">
-                                    <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                    <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                             data-bs-toggle="modal" data-bs-target="#editArriveeModal"
                                             data-id="<?= $a['idArrivee'] ?>"
                                             data-nom="<?= htmlspecialchars($a['nom'], ENT_QUOTES) ?>"
@@ -227,10 +201,10 @@ function formatBudget(int $val): string {
                                         <ion-icon name="pencil-outline"></ion-icon>
                                     </button>
                                     <form action="mercato_arrivee_post.php" method="post" style="display:contents"
-                                          onsubmit="return confirm('Supprimer ?')">
+                                          data-confirm="Supprimer ?" data-confirm-variant="danger">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="delete_id" value="<?= $a['idArrivee'] ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                             <ion-icon name="trash-outline"></ion-icon>
                                         </button>
                                     </form>
@@ -266,10 +240,9 @@ function formatBudget(int $val): string {
                 </select>
             </div>
             <div>
-                <button type="submit" class="btn btn-sm btn-primary"><?= $t['mercato_arr_add'] ?></button>
+                <button type="submit" class="btn-brand btn-sm"><?= $t['mercato_arr_add'] ?></button>
             </div>
         </form>
-    </div>
 </div>
 
 </div>
@@ -324,4 +297,3 @@ document.getElementById('editArriveeModal').addEventListener('show.bs.modal', fu
 </script>
 
 <?php require_once("footer.php"); ?>
-</body>

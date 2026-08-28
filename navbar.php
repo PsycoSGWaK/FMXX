@@ -1,84 +1,107 @@
-<?php if (isset($_SESSION['mail'])) { ?>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="hub.php">
-                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
-                iDev <span style="color:#d52228;">Compagnon</span>
+<?php
+$currentPage = basename($_SERVER['SCRIPT_NAME'] ?? '');
+function navActive(string $page, string $current): string {
+    return $page === $current ? 'active' : '';
+}
+?>
+<?php if (isset($_SESSION['mail'])) {
+    if (!isset($_SESSION['_admin_type'])) {
+        $stmtAdmin = $pdo->prepare("SELECT type FROM user WHERE idUser = :id");
+        $stmtAdmin->execute(['id' => $_SESSION['idUser']]);
+        $_SESSION['_admin_type'] = $stmtAdmin->fetchColumn();
+    }
+    $isAdmin = $_SESSION['_admin_type'] === '1';
+    $currentLang = $_SESSION['lang'] ?? 'fr';
+    $initials = mb_strtoupper(mb_substr($_SESSION['username'] ?? '?', 0, 2));
+    ?>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="sidebar-brand" href="hub.php">
+            <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+            <span class="sidebar-brand-name">iDev <em>Compagnon</em></span>
+        </a>
+        <div class="sidebar-module">Football Manager</div>
+
+        <nav class="sidebar-nav">
+            <a class="side-link <?= navActive('index.php', $currentPage) ?>" href="index.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+                <span><?= $t['nav_home'] ?></span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <a class="side-link <?= navActive('mercato.php', $currentPage) ?>" href="mercato.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-3-3"/><path d="M20 17H7l3 3"/></svg>
+                <span><?= $t['nav_mercato'] ?></span>
+            </a>
+            <a class="side-link <?= navActive('palmares.php', $currentPage) ?>" href="palmares.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4"/><path d="M17 5h3a3 3 0 0 1-3 4"/></svg>
+                <span><?= $t['nav_palmares'] ?></span>
+            </a>
+            <a class="side-link <?= navActive('about.php', $currentPage) ?>" href="about.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
+                <span><?= $t['nav_about'] ?></span>
+            </a>
+            <?php if ($isAdmin): ?>
+            <a class="side-link admin-link <?= navActive('admin.php', $currentPage) ?>" href="admin.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.7 7.5 9 4.3-1.3 7.5-4.5 7.5-9V6L12 3Z"/></svg>
+                <span><?= $t['nav_admin'] ?></span>
+            </a>
+            <?php endif; ?>
+        </nav>
+
+        <div class="sidebar-foot">
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="lang_post.php?lang=fr" class="btn <?= $currentLang === 'fr' ? 'btn-secondary' : 'btn-outline-secondary' ?>">FR</a>
+                <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
+                <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
+            </div>
+            <button type="button" class="theme-btn" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>"
+                    data-label-dark="<?= htmlspecialchars($t['nav_theme_dark']) ?>" data-label-light="<?= htmlspecialchars($t['nav_theme_light']) ?>">
+                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+                <span><?= $t['nav_theme_dark'] ?></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.php"><?= $t['nav_home'] ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="mercato.php"><?= $t['nav_mercato'] ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="palmares.php"><?= $t['nav_palmares'] ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.php"><?= $t['nav_about'] ?></a>
-                    </li>
-                    <?php
-                    if (!isset($_SESSION['_admin_type'])) {
-                        $stmtAdmin = $pdo->prepare("SELECT type FROM user WHERE idUser = :id");
-                        $stmtAdmin->execute(['id' => $_SESSION['idUser']]);
-                        $_SESSION['_admin_type'] = $stmtAdmin->fetchColumn();
-                    }
-                    if ($_SESSION['_admin_type'] === '1'): ?>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="admin.php"><?= $t['nav_admin'] ?></a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-                <div class="d-flex align-items-center gap-3 ms-auto">
-                    <div class="dropdown">
-                        <a href="#" class="fw-semibold text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
-                            👤 <?= htmlspecialchars($_SESSION['username'] ?? '') ?>
+            <div class="dropdown">
+                <button type="button" class="user-chip w-100" data-bs-toggle="dropdown" style="background:none; border:none; cursor:pointer;">
+                    <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
+                    <div class="text-start">
+                        <div class="user-name"><?= htmlspecialchars($_SESSION['username'] ?? '') ?></div>
+                        <div class="user-role"><?= $isAdmin ? 'Admin' : '' ?></div>
+                    </div>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                            <?= $t['dropdown_edit_profile'] ?>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                    <?= $t['dropdown_edit_profile'] ?>
-                                </a>
-                            </li>
-                            <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
-                            <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
-                            <li>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#restoreBackupModal">
-                                    <?= $t['dropdown_restore_backup'] ?>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                                    <?= $t['dropdown_delete_account'] ?>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="logout.php"><?= $t['nav_logout'] ?></a></li>
-                        </ul>
-                    </div>
-                    <!-- Switcher de langue -->
-                    <div class="btn-group btn-group-sm ms-3" role="group">
-                        <?php $currentLang = $_SESSION['lang'] ?? 'fr'; ?>
-                        <a href="lang_post.php?lang=fr" class="btn <?= $currentLang === 'fr' ? 'btn-secondary' : 'btn-outline-secondary' ?>">FR</a>
-                        <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
-                        <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
-                    </div>
-                </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
+                    <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
+                    <li>
+                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#restoreBackupModal">
+                            <?= $t['dropdown_restore_backup'] ?>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            <?= $t['dropdown_delete_account'] ?>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="logout.php"><?= $t['nav_logout'] ?></a></li>
+                </ul>
             </div>
         </div>
-    </nav>
+    </aside>
+
+    <main class="main">
 <?php } else { ?>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
-                iDev <span style="color:#d52228;">Compagnon</span>
+                iDev <span class="text-brand">Compagnon</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -86,10 +109,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.php"><?= $t['nav_home'] ?></a>
+                        <a class="nav-link <?= navActive('index.php', $currentPage) ?>" href="index.php"><?= $t['nav_home'] ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php"><?= $t['nav_about'] ?></a>
+                        <a class="nav-link <?= navActive('about.php', $currentPage) ?>" href="about.php"><?= $t['nav_about'] ?></a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
@@ -100,6 +123,9 @@
                         <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
                         <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
                     </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
                 </div>
             </div>
         </div>
@@ -223,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p class="small text-muted"><?= $t['restore_backup_info'] ?></p>
                 <div class="alert alert-warning small py-2"><?= $t['restore_backup_warning'] ?></div>
                 <form action="backup_import.php" method="post" enctype="multipart/form-data"
-                      onsubmit="return confirm('<?= htmlspecialchars($t['restore_backup_confirm_dialog'], ENT_QUOTES) ?>')">
+                      data-confirm="<?= htmlspecialchars($t['restore_backup_confirm_dialog'], ENT_QUOTES) ?>"
+                      data-confirm-variant="danger">
                     <?= csrf_field() ?>
                     <div class="mb-3">
                         <label class="form-label"><?= $t['restore_backup_label'] ?></label>
@@ -240,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <?php require_once("login.php"); ?>
 </div>
 
-<?php if (in_array($_GET['error'] ?? '', ['login', 'form'])): ?>
+<?php if (in_array($_GET['error'] ?? '', ['login', 'form', 'session_expired', 'too_many_attempts'])): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     new bootstrap.Modal(document.getElementById('LoginModal')).show();
@@ -250,4 +277,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <div class="modal" tabindex="-1" id="SignupModal" aria-hidden="true">
     <?php require_once("signup.php"); ?>
+</div>
+
+<!-- Modal de confirmation générique (remplace window.confirm) -->
+<div class="modal fade" tabindex="-1" id="confirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><?= $t['confirm_title'] ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= $t['confirm_cancel'] ?></button>
+                <button type="button" class="btn btn-primary" id="confirmModalOk"><?= $t['confirm_ok'] ?></button>
+            </div>
+        </div>
+    </div>
 </div>

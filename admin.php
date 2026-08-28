@@ -23,11 +23,8 @@ if ($userType !== '1') {
 
 $tab = $_GET['tab'] ?? 'users';
 ?>
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-<body>
-<div class="container-fluid px-4 py-3">
-    <h2 class="fw-bold mb-3" style="color:#091c3e;">Administration</h2>
+<div class="main-content">
+    <div class="context-title">Administration</div>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -42,27 +39,26 @@ $tab = $_GET['tab'] ?? 'users';
         </div>
     <?php endif; ?>
 
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a class="nav-link <?= $tab === 'users'        ? 'active' : '' ?>" href="admin.php?tab=users">Utilisateurs</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'competitions' ? 'active' : '' ?>" href="admin.php?tab=competitions">Compétitions</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'clubs'        ? 'active' : '' ?>" href="admin.php?tab=clubs">Clubs</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'pays'         ? 'active' : '' ?>" href="admin.php?tab=pays">Pays</a></li>
-        <li class="nav-item"><a class="nav-link <?= $tab === 'stats'        ? 'active' : '' ?>" href="admin.php?tab=stats">Stats</a></li>
-    </ul>
+    <div class="segmented">
+        <a class="<?= $tab === 'users'        ? 'active' : '' ?>" href="admin.php?tab=users">Utilisateurs</a>
+        <a class="<?= $tab === 'competitions' ? 'active' : '' ?>" href="admin.php?tab=competitions">Compétitions</a>
+        <a class="<?= $tab === 'clubs'        ? 'active' : '' ?>" href="admin.php?tab=clubs">Clubs</a>
+        <a class="<?= $tab === 'pays'         ? 'active' : '' ?>" href="admin.php?tab=pays">Pays</a>
+        <a class="<?= $tab === 'stats'        ? 'active' : '' ?>" href="admin.php?tab=stats">Stats</a>
+    </div>
 
     <?php if ($tab === 'users'): ?>
     <!-- ===================== UTILISATEURS ===================== -->
     <?php
     $users = $pdo->query("SELECT idUser, username, mail, type, saison_active, club, division, genre FROM user ORDER BY idUser")->fetchAll();
     ?>
-    <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Utilisateurs (<?= count($users) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Utilisateurs (<?= count($users) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Nom</th>
@@ -91,7 +87,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($u['genre'] ?? '—') ?></td>
                             <td><?= htmlspecialchars($u['division'] ?? '—') ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-warning" title="Réinitialiser le mot de passe"
+                                <button class="btn btn-sm btn-warning" title="Réinitialiser le mot de passe" aria-label="Réinitialiser le mot de passe"
                                     data-bs-toggle="modal" data-bs-target="#modalResetPwd"
                                     data-id="<?= $u['idUser'] ?>"
                                     data-name="<?= htmlspecialchars($u['username']) ?>">
@@ -99,21 +95,24 @@ $tab = $_GET['tab'] ?? 'users';
                                 </button>
                                 <?php if ($u['idUser'] != $_SESSION['idUser']): ?>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Changer le type de <?= htmlspecialchars($u['username'], ENT_QUOTES) ?> en <?= $u['type'] === '1' ? 'User' : 'Admin' ?> ?')">
+                                      data-confirm="Changer le type de <?= htmlspecialchars($u['username'], ENT_QUOTES) ?> en <?= $u['type'] === '1' ? 'User' : 'Admin' ?> ?"
+                                      data-confirm-variant="warning">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="toggle_user_type">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
                                     <button class="btn btn-sm <?= $u['type'] === '1' ? 'btn-outline-secondary' : 'btn-outline-success' ?>"
-                                            title="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>">
+                                            title="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>"
+                                            aria-label="<?= $u['type'] === '1' ? 'Rétrograder en User' : 'Promouvoir en Admin' ?>">
                                         <ion-icon name="<?= $u['type'] === '1' ? 'arrow-down-outline' : 'arrow-up-outline' ?>"></ion-icon>
                                     </button>
                                 </form>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer cet utilisateur et toutes ses données ?')">
+                                      data-confirm="Supprimer cet utilisateur et toutes ses données ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_user">
                                     <input type="hidden" name="idUser" value="<?= $u['idUser'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -126,7 +125,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal reset password -->
@@ -144,11 +142,11 @@ $tab = $_GET['tab'] ?? 'users';
                     <div class="modal-body">
                         <p class="text-muted small mb-3">Utilisateur : <strong id="resetPwdName"></strong></p>
                         <div class="mb-3">
-                            <label class="form-label">Nouveau mot de passe</label>
+                            <label class="form-label fw-semibold">Nouveau mot de passe</label>
                             <input type="password" name="new_password" class="form-control" required minlength="6">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Confirmer</label>
+                            <label class="form-label fw-semibold">Confirmer</label>
                             <input type="password" name="confirm_password" class="form-control" required minlength="6">
                         </div>
                     </div>
@@ -180,11 +178,11 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY p.nomPays, c.genre, c.typeCompetition, c.division
     ")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Ajouter une compétition
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter une compétition</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_competition">
@@ -219,19 +217,18 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Compétitions (<?= count($comps) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Compétitions (<?= count($comps) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>Type</th><th>Pays</th>
                             <th>Division</th><th>Genre</th><th>Qualif.</th><th>Actions</th>
@@ -252,7 +249,7 @@ $tab = $_GET['tab'] ?? 'users';
                                 <?php else: ?>—<?php endif; ?>
                             </td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditComp"
                                     data-id="<?= $c['idCompetition'] ?>"
                                     data-nom="<?= htmlspecialchars($c['nomCompetition']) ?>"
@@ -265,11 +262,12 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer cette compétition ?')">
+                                      data-confirm="Supprimer cette compétition ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_competition">
                                     <input type="hidden" name="idCompetition" value="<?= $c['idCompetition'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -279,7 +277,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal edit compétition -->
@@ -294,46 +291,52 @@ $tab = $_GET['tab'] ?? 'users';
                     <?= csrf_field() ?>
                     <input type="hidden" name="action" value="edit_competition">
                     <input type="hidden" name="idCompetition" id="editCompId">
-                    <div class="modal-body row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Nom</label>
-                            <input type="text" name="nomCompetition" id="editCompNom" class="form-control" required>
+                    <div class="modal-body">
+                        <div class="setting-group row g-3">
+                            <div class="setting-group-title col-12">Identité</div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Nom</label>
+                                <input type="text" name="nomCompetition" id="editCompNom" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Type</label>
+                                <select name="typeCompetition" id="editCompType" class="form-select" required>
+                                    <option>Championnat</option><option>Ligue</option>
+                                    <option>Nationale</option><option>Continentale</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Pays</label>
+                                <select name="idPays" id="editCompPays" class="form-select" required>
+                                    <?php foreach ($pays_list as $p): ?>
+                                        <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <label class="form-label">Type</label>
-                            <select name="typeCompetition" id="editCompType" class="form-select" required>
-                                <option>Championnat</option><option>Ligue</option>
-                                <option>Nationale</option><option>Continentale</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Pays</label>
-                            <select name="idPays" id="editCompPays" class="form-select" required>
-                                <?php foreach ($pays_list as $p): ?>
-                                    <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Division</label>
-                            <select name="division" id="editCompDiv" class="form-select">
-                                <option value="">—</option>
-                                <option>D1</option><option>D2</option><option>D3</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Genre</label>
-                            <select name="genre" id="editCompGenre" class="form-select" required>
-                                <option value="M">M</option><option value="F">F</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Qualif. rang min</label>
-                            <input type="number" name="qualif_rang_min" id="editCompQualifMin" class="form-control" min="1" max="20" placeholder="ex: 1">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Qualif. rang max</label>
-                            <input type="number" name="qualif_rang_max" id="editCompQualifMax" class="form-control" min="1" max="20" placeholder="ex: 3">
+                        <div class="setting-group row g-3">
+                            <div class="setting-group-title col-12">Qualification</div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Division</label>
+                                <select name="division" id="editCompDiv" class="form-select">
+                                    <option value="">—</option>
+                                    <option>D1</option><option>D2</option><option>D3</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Genre</label>
+                                <select name="genre" id="editCompGenre" class="form-select" required>
+                                    <option value="M">M</option><option value="F">F</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Qualif. rang min</label>
+                                <input type="number" name="qualif_rang_min" id="editCompQualifMin" class="form-control" min="1" max="20" placeholder="ex: 1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Qualif. rang max</label>
+                                <input type="number" name="qualif_rang_max" id="editCompQualifMax" class="form-control" min="1" max="20" placeholder="ex: 3">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -369,11 +372,11 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY p.nomPays, e.genre, e.division, e.nomEquipe
     ")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Ajouter un club
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter un club</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_club">
@@ -401,20 +404,19 @@ $tab = $_GET['tab'] ?? 'users';
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center fw-bold" style="background:#091c3e; color:#fff;">
-            <span>Clubs (<?= count($clubs) ?>)</span>
-            <input type="text" id="filterClub" class="form-control form-control-sm ms-3" placeholder="Rechercher…" style="max-width:200px; color:#000;">
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Clubs (<?= count($clubs) ?>)</span></span>
+            <input type="text" id="filterClub" class="form-control form-control-sm" placeholder="Rechercher…" style="max-width:200px;">
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0" id="clubTable">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table" id="clubTable">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>Pays</th><th>Genre</th>
                             <th>Division</th><th>Actions</th>
@@ -429,7 +431,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= $e['genre'] ?></td>
                             <td><?= $e['division'] ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditClub"
                                     data-id="<?= $e['idEquipe'] ?>"
                                     data-nom="<?= htmlspecialchars($e['nomEquipe']) ?>"
@@ -439,11 +441,12 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer ce club ?')">
+                                      data-confirm="Supprimer ce club ?"
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_club">
                                     <input type="hidden" name="idEquipe" value="<?= $e['idEquipe'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -453,7 +456,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
     <script>
     document.getElementById('filterClub').addEventListener('input', function() {
@@ -478,11 +480,11 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="hidden" name="idEquipe" id="editClubId">
                     <div class="modal-body row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nom du club</label>
+                            <label class="form-label fw-semibold">Nom du club</label>
                             <input type="text" name="nomEquipe" id="editClubNom" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Pays</label>
+                            <label class="form-label fw-semibold">Pays</label>
                             <select name="idPays" id="editClubPays" class="form-select" required>
                                 <?php foreach ($pays_list as $p): ?>
                                     <option value="<?= $p['idPays'] ?>"><?= htmlspecialchars($p['nomPays']) ?></option>
@@ -490,13 +492,13 @@ $tab = $_GET['tab'] ?? 'users';
                             </select>
                         </div>
                         <div class="col-3">
-                            <label class="form-label">Genre</label>
+                            <label class="form-label fw-semibold">Genre</label>
                             <select name="genre" id="editClubGenre" class="form-select" required>
                                 <option value="M">M</option><option value="F">F</option>
                             </select>
                         </div>
                         <div class="col-3">
-                            <label class="form-label">Division</label>
+                            <label class="form-label fw-semibold">Division</label>
                             <select name="division" id="editClubDiv" class="form-select" required>
                                 <option>D1</option><option>D2</option><option>D3</option><option>D4</option>
                             </select>
@@ -526,11 +528,11 @@ $tab = $_GET['tab'] ?? 'users';
     <?php
     $paysList = $pdo->query("SELECT * FROM pays ORDER BY nomPays")->fetchAll();
     ?>
-    <div class="card mb-4">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Ajouter un pays
+    <div class="table-panel mb-4">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Ajouter un pays</span></span>
         </div>
-        <div class="card-body">
+        <div class="p-3">
             <form action="admin_post.php" method="post" class="row g-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_pays">
@@ -547,19 +549,18 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="number" name="paysNum" class="form-control form-control-sm" placeholder="Code numérique">
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-sm btn-primary">Ajouter</button>
+                    <button type="submit" class="btn-brand btn-sm">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">
-            Pays (<?= count($paysList) ?>)
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Pays (<?= count($paysList) ?>)</span></span>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped mb-0">
-                    <thead class="table-dark">
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>A2</th><th>A3</th><th>Num</th><th>Actions</th>
                         </tr>
@@ -573,7 +574,7 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($p['paysA3C'] ?? '') ?></td>
                             <td><?= $p['paysNum'] ?? '' ?></td>
                             <td class="d-flex gap-1 align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" title="Modifier"
+                                <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditPays"
                                     data-id="<?= $p['idPays'] ?>"
                                     data-nom="<?= htmlspecialchars($p['nomPays']) ?>"
@@ -583,11 +584,12 @@ $tab = $_GET['tab'] ?? 'users';
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
-                                      onsubmit="return confirm('Supprimer ce pays ? Cela peut affecter les clubs et compétitions liés.')">
+                                      data-confirm="Supprimer ce pays ? Cela peut affecter les clubs et compétitions liés."
+                                      data-confirm-variant="danger">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_pays">
                                     <input type="hidden" name="idPays" value="<?= $p['idPays'] ?>">
-                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
@@ -597,7 +599,6 @@ $tab = $_GET['tab'] ?? 'users';
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
     <!-- Modal edit pays -->
@@ -614,19 +615,19 @@ $tab = $_GET['tab'] ?? 'users';
                     <input type="hidden" name="idPays" id="editPaysId">
                     <div class="modal-body row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nom</label>
+                            <label class="form-label fw-semibold">Nom</label>
                             <input type="text" name="nomPays" id="editPaysNom" class="form-control" required>
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code A2</label>
+                            <label class="form-label fw-semibold">Code A2</label>
                             <input type="text" name="paysA2C" id="editPaysA2" class="form-control" maxlength="2" required>
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code A3</label>
+                            <label class="form-label fw-semibold">Code A3</label>
                             <input type="text" name="paysA3C" id="editPaysA3" class="form-control" maxlength="3">
                         </div>
                         <div class="col-4">
-                            <label class="form-label">Code numérique</label>
+                            <label class="form-label fw-semibold">Code numérique</label>
                             <input type="number" name="paysNum" id="editPaysNum" class="form-control">
                         </div>
                     </div>
@@ -667,34 +668,34 @@ $tab = $_GET['tab'] ?? 'users';
         ORDER BY nb_joueurs DESC
     ")->fetchAll();
     ?>
-    <div class="row g-3 mb-4">
-        <?php
-        $cards = [
-            ['Utilisateurs',     $nbUsers,     'primary'],
-            ['Joueurs importés', $nbJoueurs,   'info'],
-            ['Clubs',            $nbClubs,     'secondary'],
-            ['Compétitions',     $nbComps,     'warning'],
-            ['Pays',             $nbPays,      'dark'],
-            ['Saisons jouées',   $nbSaisons,   'success'],
-            ['Objectifs',        $nbObjectifs, 'danger'],
-        ];
-        foreach ($cards as [$label, $val, $color]):
-        ?>
-        <div class="col-6 col-md-3">
-            <div class="card border-<?= $color ?> text-center">
-                <div class="card-body py-3">
-                    <div class="fs-1 fw-bold text-<?= $color ?>"><?= $val ?></div>
-                    <div class="small text-muted"><?= $label ?></div>
-                </div>
+    <?php
+    $cards = [
+        ['Utilisateurs',     $nbUsers,     'primary'],
+        ['Joueurs importés', $nbJoueurs,   'info'],
+        ['Clubs',            $nbClubs,     'secondary'],
+        ['Compétitions',     $nbComps,     'warning'],
+        ['Pays',             $nbPays,      'dark'],
+        ['Saisons jouées',   $nbSaisons,   'success'],
+        ['Objectifs',        $nbObjectifs, 'danger'],
+    ];
+    ?>
+    <div class="table-panel mb-4">
+        <div class="stat-bar">
+            <?php foreach ($cards as [$label, $val, $color]): ?>
+            <div class="stat-item">
+                <div class="stat-value text-<?= $color ?>"><?= $val ?></div>
+                <div class="stat-label"><?= $label ?></div>
             </div>
+            <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
     </div>
-    <div class="card">
-        <div class="card-header fw-bold" style="background:#091c3e; color:#fff;">Effectifs par utilisateur</div>
-        <div class="card-body p-0">
-            <table class="table table-sm table-striped mb-0">
-                <thead class="table-dark">
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Effectifs par utilisateur</span></span>
+        </div>
+            <div class="table-scroll">
+            <table class="table table-sm table-striped mb-0 data-table">
+                <thead>
                     <tr><th>Utilisateur</th><th>Email</th><th>Joueurs importés</th></tr>
                 </thead>
                 <tbody>
@@ -707,10 +708,9 @@ $tab = $_GET['tab'] ?? 'users';
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+            </div>
     </div>
     <?php endif; ?>
 
 </div>
 <?php require_once("footer.php"); ?>
-</body>

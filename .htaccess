@@ -18,6 +18,21 @@ Options -Indexes
     </IfModule>
 </FilesMatch>
 
+# --- Bloquer l'accès web au dossier de secours de sql/backup_db.php ---
+# (le cron doit normalement pointer FMXX_BACKUP_DIR en dehors du webroot,
+# ceci n'est qu'une seconde barrière si ce n'est pas fait).
+<IfModule mod_authz_core.c>
+    <If "%{REQUEST_URI} =~ m#^/backups/#">
+        Require all denied
+    </If>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    <LocationMatch "^/backups/">
+        Order allow,deny
+        Deny from all
+    </LocationMatch>
+</IfModule>
+
 # --- En-têtes de sécurité ---
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
@@ -34,3 +49,6 @@ Options -Indexes
 
 # --- Page d'accueil ---
 DirectoryIndex index.php
+
+# --- Page 404 personnalisée ---
+ErrorDocument 404 /404.php

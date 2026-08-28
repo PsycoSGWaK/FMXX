@@ -29,11 +29,28 @@ if (!$j) {
 
 $saved = isset($_GET['saved']);
 ?>
-<body>
-<div class="container-fluid px-4 py-3">
+<div class="main-content">
 
-    <div class="mb-3">
-        <a href="index.php?tab=effectif" class="btn btn-sm btn-outline-secondary"><?= $t['player_back'] ?></a>
+    <div class="context-bar">
+        <div class="context-title"><?= htmlspecialchars($j['nom'] ?? '—') ?></div>
+        <div class="context-right">
+            <?php
+            $badgeClass = match($j['mercato_status']) {
+                'sell' => 'status-danger',
+                'loan' => 'status-pending',
+                'free' => 'status-danger',
+                default => 'status-pending'
+            };
+            $badgeLabel = match($j['mercato_status']) {
+                'sell' => $t['player_status_sell'],
+                'loan' => $t['player_status_loan'],
+                'free' => $t['player_status_free'],
+                default => $t['player_status_squad']
+            };
+            ?>
+            <span class="status-chip <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+            <a href="index.php?tab=effectif" class="btn-ghost"><?= $t['player_back'] ?></a>
+        </div>
     </div>
 
     <?php if ($saved): ?>
@@ -43,66 +60,40 @@ $saved = isset($_GET['saved']);
         </div>
     <?php endif; ?>
 
-    <div class="card mb-4">
-        <div class="card-header py-2 d-flex justify-content-between align-items-center" style="background:#091c3e; color:#16ffd0;">
-            <span class="fs-4 fw-bold"><?= htmlspecialchars($j['nom'] ?? '—') ?></span>
-            <?php
-            $badgeClass = match($j['mercato_status']) {
-                'sell' => 'bg-danger',
-                'loan' => 'bg-primary',
-                'free' => 'bg-danger',
-                default => 'bg-secondary'
-            };
-            $badgeLabel = match($j['mercato_status']) {
-                'sell' => $t['player_status_sell'],
-                'loan' => $t['player_status_loan'],
-                'free' => $t['player_status_free'],
-                default => $t['player_status_squad']
-            };
-            ?>
-            <span class="badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
-        </div>
-        <div class="card-body">
-
-            <!-- Stats (lecture seule) -->
-            <h6 class="text-muted fw-semibold mb-3 text-uppercase" style="font-size:.75rem; letter-spacing:.08em;"><?= $t['player_stats'] ?></h6>
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-2">
-                    <div class="border rounded p-2 text-center">
-                        <div class="fs-4 fw-bold"><?= $j['app'] ?? '—' ?></div>
-                        <div class="small text-muted"><?= $t['player_apps'] ?></div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="border rounded p-2 text-center">
-                        <div class="fs-4 fw-bold"><?= $j['buts'] ?? '—' ?></div>
-                        <div class="small text-muted"><?= $t['player_goals'] ?></div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="border rounded p-2 text-center">
-                        <div class="fs-4 fw-bold"><?= $j['pDec'] ?? '—' ?></div>
-                        <div class="small text-muted"><?= $t['player_assists'] ?></div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="border rounded p-2 text-center">
-                        <div class="fs-4 fw-bold"><?= $j['noteMoy'] ?? '—' ?></div>
-                        <div class="small text-muted"><?= $t['player_rating'] ?></div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="border rounded p-2 text-center">
-                        <div class="fs-4 fw-bold" style="font-size:1rem !important;">
-                            <?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '—' ?>
-                        </div>
-                        <div class="small text-muted"><?= $t['player_value'] ?></div>
-                    </div>
-                </div>
+    <!-- Stats (lecture seule) -->
+    <div class="table-panel">
+        <div class="stat-bar">
+            <div class="stat-item">
+                <div class="stat-value"><?= $j['app'] ?? '—' ?></div>
+                <div class="stat-label"><?= $t['player_apps'] ?></div>
             </div>
+            <div class="stat-item">
+                <div class="stat-value"><?= $j['buts'] ?? '—' ?></div>
+                <div class="stat-label"><?= $t['player_goals'] ?></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value"><?= $j['pDec'] ?? '—' ?></div>
+                <div class="stat-label"><?= $t['player_assists'] ?></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value"><?= $j['noteMoy'] ?? '—' ?></div>
+                <div class="stat-label"><?= $t['player_rating'] ?></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="font-size:1.1rem;">
+                    <?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '—' ?>
+                </div>
+                <div class="stat-label"><?= $t['player_value'] ?></div>
+            </div>
+        </div>
+    </div>
 
-            <!-- Formulaire d'édition -->
-            <h6 class="text-muted fw-semibold mb-3 text-uppercase" style="font-size:.75rem; letter-spacing:.08em;"><?= $t['player_info'] ?></h6>
+    <!-- Formulaire d'édition -->
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)"><?= $t['player_info'] ?></span></span>
+        </div>
+        <div class="p-3">
             <form action="joueur_post.php" method="post">
                 <?= csrf_field() ?>
                 <input type="hidden" name="idJoueur" value="<?= $j['idJoueur'] ?>">
@@ -154,7 +145,7 @@ $saved = isset($_GET['saved']);
                     </div>
                 </div>
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-sm btn-primary"><?= $t['btn_save'] ?></button>
+                    <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
                 </div>
             </form>
         </div>
@@ -162,4 +153,3 @@ $saved = isset($_GET['saved']);
 
 </div>
 <?php require_once("footer.php"); ?>
-</body>

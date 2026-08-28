@@ -1,7 +1,10 @@
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title"><?= $t['nav_login'] ?></h5>
+        <div class="modal-header border-0">
+            <div class="d-flex align-items-center gap-2">
+                <img src="assets/pictures/fmxx_logo.png" alt="" height="28" style="object-fit:contain;">
+                <h5 class="modal-title mb-0"><?= $t['nav_login'] ?></h5>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -10,6 +13,10 @@
                 <div class="alert alert-danger py-2"><?= $t['alert_login_error'] ?></div>
             <?php elseif ($loginError === 'form'): ?>
                 <div class="alert alert-danger py-2"><?= $t['alert_login_missing'] ?></div>
+            <?php elseif ($loginError === 'session_expired'): ?>
+                <div class="alert alert-warning py-2"><?= $t['alert_session_expired'] ?></div>
+            <?php elseif ($loginError === 'too_many_attempts'): ?>
+                <div class="alert alert-danger py-2"><?= $t['alert_login_ratelimited'] ?></div>
             <?php endif; ?>
             <form class="form-login" action="login_post.php" method="post">
                 <?= csrf_field() ?>

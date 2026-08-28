@@ -19,6 +19,9 @@ $t = [
     'nav_admin'        => 'Admin',
     'nav_logout'       => 'Cerrar sesión',
     'nav_signup'       => 'Registrarse',
+    'nav_theme_toggle' => 'Alternar tema oscuro',
+    'nav_theme_dark'   => 'Modo oscuro',
+    'nav_theme_light'  => 'Modo claro',
     'nav_login'        => 'Iniciar sesión',
 
     // Auth
@@ -55,6 +58,16 @@ $t = [
     'pwd_strength_medium' => 'Medio',
     'pwd_strength_strong' => 'Fuerte',
 
+    // Página 404
+    'page404_title' => 'Fuera de juego.',
+    'page404_text'  => 'Esta página no existe o ha sido movida.',
+    'page404_home'  => 'Volver al juego',
+
+    // Modal de confirmación genérico
+    'confirm_title'  => 'Confirmación',
+    'confirm_cancel' => 'Cancelar',
+    'confirm_ok'     => 'Confirmar',
+
     // Botones comunes
     'btn_save'          => 'Guardar',
     'btn_import'        => 'Importar',
@@ -76,6 +89,8 @@ $t = [
     'alert_mercato_saved'   => 'Estados de mercado guardados.',
     'alert_login_error'     => 'Correo o contraseña incorrectos.',
     'alert_login_missing'   => 'Por favor, introduce tu correo y contraseña.',
+    'alert_session_expired' => 'Tu sesión ha expirado por inactividad. Vuelve a iniciar sesión.',
+    'alert_login_ratelimited' => 'Demasiados intentos. Vuelve a intentarlo en unos minutos.',
     'alert_format_error'    => 'Formato de archivo no compatible. Usa un archivo .html o .csv.',
 
     // Pestañas index
@@ -96,6 +111,10 @@ $t = [
     'obj_type_cup_continental' => 'Copa Continental',
     'obj_placeholder'        => '— Objetivo —',
     'obj_result_placeholder' => '— Resultado —',
+    'obj_status_exceeded'    => 'Superado',
+    'obj_status_success'     => 'Logrado',
+    'obj_status_failed'      => 'Fallido',
+    'obj_status_pending'     => 'Pendiente',
 
     // Presupuesto
     'card_budget'      => 'PRESUPUESTO',
@@ -220,11 +239,11 @@ $t = [
     'pal_female'        => 'Femenino',
 
     // Menú usuario
-    'dropdown_edit_profile'   => '✏️ Editar perfil',
-    'dropdown_export'         => '⬇ Exportar mis datos',
-    'dropdown_backup'         => '💾 Descargar una copia de seguridad',
-    'dropdown_restore_backup' => '📤 Restaurar una copia de seguridad',
-    'dropdown_delete_account' => '🗑 Eliminar mi cuenta',
+    'dropdown_edit_profile'   => 'Editar perfil',
+    'dropdown_export'         => 'Exportar mis datos',
+    'dropdown_backup'         => 'Descargar una copia de seguridad',
+    'dropdown_restore_backup' => 'Restaurar una copia de seguridad',
+    'dropdown_delete_account' => 'Eliminar mi cuenta',
 
     // Modal perfil
     'profile_title'           => 'Mi perfil',
@@ -269,6 +288,9 @@ $t = [
     'setting_europe_comp'      => 'Competición europea',
     'setting_europe_auto'      => '— Automático (según objetivo de liga) —',
     'setting_europe_hint'      => 'Fuerza una competición europea, por ejemplo si empiezas ya clasificado en un club grande.',
+    'setting_group_club'       => 'Identidad del club',
+    'setting_group_season'     => 'Temporada',
+    'setting_group_europe'     => 'Competición europea',
     'lbl_select'              => '— Seleccionar —',
     'd1_label'                => 'D1 — Primera división',
     'd2_label'                => 'D2 — Segunda división',

@@ -1,11 +1,15 @@
-</body>
-<footer class="mt-auto border-top bg-light">
+<?php if (isset($_SESSION['mail'])): ?>
+    </main>
+</div><!-- /app-shell -->
+<?php endif; ?>
+<footer class="mt-auto border-top bg-body-tertiary">
     <div class="container-fluid px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
 
         <!-- Branding -->
         <div>
             <span class="fw-bold">iDev Normandie</span>
             <span class="text-muted ms-2 small">&copy; <?= date('Y') ?> Guillaume Hurard</span>
+            <a href="mentions-legales.php" class="text-muted small ms-3">Mentions légales</a>
         </div>
 
         <!-- Liens sociaux -->
@@ -34,3 +38,4 @@
 
     </div>
 </footer>
+</body>

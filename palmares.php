@@ -58,12 +58,11 @@ function trophees(array $objectifs): array {
     return array_filter($objectifs, fn($o) => in_array($o['resultat'], ['1er', 'Gagner']));
 }
 ?>
-<body>
-<div class="container-fluid px-4 py-3">
+<div class="main-content">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0"><?= $t['pal_title'] ?></h2>
-        <a href="index.php" class="btn btn-sm btn-outline-secondary"><?= $t['pal_back'] ?></a>
+    <div class="context-bar">
+        <div class="context-title"><?= $t['pal_title'] ?></div>
+        <a href="index.php" class="btn-ghost"><?= $t['pal_back'] ?></a>
     </div>
 
     <?php if (empty($saisons)): ?>
@@ -92,29 +91,20 @@ function trophees(array $objectifs): array {
             $chartTitres[]  = count(trophees($objs));
         }
         ?>
-        <div class="row g-3 mb-4">
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-warning">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold text-warning"><?= $totalTrophees ?></div>
-                        <div class="text-muted small"><?= $t['pal_trophies'] ?></div>
-                    </div>
+        <div class="table-panel mb-4">
+            <div class="stat-bar">
+                <div class="stat-item">
+                    <div class="stat-value text-warning"><?= $totalTrophees ?></div>
+                    <div class="stat-label"><?= $t['pal_trophies'] ?></div>
                 </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-primary">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold text-primary"><?= $totalSaisons ?></div>
-                        <div class="text-muted small"><?= $t['pal_seasons'] ?></div>
-                    </div>
+                <div class="stat-item">
+                    <div class="stat-value text-primary"><?= $totalSaisons ?></div>
+                    <div class="stat-label"><?= $t['pal_seasons'] ?></div>
                 </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card text-center border-<?= $avgPct === null ? 'secondary' : ($avgPct >= 75 ? 'success' : ($avgPct >= 50 ? 'warning' : 'danger')) ?>">
-                    <div class="card-body py-2">
-                        <div class="fs-3 fw-bold"><?= $avgPct !== null ? $avgPct . ' %' : '—' ?></div>
-                        <div class="text-muted small"><?= $t['pal_avg_success'] ?></div>
-                    </div>
+                <div class="stat-item">
+                    <?php $avgPctColor = $avgPct === null ? 'text-secondary' : ($avgPct >= 75 ? 'text-success' : ($avgPct >= 50 ? 'text-warning' : 'text-danger')); ?>
+                    <div class="stat-value <?= $avgPctColor ?>"><?= $avgPct !== null ? $avgPct . ' %' : '—' ?></div>
+                    <div class="stat-label"><?= $t['pal_avg_success'] ?></div>
                 </div>
             </div>
         </div>
@@ -184,76 +174,86 @@ function trophees(array $objectifs): array {
 
         <?php
         $typeLabels = [
-            'Championnat'  => ['label' => $t['obj_type_league'],          'color' => 'primary'],
-            'Ligue'        => ['label' => $t['obj_type_cup_league'],       'color' => 'info'],
-            'Nationale'    => ['label' => $t['obj_type_cup_national'],     'color' => 'warning'],
-            'Continentale' => ['label' => $t['obj_type_cup_continental'],  'color' => 'success'],
+            'Championnat'  => $t['obj_type_league'],
+            'Ligue'        => $t['obj_type_cup_league'],
+            'Nationale'    => $t['obj_type_cup_national'],
+            'Continentale' => $t['obj_type_cup_continental'],
         ];
         ?>
         <?php foreach ($saisons as $s):
             $objs   = $bySaison[$s['saison']] ?? [];
             $pct    = calcPct($objs, $ranking);
             $trophs = trophees($objs);
-            $pctColor = $pct === null ? 'secondary' : ($pct >= 75 ? 'success' : ($pct >= 50 ? 'warning' : 'danger'));
+            $pctColor = $pct === null ? '' : ($pct >= 75 ? 'pill-success' : ($pct >= 50 ? 'pill-warning' : 'pill-danger'));
         ?>
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center py-2" style="background:#091c3e; color:#fff;">
-                <div class="d-flex align-items-center gap-3">
-                    <span class="fw-bold fs-5"><?= htmlspecialchars($s['saison']) ?></span>
+        <div class="table-panel mb-3">
+            <div class="table-panel-head">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <span class="section-title"><span style="color:var(--heading); font-size:1.05rem;"><?= htmlspecialchars($s['saison']) ?></span></span>
                     <?php if ($s['club']): ?>
-                        <span class="badge bg-secondary"><?= htmlspecialchars($s['club']) ?></span>
+                        <span class="pill"><?= htmlspecialchars($s['club']) ?></span>
                     <?php endif; ?>
                     <?php if ($s['nomPays']): ?>
-                        <span class="text-white-50 small">
+                        <span class="text-muted small">
                             <?= htmlspecialchars($s['nomPays']) ?> — <?= $s['division'] ?> — <?= $s['genre'] === 'F' ? $t['pal_female'] : $t['pal_male'] ?>
                         </span>
                     <?php endif; ?>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <?php $tc = count($trophs); if ($tc > 0): ?>
-                        <span class="badge bg-warning text-dark">🏆 <?= $tc ?> <?= $tc > 1 ? $t['pal_trophy_pl'] : $t['pal_trophy_s'] ?></span>
+                        <span class="pill pill-success">🏆 <?= $tc ?> <?= $tc > 1 ? $t['pal_trophy_pl'] : $t['pal_trophy_s'] ?></span>
                     <?php endif; ?>
                     <?php if ($pct !== null): ?>
-                        <span class="badge bg-<?= $pctColor ?>"><?= $pct ?> <?= $t['pal_success_rate'] ?></span>
+                        <span class="pill <?= $pctColor ?>"><?= $pct ?> <?= $t['pal_success_rate'] ?></span>
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="card-body p-3">
                 <?php if (empty($objs)): ?>
-                    <span class="text-muted small"><?= $t['pal_no_objectives'] ?></span>
+                    <span class="text-muted small p-3 d-block"><?= $t['pal_no_objectives'] ?></span>
                 <?php else: ?>
-                    <div class="row g-2">
+                    <div class="objectives" style="border:none; border-radius:0;">
                         <?php foreach ($objs as $o):
-                            $meta  = $typeLabels[$o['typeCompetition']] ?? ['label' => $o['typeCompetition'], 'color' => 'secondary'];
+                            $label = $typeLabels[$o['typeCompetition']] ?? $o['typeCompetition'];
                             $rObj  = $ranking[$o['objectif']] ?? null;
                             $rRes  = $ranking[$o['resultat']]  ?? null;
                             $won   = in_array($o['resultat'], ['1er', 'Gagner']);
-                            if ($rObj && $rRes)      $border = $rRes <= $rObj ? 'success' : 'danger';
-                            elseif ($o['resultat'])  $border = 'secondary';
-                            else                     $border = $meta['color'];
+                            if ($rObj && $rRes) {
+                                $statusClass = $rRes <= $rObj ? 'status-success' : 'status-danger';
+                                $statusLabel = $rRes <= $rObj ? ($rRes < $rObj ? $t['obj_status_exceeded'] : $t['obj_status_success']) : $t['obj_status_failed'];
+                            } elseif ($o['resultat']) {
+                                $statusClass = 'status-pending';
+                                $statusLabel = $o['resultat'];
+                            } else {
+                                $statusClass = 'status-pending';
+                                $statusLabel = $t['obj_status_pending'];
+                            }
                         ?>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="card border-<?= $border ?> h-100">
-                                <div class="card-body p-2">
-                                    <div class="small text-<?= $meta['color'] ?> fw-semibold"><?= $meta['label'] ?></div>
-                                    <div class="fw-bold small"><?= htmlspecialchars($o['nomCompetition']) ?><?= $won ? ' 🏆' : '' ?></div>
-                                    <div class="d-flex justify-content-between mt-1">
-                                        <span class="text-muted" style="font-size:.75rem"><?= $t['pal_obj_label'] ?> : <?= $o['objectif'] ?: '—' ?></span>
-                                        <span class="<?= $border === 'success' ? 'text-success' : ($border === 'danger' ? 'text-danger' : 'text-muted') ?> fw-semibold" style="font-size:.75rem">
-                                            <?= $o['resultat'] ?: '—' ?>
-                                        </span>
-                                    </div>
-                                </div>
+                        <div class="objective-row" style="grid-template-columns: 1.4fr 1fr 1fr auto;">
+                            <div class="objective-comp">
+                                <span class="objective-type"><?= $label ?></span>
+                                <span class="objective-name"><?= htmlspecialchars($o['nomCompetition']) ?><?= $won ? ' 🏆' : '' ?></span>
                             </div>
+                            <div>
+                                <div class="field-label"><?= $t['pal_obj_label'] ?></div>
+                                <div class="field-value"><?= $o['objectif'] ?: '—' ?></div>
+                            </div>
+                            <div>
+                                <div class="field-label"><?= $t['obj_result'] ?></div>
+                                <div class="field-value"><?= $o['resultat'] ?: '—' ?></div>
+                            </div>
+                            <span class="status-chip <?= $statusClass ?>">
+                                <?php if ($statusClass === 'status-success'): ?>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                <?php endif; ?>
+                                <?= $statusLabel ?>
+                            </span>
                         </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
-            </div>
         </div>
         <?php endforeach; ?>
 
     <?php endif; ?>
 </div>
 <?php require_once("footer.php"); ?>
-</body>
