@@ -125,6 +125,7 @@ $t = [
     'card_budget'      => 'PRESUPUESTO',
     'budget_transfer'  => 'Presupuesto de fichajes',
     'budget_wages'     => 'Presupuesto de salarios',
+    'budget_wage_used' => 'Masa salarial utilizada',
 
     // Plantilla
     'card_squad'             => 'PLANTILLA',

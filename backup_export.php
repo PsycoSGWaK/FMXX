@@ -34,7 +34,7 @@ $objectifData = $objectifStmt->fetchAll();
 
 $joueurStmt = $pdo->prepare("
     SELECT idJoueur, positionTact, nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy,
-           montantTransfert, mercato_status, prixDemande, expireContrat
+           montantTransfert, mercato_status, prixDemande, salaire, expireContrat
     FROM joueur WHERE idUser = :id
 ");
 $joueurStmt->execute(['id' => $idUser]);

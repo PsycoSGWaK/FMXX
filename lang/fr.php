@@ -125,6 +125,7 @@ $t = [
     'card_budget'      => 'BUDGET',
     'budget_transfer'  => 'Budget transferts',
     'budget_wages'     => 'Budget salaires',
+    'budget_wage_used' => 'Masse salariale utilisée',
 
     // Effectif
     'card_squad'             => 'EFFECTIF',
