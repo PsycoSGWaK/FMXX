@@ -28,10 +28,6 @@ function navActive(string $page, string $current): string {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
                 <span><?= $t['nav_home'] ?></span>
             </a>
-            <a class="side-link <?= navActive('mercato.php', $currentPage) ?>" href="mercato.php">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-3-3"/><path d="M20 17H7l3 3"/></svg>
-                <span><?= $t['nav_mercato'] ?></span>
-            </a>
             <a class="side-link <?= navActive('palmares.php', $currentPage) ?>" href="palmares.php">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4"/><path d="M17 5h3a3 3 0 0 1-3 4"/></svg>
                 <span><?= $t['nav_palmares'] ?></span>

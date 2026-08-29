@@ -13,7 +13,6 @@ $t = [
 
     // Navbar
     'nav_home'         => 'Home',
-    'nav_mercato'      => 'Transfers',
     'nav_palmares'     => 'Trophy Cabinet',
     'nav_about'        => 'About',
     'nav_admin'        => 'Admin',
@@ -174,12 +173,8 @@ $t = [
     'tactic_no_squad' => 'Import a squad to set up substitutions.',
 
     // Transfers
-    'mercato_title'      => 'TRANSFERS',
-    'mercato_sell'       => 'For sale',
     'mercato_loan'       => 'On loan',
-    'mercato_kept'       => 'Kept',
     'mercato_revenue'    => 'Estimated revenue',
-    'mercato_arrivals'       => 'Arrivals',
     'mercato_arr_targets'    => 'Targets',
     'mercato_arr_signed'     => 'Signed',
     'mercato_arr_title'      => 'Incoming transfers',
@@ -194,16 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Delete all',
     'mercato_arr_delete_all_confirm' => 'Delete all mercato arrivals? This action cannot be undone.',
     'mercato_arr_empty'      => 'No incoming transfers recorded.',
-    'mercato_empty'      => 'No players.',
-    'mercato_import_link'=> 'Import a squad',
-    'mercato_col_name'   => 'Name',
-    'mercato_col_age'    => 'Age',
-    'mercato_col_pos'    => 'Position',
-    'mercato_col_apps'   => 'Apps',
-    'mercato_col_rating' => 'Avg rating',
-    'mercato_col_value'  => 'Transfer value',
-    'mercato_col_asking' => 'Asking price',
-    'mercato_col_status' => 'Status',
     'mercato_opt_sell'   => 'Sell',
     'mercato_opt_loan'   => 'Loan',
     'mercato_opt_free'   => 'Free transfer (won\'t renew)',

@@ -909,8 +909,6 @@ footer a.text-secondary:hover {
 .status-success { background: var(--success-bg); color: var(--success); }
 .status-danger { background: var(--panel-2); color: var(--brand); }
 .status-pending { background: var(--panel-2); color: var(--muted); }
-.status-warning { background: var(--warning-bg); color: var(--warning-color); }
-.status-info { background: rgba(13, 110, 253, .12); color: #0d6efd; }
 
 .player-cell {
     display: flex;
@@ -974,6 +972,16 @@ footer a.text-secondary:hover {
 }
 
 .poste-legend-count { color: var(--muted); }
+
+/* Flash de confirmation après un auto-save (select statut mercato) */
+.mercato-status-saved {
+    animation: mercatoStatusSaved .9s ease;
+}
+
+@keyframes mercatoStatusSaved {
+    0%   { box-shadow: 0 0 0 2px var(--success); }
+    100% { box-shadow: 0 0 0 2px transparent; }
+}
 
 .player-nat {
     font-size: .74rem;

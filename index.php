@@ -127,6 +127,23 @@ $joueursDispo = array_filter($joueurs, fn($j) => $j['mercato_status'] === null);
 $ages = array_column($joueurs, 'age');
 $ageMoyen = count($ages) > 0 ? round(array_sum($ages) / count($ages), 1) : null;
 
+function formatBudget(int $val): string {
+    return number_format($val, 0, ',', ' ') . ' €';
+}
+
+// Mercato (fusionné depuis l'ex-page mercato.php) : statuts de l'effectif + arrivées
+$mercatoSells    = array_filter($joueurs, fn($j) => $j['mercato_status'] === 'sell');
+$mercatoLoans    = array_filter($joueurs, fn($j) => $j['mercato_status'] === 'loan');
+$mercatoRecettes = array_sum(array_map(fn($j) => (int)$j['prixDemande'], $mercatoSells));
+
+$arrStmt = $pdo->prepare("SELECT * FROM mercato_arrivee WHERE idUser = :idUser ORDER BY statut, nom");
+$arrStmt->execute(['idUser' => $idUser]);
+$arrivees = $arrStmt->fetchAll();
+$nbCibles        = count(array_filter($arrivees, fn($a) => $a['statut'] === 'cible'));
+$nbSignes        = count(array_filter($arrivees, fn($a) => $a['statut'] === 'signe'));
+$mercatoDepenses = array_sum(array_map(fn($a) => (int)$a['prix'], $arrivees));
+$mercatoSolde    = $mercatoRecettes - $mercatoDepenses;
+
 // Charger les paramètres user depuis la session ou la BDD
 if (empty($_SESSION['idPays'])) {
     $u = $pdo->prepare("SELECT club, idPays, genre, division FROM user WHERE idUser = :id");
@@ -375,6 +392,12 @@ if (count($joueurs) > 0) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
+    <?php if (isset($_GET['mercato_saved'])): ?>
+        <div class="alert alert-success alert-dismissible fade show">
+            <?= $t['alert_mercato_saved'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- CONTEXTE -->
     <div class="context-bar">
@@ -539,9 +562,10 @@ if (count($joueurs) > 0) {
                 $parts = explode('/', $j['expireContrat']);
                 return (int)end($parts) === $saisonFin;
             });
-            $enVente = count(array_filter($joueurs, fn($j) => $j['mercato_status'] === 'sell'));
+            $enVente = count($mercatoSells);
+            $enPret  = count($mercatoLoans);
             ?>
-            <!-- Stats rapides -->
+            <!-- Stats rapides (effectif + mercato fusionnés) -->
             <div class="table-panel mb-3">
                 <div class="stat-bar">
                     <div class="stat-item">
@@ -559,6 +583,27 @@ if (count($joueurs) > 0) {
                     <div class="stat-item">
                         <div class="stat-value <?= $enVente > 0 ? 'text-danger' : '' ?>"><?= $enVente ?></div>
                         <div class="stat-label"><?= $t['squad_stat_selling'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-primary"><?= $enPret ?></div>
+                        <div class="stat-label"><?= $t['mercato_loan'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-warning"><?= $nbCibles ?></div>
+                        <div class="stat-label"><?= $t['mercato_arr_targets'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-success"><?= $nbSignes ?></div>
+                        <div class="stat-label"><?= $t['mercato_arr_signed'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value <?= $mercatoSolde >= 0 ? 'text-success' : 'text-danger' ?>">
+                            <?= $mercatoSolde > 0 ? '+' : '' ?><?= formatBudget($mercatoSolde) ?>
+                        </div>
+                        <div class="stat-label"><?= $t['mercato_revenue'] ?></div>
+                        <?php if ($mercatoDepenses > 0): ?>
+                            <div class="stat-sub">+<?= formatBudget($mercatoRecettes) ?> / −<?= formatBudget($mercatoDepenses) ?></div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -678,24 +723,17 @@ if (count($joueurs) > 0) {
                                 <tbody>
                                     <?php foreach ($joueurs as $i => $j): ?>
                                         <?php
-                                        $expireYear = '';
+                                        $expireYear  = '';
+                                        $expireBadge = '';
                                         if ($j['expireContrat']) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
+                                            if ((int)$expireYear === $saisonFin)
+                                                $expireBadge = '<span class="badge bg-danger ms-2"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
+                                            elseif ((int)$expireYear === $saisonFinNext)
+                                                $expireBadge = '<span class="badge bg-warning text-dark ms-2"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
                                         }
-                                        if ($j['mercato_status'] === 'sell') {
-                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_status_sell']) . '</span>';
-                                        } elseif ($j['mercato_status'] === 'loan') {
-                                            $statutChip = '<span class="status-chip status-info">' . htmlspecialchars($t['squad_status_loan']) . '</span>';
-                                        } elseif ($j['mercato_status'] === 'free') {
-                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_status_free']) . '</span>';
-                                        } elseif ($expireYear !== '' && (int)$expireYear === $saisonFin) {
-                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
-                                        } elseif ($expireYear !== '' && (int)$expireYear === $saisonFinNext) {
-                                            $statutChip = '<span class="status-chip status-warning">' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
-                                        } else {
-                                            $statutChip = '<span class="text-muted">—</span>';
-                                        }
+                                        $status = $j['mercato_status'];
                                         ?>
                                         <tr data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
                                             data-poste="<?= htmlspecialchars($j['poste'] ?? '') ?>"
@@ -718,8 +756,16 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
-                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?></td>
-                                            <td><?= $statutChip ?></td>
+                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
+                                            <td>
+                                                <select class="form-select form-select-sm mercato-status-select" style="min-width:100px"
+                                                        data-id="<?= $j['idJoueur'] ?>">
+                                                    <option value=""     <?= $status === null   ? 'selected' : '' ?>>—</option>
+                                                    <option value="sell" <?= $status === 'sell' ? 'selected' : '' ?>><?= $t['mercato_opt_sell'] ?></option>
+                                                    <option value="loan" <?= $status === 'loan' ? 'selected' : '' ?>><?= $t['mercato_opt_loan'] ?></option>
+                                                    <option value="free" <?= $status === 'free' ? 'selected' : '' ?>><?= $t['mercato_opt_free'] ?></option>
+                                                </select>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -803,12 +849,186 @@ if (count($joueurs) > 0) {
                             });
                         });
                         </script>
+                        <script>
+                        document.querySelectorAll('.mercato-status-select').forEach(function (sel) {
+                            sel.addEventListener('change', function () {
+                                const tr = sel.closest('tr');
+                                fetch('mercato_status_post.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: new URLSearchParams({
+                                        idJoueur: sel.dataset.id,
+                                        status: sel.value,
+                                        csrf_token: <?= json_encode(csrf_token()) ?>
+                                    })
+                                }).then(r => r.json()).then(function (data) {
+                                    if (!data.ok) return;
+                                    tr.dataset.statut = sel.value;
+                                    sel.classList.add('mercato-status-saved');
+                                    setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
+                                });
+                            });
+                        });
+                        </script>
                     <?php else: ?>
                         <div class="p-4 text-center text-muted">
                             <?= $t['squad_empty'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><?= $t['squad_import_link'] ?></a>
                         </div>
                     <?php endif; ?>
             </div>
+
+            <!-- Arrivées mercato (fusionné depuis l'ex-page mercato.php) -->
+            <div class="table-panel mt-4">
+                <div class="table-panel-head">
+                    <span class="section-title"><span style="color:var(--heading)"><?= $t['mercato_arr_title'] ?></span></span>
+                    <?php if (!empty($arrivees)): ?>
+                        <form action="mercato_arrivee_post.php" method="post"
+                              data-confirm="<?= htmlspecialchars($t['mercato_arr_delete_all_confirm'], ENT_QUOTES) ?>"
+                              data-confirm-variant="danger">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="delete_all" value="1">
+                            <button type="submit" class="btn-danger-ghost">
+                                <ion-icon name="trash-outline"></ion-icon> <?= $t['mercato_arr_delete_all'] ?>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+                <?php
+                $statutColors = ['cible' => 'warning', 'nego' => 'info', 'signe' => 'success'];
+                $statutLabels = [
+                    'cible' => $t['mercato_arr_opt_cible'],
+                    'nego'  => $t['mercato_arr_opt_nego'],
+                    'signe' => $t['mercato_arr_opt_signe'],
+                ];
+                ?>
+                <?php if (empty($arrivees)): ?>
+                    <div class="p-3 text-muted small"><?= $t['mercato_arr_empty'] ?></div>
+                <?php else: ?>
+                    <div class="table-scroll">
+                        <table class="table table-sm table-hover align-middle mb-0 data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><?= $t['mercato_arr_col_name'] ?></th>
+                                    <th><?= $t['mercato_arr_col_pos'] ?></th>
+                                    <th class="text-end"><?= $t['mercato_arr_col_price'] ?></th>
+                                    <th><?= $t['mercato_arr_col_status'] ?></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($arrivees as $i => $a): ?>
+                                    <tr>
+                                        <td><?= $i + 1 ?></td>
+                                        <td class="fw-semibold"><?= htmlspecialchars($a['nom']) ?></td>
+                                        <td><?= htmlspecialchars($a['poste'] ?? '—') ?></td>
+                                        <td class="text-end"><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
+                                        <td><span class="badge bg-<?= $statutColors[$a['statut']] ?? 'secondary' ?>"><?= $statutLabels[$a['statut']] ?? $a['statut'] ?></span></td>
+                                        <td>
+                                        <div class="d-flex gap-1 align-items-center">
+                                            <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
+                                                    data-bs-toggle="modal" data-bs-target="#editArriveeModal"
+                                                    data-id="<?= $a['idArrivee'] ?>"
+                                                    data-nom="<?= htmlspecialchars($a['nom'], ENT_QUOTES) ?>"
+                                                    data-poste="<?= htmlspecialchars($a['poste'] ?? '', ENT_QUOTES) ?>"
+                                                    data-prix="<?= $a['prix'] ?? '' ?>"
+                                                    data-statut="<?= $a['statut'] ?>">
+                                                <ion-icon name="pencil-outline"></ion-icon>
+                                            </button>
+                                            <form action="mercato_arrivee_post.php" method="post" style="display:contents"
+                                                  data-confirm="Supprimer ?" data-confirm-variant="danger">
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="delete_id" value="<?= $a['idArrivee'] ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
+                                                    <ion-icon name="trash-outline"></ion-icon>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Formulaire ajout -->
+                <form action="mercato_arrivee_post.php" method="post" class="p-3 border-top d-flex flex-wrap gap-2 align-items-end">
+                    <?= csrf_field() ?>
+                    <div>
+                        <label class="form-label small text-muted mb-1"><?= $t['mercato_arr_col_name'] ?> *</label>
+                        <input type="text" name="nom" class="form-control form-control-sm" style="min-width:150px" required>
+                    </div>
+                    <div>
+                        <label class="form-label small text-muted mb-1"><?= $t['mercato_arr_col_pos'] ?></label>
+                        <input type="text" name="poste" class="form-control form-control-sm" style="max-width:100px">
+                    </div>
+                    <div>
+                        <label class="form-label small text-muted mb-1"><?= $t['mercato_arr_col_price'] ?> (€)</label>
+                        <input type="number" name="prix" class="form-control form-control-sm" min="0" style="max-width:130px">
+                    </div>
+                    <div>
+                        <label class="form-label small text-muted mb-1"><?= $t['mercato_arr_col_status'] ?></label>
+                        <select name="statut" class="form-select form-select-sm">
+                            <option value="cible"><?= $t['mercato_arr_opt_cible'] ?></option>
+                            <option value="nego"><?= $t['mercato_arr_opt_nego'] ?></option>
+                            <option value="signe"><?= $t['mercato_arr_opt_signe'] ?></option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-brand btn-sm"><?= $t['mercato_arr_add'] ?></button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal édition arrivée -->
+            <div class="modal fade" id="editArriveeModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><?= $t['mercato_arr_title'] ?></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="mercato_arrivee_post.php" method="post">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="edit_id" id="edit_id">
+                                <div class="mb-3">
+                                    <label class="form-label small"><?= $t['mercato_arr_col_name'] ?> *</label>
+                                    <input type="text" name="nom" id="edit_nom" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small"><?= $t['mercato_arr_col_pos'] ?></label>
+                                    <input type="text" name="poste" id="edit_poste" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small"><?= $t['mercato_arr_col_price'] ?> (€)</label>
+                                    <input type="number" name="prix" id="edit_prix" class="form-control" min="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small"><?= $t['mercato_arr_col_status'] ?></label>
+                                    <select name="statut" id="edit_statut" class="form-select">
+                                        <option value="cible"><?= $t['mercato_arr_opt_cible'] ?></option>
+                                        <option value="nego"><?= $t['mercato_arr_opt_nego'] ?></option>
+                                        <option value="signe"><?= $t['mercato_arr_opt_signe'] ?></option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100"><?= $t['btn_save'] ?></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+            document.getElementById('editArriveeModal').addEventListener('show.bs.modal', function (e) {
+                const btn = e.relatedTarget;
+                document.getElementById('edit_id').value    = btn.dataset.id;
+                document.getElementById('edit_nom').value   = btn.dataset.nom;
+                document.getElementById('edit_poste').value = btn.dataset.poste;
+                document.getElementById('edit_prix').value  = btn.dataset.prix;
+                document.getElementById('edit_statut').value = btn.dataset.statut;
+            });
+            </script>
         </div>
 
         <!-- ===================== ONGLET TACTIC SUB ===================== -->
