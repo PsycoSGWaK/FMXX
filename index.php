@@ -725,16 +725,13 @@ if (count($joueurs) > 0) {
                                         <?php
                                         $expireYear  = '';
                                         $expireClass = '';
-                                        $expireTitle = '';
                                         if ($j['expireContrat']) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
                                             if ((int)$expireYear === $saisonFin) {
                                                 $expireClass = 'expire-this';
-                                                $expireTitle = $t['squad_badge_expiry_this'];
                                             } elseif ((int)$expireYear === $saisonFinNext) {
                                                 $expireClass = 'expire-next';
-                                                $expireTitle = $t['squad_badge_expiry_next'];
                                             }
                                         }
                                         $status = $j['mercato_status'];
@@ -761,9 +758,7 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
                                             <td>
-                                                <span class="<?= $expireClass ?>" <?= $expireTitle ? 'title="' . htmlspecialchars($expireTitle) . '"' : '' ?>>
-                                                    <?= htmlspecialchars($j['expireContrat'] ?? '') ?>
-                                                </span>
+                                                <span class="<?= $expireClass ?>"><?= htmlspecialchars($j['expireContrat'] ?? '') ?></span>
                                             </td>
                                             <td>
                                                 <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
@@ -776,11 +771,20 @@ if (count($joueurs) > 0) {
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                                <tfoot class="table-secondary fw-bold">
+                                <tfoot class="table-secondary">
                                     <tr>
-                                        <td colspan="2"><?= count($joueurs) ?> <?= $t['squad_players'] ?></td>
-                                        <td><?= $ageMoyen ?> <?= $t['squad_avg_age'] ?></td>
-                                        <td colspan="8"></td>
+                                        <td colspan="11">
+                                            <div class="poste-legend" style="margin-top:0">
+                                                <span class="poste-legend-item">
+                                                    <span class="poste-legend-dot" style="background:var(--brand)"></span>
+                                                    <?= htmlspecialchars($t['squad_badge_expiry_this']) ?>
+                                                </span>
+                                                <span class="poste-legend-item">
+                                                    <span class="poste-legend-dot" style="background:var(--warning-color)"></span>
+                                                    <?= htmlspecialchars($t['squad_badge_expiry_next']) ?>
+                                                </span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>
