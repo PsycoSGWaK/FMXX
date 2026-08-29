@@ -86,6 +86,8 @@ $t = [
     'btn_settings'      => 'Paramètres saison',
     'confirm_clear_squad'  => 'Vider tout l\'effectif ?',
     'confirm_next_season'  => 'Passer à la saison suivante ?',
+    'confirm_remove_objective' => 'Retirer cette compétition de la saison ?',
+    'btn_remove_objective'  => 'Retirer',
 
     // Alertes
     'alert_squad_imported'  => 'Effectif importé avec succès !',
@@ -117,6 +119,8 @@ $t = [
     'obj_result'             => 'Résultat obtenu',
     'obj_no_config'          => 'Configurez votre club, pays et division dans les Paramètres pour voir vos compétitions.',
     'obj_no_competitions'    => 'Aucune compétition trouvée pour ces paramètres.',
+    'obj_add_placeholder'    => '— Ajouter une compétition —',
+    'obj_add_button'         => 'Ajouter',
     'obj_type_league'        => 'Championnat',
     'obj_type_cup_league'    => 'Coupe de la ligue',
     'obj_type_cup_national'  => 'Coupe nationale',

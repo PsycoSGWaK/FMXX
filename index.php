@@ -193,7 +193,7 @@ $saisonFinNext = $saisonFin + 1;
 $competitions = [];
 if ($idPays && $division) {
     $cStmt = $pdo->prepare("
-        SELECT c.*, COALESCE(o.objectif, '') as objectif, o.resultat
+        SELECT c.*, COALESCE(o.objectif, '') as objectif, o.resultat, COALESCE(o.manuel, 0) as manuel
         FROM competition c
         LEFT JOIN objectif o ON o.idCompetition = c.idCompetition AND o.idUser = :idUser AND o.saison = :saison
         WHERE c.genre = :genre
@@ -201,6 +201,7 @@ if ($idPays && $division) {
             (c.typeCompetition = 'Championnat' AND c.idPays = :idPays1 AND c.division = :division1)
             OR (c.typeCompetition IN ('Nationale','Ligue') AND c.idPays = :idPays2)
             OR (c.typeCompetition = 'Continentale' AND :division2 = 'D1')
+            OR o.manuel = 1
           )
         ORDER BY FIELD(c.typeCompetition,'Championnat','Ligue','Nationale','Continentale'),c.nomCompetition
     ");
@@ -304,6 +305,7 @@ foreach ($qualifStmt->fetchAll() as $r) {
 
 $competitions = array_values(array_filter($competitions, function($c) use ($qualifRules, $compEuropeOverride, $ranking) {
     if ($c['typeCompetition'] !== 'Continentale') return true;
+    if ($c['manuel']) return true;
     if ($compEuropeOverride) return (int)$c['idCompetition'] === (int)$compEuropeOverride;
     foreach ($qualifRules[$c['idCompetition']] ?? [] as $rule) {
         if ($rule['resultat'] === null) continue;
@@ -328,6 +330,24 @@ foreach ($competitions as $c) {
 }
 $pct      = $totalAvecObjectif > 0 ? round($reussites / $totalAvecObjectif * 100) : null;
 $pctColor = $pct === null ? 'secondary' : ($pct >= 75 ? 'success' : ($pct >= 50 ? 'warning' : 'danger'));
+
+// Compétitions ajoutables à la main dans l'onglet Objectifs (filet de sécurité
+// quand la déduction automatique ne peut rien afficher, ex: 1re saison suivie
+// sans historique pour calculer une qualification, alors que le club joue
+// réellement une Supercoupe/comp continentale dans la save FM).
+$addableCompetitions = [];
+if ($genre) {
+    $usedIds = array_column($competitions, 'idCompetition');
+    $inClause = $usedIds ? implode(',', array_map('intval', $usedIds)) : '0';
+    $addableCompetitions = $pdo->prepare("
+        SELECT idCompetition, nomCompetition, typeCompetition, idPays
+        FROM competition
+        WHERE genre = :genre AND idCompetition NOT IN ($inClause)
+        ORDER BY typeCompetition, nomCompetition
+    ");
+    $addableCompetitions->execute(['genre' => $genre]);
+    $addableCompetitions = $addableCompetitions->fetchAll();
+}
 
 // Graphiques effectif
 if (count($joueurs) > 0) {
@@ -716,21 +736,46 @@ if (count($joueurs) > 0) {
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <span class="status-chip <?= $statusClass ?>">
-                                <?php if ($statusClass === 'status-success'): ?>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <div class="objective-status">
+                                <span class="status-chip <?= $statusClass ?>">
+                                    <?php if ($statusClass === 'status-success'): ?>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    <?php endif; ?>
+                                    <?= $statusLabel ?>
+                                </span>
+                                <?php if ($c['manuel']): ?>
+                                <form action="objectif_manuel_post.php" method="post"
+                                      data-confirm="<?= htmlspecialchars($t['confirm_remove_objective'], ENT_QUOTES) ?>"
+                                      data-confirm-variant="danger">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="remove_idCompetition" value="<?= $c['idCompetition'] ?>">
+                                    <button type="submit" class="objective-remove-btn" title="<?= htmlspecialchars($t['btn_remove_objective']) ?>" aria-label="<?= htmlspecialchars($t['btn_remove_objective']) ?>">
+                                        <ion-icon name="close-outline"></ion-icon>
+                                    </button>
+                                </form>
                                 <?php endif; ?>
-                                <?= $statusLabel ?>
-                            </span>
+                            </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
                         <a href="saison_next.php" class="btn-ghost"
                            data-confirm="<?= htmlspecialchars($t['confirm_next_season'], ENT_QUOTES) ?>"
                            data-confirm-variant="warning">
                             <?= $t['btn_next_season'] ?>
                         </a>
+                        <?php if (!empty($addableCompetitions)): ?>
+                        <form action="objectif_manuel_post.php" method="post" class="d-flex gap-2 align-items-center ms-auto">
+                            <?= csrf_field() ?>
+                            <select name="idCompetition" class="btn-ghost" required>
+                                <option value=""><?= htmlspecialchars($t['obj_add_placeholder']) ?></option>
+                                <?php foreach ($addableCompetitions as $ac): ?>
+                                    <option value="<?= $ac['idCompetition'] ?>"><?= htmlspecialchars($ac['nomCompetition']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit" class="btn-ghost"><?= htmlspecialchars($t['obj_add_button']) ?></button>
+                        </form>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <script>

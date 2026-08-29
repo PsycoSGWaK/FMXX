@@ -86,6 +86,8 @@ $t = [
     'btn_settings'      => 'Season settings',
     'confirm_clear_squad'  => 'Clear the entire squad?',
     'confirm_next_season'  => 'Move to the next season?',
+    'confirm_remove_objective' => 'Remove this competition from the season?',
+    'btn_remove_objective'  => 'Remove',
 
     // Alerts
     'alert_squad_imported'  => 'Squad imported successfully!',
@@ -117,6 +119,8 @@ $t = [
     'obj_result'             => 'Actual result',
     'obj_no_config'          => 'Configure your club, country and division in Settings to see your competitions.',
     'obj_no_competitions'    => 'No competitions found for these settings.',
+    'obj_add_placeholder'    => '— Add a competition —',
+    'obj_add_button'         => 'Add',
     'obj_type_league'        => 'League',
     'obj_type_cup_league'    => 'League Cup',
     'obj_type_cup_national'  => 'National Cup',
