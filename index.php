@@ -323,8 +323,6 @@ if (count($joueurs) > 0) {
         $cat = $catPoste($j['poste'] ?? '');
         if (isset($parCategorie[$cat])) $parCategorie[$cat]++;
     }
-    $parAge = array_count_values(array_filter(array_column($joueurs, 'age')));
-    ksort($parAge);
 }
 ?>
 <div class="main-content">
@@ -576,7 +574,7 @@ if (count($joueurs) > 0) {
             ];
             ?>
             <div class="row g-3 mb-4">
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-body">
                             <h6 class="fw-bold text-muted mb-3"><?= $t['squad_chart_by_position'] ?></h6>
@@ -599,53 +597,7 @@ if (count($joueurs) > 0) {
                         </div>
                     </div>
                 </div>
-                <div class="col-md-7">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="fw-bold text-muted mb-3"><?= $t['squad_chart_age_dist'] ?></h6>
-                            <canvas id="chartAges" height="65"></canvas>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <script>
-            (function () {
-                function chartColor(name) {
-                    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-                }
-                var ctx = document.getElementById('chartAges');
-                var chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: <?= json_encode(array_map('strval', array_keys($parAge))) ?>,
-                        datasets: [{
-                            label: <?= json_encode($t['squad_chart_players']) ?>,
-                            data: <?= json_encode(array_values($parAge)) ?>,
-                            backgroundColor: chartColor('--chart-seq'),
-                            borderRadius: 4,
-                            categoryPercentage: 0.7,
-                            barPercentage: 0.9,
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: { beginAtZero: true, ticks: { stepSize: 1, color: chartColor('--muted') }, grid: { color: chartColor('--border') } },
-                            x: { ticks: { color: chartColor('--muted') }, grid: { display: false } }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-                // Le bouton de thème change data-bs-theme sans recharger la page :
-                // on réapplique les couleurs (variables CSS) au graphique existant.
-                new MutationObserver(function () {
-                    chart.data.datasets[0].backgroundColor = chartColor('--chart-seq');
-                    chart.options.scales.y.ticks.color = chartColor('--muted');
-                    chart.options.scales.y.grid.color = chartColor('--border');
-                    chart.options.scales.x.ticks.color = chartColor('--muted');
-                    chart.update();
-                }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme'] });
-            })();
-            </script>
             <?php endif; ?>
 
             <!-- Tableau effectif -->
