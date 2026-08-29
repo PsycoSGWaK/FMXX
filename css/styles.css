@@ -24,6 +24,13 @@
     --warning-color: #b9720f;
     --warning-bg: #fbead2;
     --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+
+    /* Palette catégorielle (graphiques) — ordre fixe validé CVD, ne jamais réordonner */
+    --chart-1: #2a78d6; /* bleu */
+    --chart-2: #eb6834; /* orange */
+    --chart-3: #1baf7a; /* aqua */
+    --chart-4: #eda100; /* jaune */
+    --chart-seq: #2a78d6; /* hue séquentiel par défaut (magnitude) */
 }
 
 /* ---------- Mode sombre ---------- */
@@ -41,6 +48,12 @@
     --heading: #eef1f8;
     --success-bg: #113224;
     --warning-bg: #3a2a0c;
+
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-seq: #3987e5;
 }
 
 /* ---------- Typographie ---------- */
@@ -255,6 +268,22 @@ html {
     text-transform: uppercase;
     color: var(--muted);
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+/* Effectif : colonnes moins collées, plus d'air pour la lecture. */
+#effectifTable th, #effectifTable td {
+    padding-left: .85rem;
+    padding-right: .85rem;
+}
+
+#effectifTable td {
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+}
+
+#effectifTable td.text-end,
+#effectifTable th.text-end {
     white-space: nowrap;
 }
 
@@ -903,6 +932,55 @@ footer a.text-secondary:hover {
     font-size: .68rem;
     font-weight: 700;
     flex-shrink: 0;
+}
+
+.player-name { display: block; }
+
+/* ---------- Répartition par poste (barre empilée) ---------- */
+
+.poste-bar {
+    display: flex;
+    height: 14px;
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--panel-2);
+}
+
+.poste-seg {
+    height: 100%;
+    border-right: 2px solid var(--panel);
+}
+
+.poste-seg:last-child { border-right: none; }
+
+.poste-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .9rem;
+    margin-top: 1rem;
+}
+
+.poste-legend-item {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: .82rem;
+    color: var(--text);
+}
+
+.poste-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.poste-legend-count { color: var(--muted); }
+
+.player-nat {
+    font-size: .74rem;
+    color: var(--muted);
+    white-space: nowrap;
 }
 
 /* ---------- Bandeau budget ---------- */

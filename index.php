@@ -565,12 +565,37 @@ if (count($joueurs) > 0) {
                 </div>
             </div>
             <!-- Graphiques -->
+            <?php
+            $posteTotal = array_sum($parCategorie);
+            $posteColors = ['Gardien' => 'var(--chart-1)', 'Défense' => 'var(--chart-2)', 'Milieu' => 'var(--chart-3)', 'Attaque' => 'var(--chart-4)'];
+            $posteLabels = [
+                'Gardien' => $t['squad_pos_goalkeeper'],
+                'Défense' => $t['squad_pos_defense'],
+                'Milieu'  => $t['squad_pos_midfield'],
+                'Attaque' => $t['squad_pos_attack'],
+            ];
+            ?>
             <div class="row g-3 mb-4">
                 <div class="col-md-5">
                     <div class="card h-100">
                         <div class="card-body">
                             <h6 class="fw-bold text-muted mb-3"><?= $t['squad_chart_by_position'] ?></h6>
-                            <canvas id="chartPostes" style="max-height:220px"></canvas>
+                            <?php if ($posteTotal > 0): ?>
+                            <div class="poste-bar">
+                                <?php foreach ($parCategorie as $cat => $n): if ($n === 0) continue; ?>
+                                    <div class="poste-seg" style="width:<?= round($n / $posteTotal * 100, 2) ?>%; background:<?= $posteColors[$cat] ?>"></div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="poste-legend">
+                                <?php foreach ($parCategorie as $cat => $n): ?>
+                                    <span class="poste-legend-item">
+                                        <span class="poste-legend-dot" style="background:<?= $posteColors[$cat] ?>"></span>
+                                        <?= htmlspecialchars($posteLabels[$cat]) ?>
+                                        <span class="poste-legend-count"><?= $n ?> (<?= round($n / $posteTotal * 100) ?>%)</span>
+                                    </span>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -584,37 +609,42 @@ if (count($joueurs) > 0) {
                 </div>
             </div>
             <script>
-            new Chart(document.getElementById('chartPostes'), {
-                type: 'doughnut',
-                data: {
-                    labels: <?= json_encode(array_keys($parCategorie)) ?>,
-                    datasets: [{
-                        data: <?= json_encode(array_values($parCategorie)) ?>,
-                        backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545'],
-                        borderWidth: 2,
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } }
+            (function () {
+                function chartColor(name) {
+                    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
                 }
-            });
-            new Chart(document.getElementById('chartAges'), {
-                type: 'bar',
-                data: {
-                    labels: <?= json_encode(array_map('strval', array_keys($parAge))) ?>,
-                    datasets: [{
-                        label: 'Joueurs',
-                        data: <?= json_encode(array_values($parAge)) ?>,
-                        backgroundColor: '#0d6efd',
-                        borderRadius: 3,
-                    }]
-                },
-                options: {
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                    plugins: { legend: { display: false } }
-                }
-            });
+                var ctx = document.getElementById('chartAges');
+                var chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: <?= json_encode(array_map('strval', array_keys($parAge))) ?>,
+                        datasets: [{
+                            label: <?= json_encode($t['squad_chart_players']) ?>,
+                            data: <?= json_encode(array_values($parAge)) ?>,
+                            backgroundColor: chartColor('--chart-seq'),
+                            borderRadius: 4,
+                            categoryPercentage: 0.7,
+                            barPercentage: 0.9,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1, color: chartColor('--muted') }, grid: { color: chartColor('--border') } },
+                            x: { ticks: { color: chartColor('--muted') }, grid: { display: false } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                // Le bouton de thème change data-bs-theme sans recharger la page :
+                // on réapplique les couleurs (variables CSS) au graphique existant.
+                new MutationObserver(function () {
+                    chart.data.datasets[0].backgroundColor = chartColor('--chart-seq');
+                    chart.options.scales.y.ticks.color = chartColor('--muted');
+                    chart.options.scales.y.grid.color = chartColor('--border');
+                    chart.options.scales.x.ticks.color = chartColor('--muted');
+                    chart.update();
+                }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme'] });
+            })();
             </script>
             <?php endif; ?>
 
@@ -683,16 +713,13 @@ if (count($joueurs) > 0) {
                                         <th>#</th>
                                         <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end"><?= $t['squad_col_number'] ?></th>
-                                        <th><?= $t['squad_col_nat'] ?></th>
-                                        <th><?= $t['squad_col_pob'] ?></th>
-                                        <th data-sort="text" data-col="6" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="9"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="text" data-col="3" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="4"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="5"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="6"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="7" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="8" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="9" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th><?= $t['squad_col_status'] ?></th>
                                     </tr>
                                 </thead>
@@ -725,14 +752,14 @@ if (count($joueurs) > 0) {
                                             <td><?= $i + 1 ?></td>
                                             <td>
                                                 <div class="player-cell">
-                                                    <span class="player-avatar"><?= htmlspecialchars(fmxx_initials($j['nom'] ?? '')) ?></span>
-                                                    <a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a>
+                                                    <span class="player-avatar"><?= htmlspecialchars($j['numero'] ?? '') ?></span>
+                                                    <div>
+                                                        <a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="player-name text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a>
+                                                        <div class="player-nat"><?= fmxx_flag_emoji($j['nat'] ?? null) ?> <?= htmlspecialchars($j['nat'] ?? '') ?></div>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="text-end"><?= $j['age'] ?? '' ?></td>
-                                            <td class="text-end"><?= $j['numero'] ?? '' ?></td>
-                                            <td><?= fmxx_flag_emoji($j['nat'] ?? null) ?> <?= htmlspecialchars($j['nat'] ?? '') ?></td>
-                                            <td><?= htmlspecialchars($j['pdn'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
                                             <td class="text-end"><?= $j['app'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['pDec'] ?? '' ?></td>
@@ -748,7 +775,7 @@ if (count($joueurs) > 0) {
                                     <tr>
                                         <td colspan="2"><?= count($joueurs) ?> <?= $t['squad_players'] ?></td>
                                         <td><?= $ageMoyen ?> <?= $t['squad_avg_age'] ?></td>
-                                        <td colspan="11"></td>
+                                        <td colspan="8"></td>
                                     </tr>
                                 </tfoot>
                             </table>
