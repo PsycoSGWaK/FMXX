@@ -891,7 +891,7 @@ if (count($joueurs) > 0) {
                                                 <?php $curRole = $effectiveRole($j); ?>
                                                 <select class="role-select form-select form-select-sm" data-id="<?= $j['idJoueur'] ?>">
                                                     <?php foreach ($roleOptions as $opt): ?>
-                                                        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $curRole ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option>
+                                                        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $curRole ? 'selected' : '' ?>><?= htmlspecialchars(($t['role_' . $opt] ?? $opt) . ' (' . $opt . ')') ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             </td>
