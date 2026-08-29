@@ -508,24 +508,6 @@ footer a.text-secondary:hover {
 
 .game-row.is-soon { opacity: .55; }
 
-.game-badge {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: .6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: .82rem;
-    letter-spacing: .02em;
-    color: #cbd8f2;
-    background: rgba(255, 255, 255, .08);
-}
-
-.game-row.is-active .game-badge { background: var(--brand); color: #fff; }
-
 .game-body { flex: 1; min-width: 0; }
 
 .game-name {
