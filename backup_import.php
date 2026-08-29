@@ -88,9 +88,9 @@ try {
     $joueurMap = [];
     $insJoueur = $pdo->prepare("
         INSERT INTO joueur (positionTact, nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy,
-            montantTransfert, idUser, mercato_status, prixDemande, expireContrat)
+            montantTransfert, idUser, mercato_status, prixDemande, salaire, expireContrat)
         VALUES (:positionTact, :nom, :age, :numero, :nat, :pdn, :poste, :app, :pDec, :buts, :noteMoy,
-            :montantTransfert, :idUser, :mercato_status, :prixDemande, :expireContrat)
+            :montantTransfert, :idUser, :mercato_status, :prixDemande, :salaire, :expireContrat)
     ");
     foreach ($joueurData as $j) {
         if (empty($j['nom'])) continue;
@@ -111,6 +111,7 @@ try {
             'idUser'            => $idUser,
             'mercato_status'    => $statut,
             'prixDemande'       => isset($j['prixDemande']) ? (int)$j['prixDemande'] : null,
+            'salaire'           => isset($j['salaire']) ? (int)$j['salaire'] : null,
             'expireContrat'     => $j['expireContrat'] ?? null,
         ]);
         if (isset($j['idJoueur'])) {

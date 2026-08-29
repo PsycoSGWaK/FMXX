@@ -155,6 +155,13 @@ $budgets = $bStmt->fetch();
 $budgetTransfert = $budgets['budget_transfert'];
 $budgetSalaires  = $budgets['budget_salaires'];
 
+// Masse salariale utilisée = somme des salaires importés (colonne "Salaire" FM),
+// en % du budget salaires. Ignore les joueurs déjà en partance (mercato).
+$masseSalariale = array_sum(array_column($joueursDispo, 'salaire'));
+$pctMasseSalariale = ($budgetSalaires !== null && (int)$budgetSalaires > 0)
+    ? round($masseSalariale / $budgetSalaires * 100)
+    : null;
+
 // Saison active
 if (empty($_SESSION['saison_active'])) {
     $r = $pdo->prepare("SELECT saison_active FROM user WHERE idUser = :id");
@@ -514,6 +521,12 @@ if (count($joueurs) > 0) {
                     </div>
                     <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
                 </form>
+                <div class="budget-field">
+                    <span class="budget-label"><?= $t['budget_wage_used'] ?></span>
+                    <div class="budget-value">
+                        <?= $pctMasseSalariale !== null ? $pctMasseSalariale . '<small>%</small>' : '—' ?>
+                    </div>
+                </div>
             </div>
         </div>
 

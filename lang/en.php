@@ -125,6 +125,7 @@ $t = [
     'card_budget'      => 'BUDGET',
     'budget_transfer'  => 'Transfer budget',
     'budget_wages'     => 'Wages budget',
+    'budget_wage_used' => 'Wage budget used',
 
     // Squad
     'card_squad'             => 'SQUAD',
