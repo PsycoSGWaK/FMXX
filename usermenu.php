@@ -11,6 +11,9 @@
     <a href="lang_post.php?lang=en" class="lang-flag <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">🇬🇧</a>
     <a href="lang_post.php?lang=es" class="lang-flag <?= $currentLang === 'es' ? 'active' : '' ?>" title="Español">🇪🇸</a>
 </div>
+<button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+    <ion-icon name="moon-outline"></ion-icon>
+</button>
 <div class="dropdown user-dropdown">
     <button type="button" class="user-chip" data-bs-toggle="dropdown" style="background:none; border:none; cursor:pointer;">
         <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
@@ -20,18 +23,10 @@
         </div>
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-        <li>
-            <button type="button" class="dropdown-item d-flex align-items-center gap-2" id="themeToggle"
-                    data-label-dark="<?= htmlspecialchars($t['nav_theme_dark']) ?>" data-label-light="<?= htmlspecialchars($t['nav_theme_light']) ?>">
-                <ion-icon name="moon-outline"></ion-icon>
-                <span><?= $t['nav_theme_dark'] ?></span>
-            </button>
-        </li>
         <?php if ($isAdmin): ?>
-        <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="admin.php"><?= $t['nav_admin'] ?></a></li>
-        <?php endif; ?>
         <li><hr class="dropdown-divider"></li>
+        <?php endif; ?>
         <li>
             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
                 <?= $t['dropdown_edit_profile'] ?>
