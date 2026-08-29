@@ -1423,8 +1423,7 @@ if (count($joueurs) > 0) {
                             'AL' => 'LW', 'AR' => 'RW', 'BU' => 'ST',
                         ];
                         ?>
-                        <form action="tactic_post.php" method="post">
-                            <?= csrf_field() ?>
+                        <div id="tacticWrap">
                             <div class="table-scroll">
                                 <table class="table table-sm align-middle mb-0 data-table">
                                     <thead>
@@ -1450,11 +1449,11 @@ if (count($joueurs) > 0) {
                                                 })
                                                 : $joueursDispo;
                                         ?>
-                                            <tr>
+                                            <tr data-position="<?= $i ?>">
                                                 <td><span class="pos-tag"><?= htmlspecialchars($roleCode ? ($t['role_abbr_' . $roleCode] ?? $posCode) : $posCode) ?></span></td>
                                                 <?php foreach (['titulaire','remplacant','supersub'] as $role): ?>
                                                     <td>
-                                                        <select class="form-select form-select-sm" name="line_<?= $i ?>_<?= $role ?>">
+                                                        <select class="form-select form-select-sm tactic-select" data-role="<?= $role ?>">
                                                             <option value="">—</option>
                                                             <?php foreach ($rowPlayers as $j): ?>
                                                                 <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
@@ -1470,10 +1469,28 @@ if (count($joueurs) > 0) {
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="p-3">
-                                <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
-                            </div>
-                        </form>
+                        </div>
+                        <script>
+                        document.querySelectorAll('#tacticWrap .tactic-select').forEach(function (sel) {
+                            sel.addEventListener('change', function () {
+                                const row = sel.closest('tr');
+                                fetch('tactic_field_post.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: new URLSearchParams({
+                                        position: row.dataset.position,
+                                        role: sel.dataset.role,
+                                        value: sel.value,
+                                        csrf_token: <?= json_encode(csrf_token()) ?>
+                                    })
+                                }).then(r => r.json()).then(function (data) {
+                                    if (!data.ok) return;
+                                    sel.classList.add('mercato-status-saved');
+                                    setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
+                                });
+                            });
+                        });
+                        </script>
                     <?php endif; ?>
             </div>
         </div>
