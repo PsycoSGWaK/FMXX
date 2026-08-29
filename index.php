@@ -418,10 +418,10 @@ if (count($joueurs) > 0) {
     };
 
     // Les 16 rôles "utilisés en match" proposés dans le sélecteur (codes
-    // courts de la liste FR/EN fournie par Guillaume, 2026-08-29 —
-    // "Défenseur central : DC/CB" etc., pas le format libre "D (C)" utilisé
-    // par $simplifyPoste). Cette liste est fermée : un seul rôle par
-    // combinaison rôle+côté, ex. pas de "D (RLC)".
+    // courts EN de la liste FR/EN/ES fournie par Guillaume, 2026-08-29 —
+    // le code est toujours stocké en EN, l'abréviation affichée dans le
+    // sélecteur et le glossaire est traduite via $t['role_abbr_XXX']).
+    // Liste fermée : un seul rôle par combinaison rôle+côté.
     $roleOptions = ['GK', 'CB', 'RB', 'LB', 'RWB', 'LWB', 'SW', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST', 'FW'];
     $roleCategory = [
         'GK' => 'Gardien',
@@ -891,7 +891,7 @@ if (count($joueurs) > 0) {
                                                 <?php $curRole = $effectiveRole($j); ?>
                                                 <select class="role-select form-select form-select-sm" data-id="<?= $j['idJoueur'] ?>">
                                                     <?php foreach ($roleOptions as $opt): ?>
-                                                        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $curRole ? 'selected' : '' ?>><?= htmlspecialchars(($t['role_' . $opt] ?? $opt) . ' (' . $opt . ')') ?></option>
+                                                        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $curRole ? 'selected' : '' ?>><?= htmlspecialchars(($t['role_' . $opt] ?? $opt) . ' (' . ($t['role_abbr_' . $opt] ?? $opt) . ')') ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             </td>
@@ -919,7 +919,7 @@ if (count($joueurs) > 0) {
                                         <td colspan="11">
                                             <div class="role-legend">
                                                 <?php foreach ($roleOptions as $code): ?>
-                                                    <span class="role-legend-item"><strong><?= htmlspecialchars($code) ?></strong> = <?= htmlspecialchars($t['role_' . $code] ?? $code) ?></span>
+                                                    <span class="role-legend-item"><strong><?= htmlspecialchars($t['role_abbr_' . $code] ?? $code) ?></strong> = <?= htmlspecialchars($t['role_' . $code] ?? $code) ?></span>
                                                 <?php endforeach; ?>
                                             </div>
                                             <hr class="role-legend-sep">

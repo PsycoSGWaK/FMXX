@@ -180,6 +180,24 @@ $t = [
     'role_LW'  => 'Extremo izquierdo',
     'role_ST'  => 'Delantero centro',
     'role_FW'  => 'Delantero',
+    // Abreviaturas traducidas (mostradas en el selector y el glosario; el
+    // valor guardado en la base siempre es el codigo EN, ej. "CB")
+    'role_abbr_GK'  => 'POR',
+    'role_abbr_CB'  => 'DFC',
+    'role_abbr_RB'  => 'LD',
+    'role_abbr_LB'  => 'LI',
+    'role_abbr_RWB' => 'CAD',
+    'role_abbr_LWB' => 'CAI',
+    'role_abbr_SW'  => 'LIB',
+    'role_abbr_CDM' => 'MCD',
+    'role_abbr_CM'  => 'MC',
+    'role_abbr_CAM' => 'MP',
+    'role_abbr_RM'  => 'MD',
+    'role_abbr_LM'  => 'MI',
+    'role_abbr_RW'  => 'ED',
+    'role_abbr_LW'  => 'EI',
+    'role_abbr_ST'  => 'DC',
+    'role_abbr_FW'  => 'DEL',
     'squad_contract_alert'   => 'Contratos que expiran esta temporada',
 
     // Táctica

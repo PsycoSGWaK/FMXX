@@ -180,6 +180,24 @@ $t = [
     'role_LW'  => 'Ailier gauche',
     'role_ST'  => 'Buteur',
     'role_FW'  => 'Attaquant',
+    // Abréviations traduites (affichées dans le sélecteur et le glossaire ;
+    // la valeur enregistrée en base reste toujours le code EN, ex. "CB")
+    'role_abbr_GK'  => 'GB',
+    'role_abbr_CB'  => 'DC',
+    'role_abbr_RB'  => 'DD',
+    'role_abbr_LB'  => 'DG',
+    'role_abbr_RWB' => 'PD',
+    'role_abbr_LWB' => 'PG',
+    'role_abbr_SW'  => 'LIB',
+    'role_abbr_CDM' => 'MDC',
+    'role_abbr_CM'  => 'MC',
+    'role_abbr_CAM' => 'MOC',
+    'role_abbr_RM'  => 'MD',
+    'role_abbr_LM'  => 'MG',
+    'role_abbr_RW'  => 'AD',
+    'role_abbr_LW'  => 'AG',
+    'role_abbr_ST'  => 'BU',
+    'role_abbr_FW'  => 'ATT',
     'squad_contract_alert'   => 'Contrats expirant cette saison',
 
     // Tactic
