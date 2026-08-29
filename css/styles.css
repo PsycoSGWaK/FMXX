@@ -285,6 +285,13 @@ html {
     white-space: nowrap;
 }
 
+#effectifTable .role-select {
+    width: auto;
+    min-width: 6rem;
+    padding: .2rem 1.6rem .2rem .5rem;
+    font-size: .82rem;
+}
+
 /* Âge -> Poste et Valeur transfert -> Expire le : une colonne alignée à
    droite suivie d'une colonne alignée à gauche colle sinon les deux
    valeurs l'une contre l'autre. On ajoute l'air manquant pour retrouver
@@ -1023,6 +1030,23 @@ footer a.text-secondary:hover {
 }
 
 .poste-legend-count { color: var(--muted); }
+
+/* Glossaire des rôles (CB = Défenseur central...), pied du tableau Effectif */
+.role-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.1rem;
+    font-size: .82rem;
+    color: var(--muted);
+}
+
+.role-legend-item strong { color: var(--text); }
+
+.role-legend-sep {
+    margin: .7rem 0;
+    border: none;
+    border-top: 1px solid var(--border);
+}
 
 /* Flash de confirmation après un auto-save (select statut mercato) */
 .mercato-status-saved {
