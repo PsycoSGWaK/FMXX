@@ -543,7 +543,7 @@ footer a.text-secondary:hover {
 .how-section {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 3rem 1.75rem;
+    padding: 3rem 1.75rem 0;
 }
 
 .how-title {
