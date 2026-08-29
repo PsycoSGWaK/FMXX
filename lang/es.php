@@ -163,8 +163,6 @@ $t = [
     'squad_pos_midfield'     => 'Centrocampo',
     'squad_pos_attack'       => 'Ataque',
     'squad_chart_by_position'=> 'Plantilla por posición',
-    'squad_chart_age_dist'   => 'Distribución de edades',
-    'squad_chart_players'    => 'Jugadores',
     'squad_contract_alert'   => 'Contratos que expiran esta temporada',
 
     // Táctica

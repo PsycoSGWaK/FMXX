@@ -163,8 +163,6 @@ $t = [
     'squad_pos_midfield'     => 'Midfield',
     'squad_pos_attack'       => 'Attack',
     'squad_chart_by_position'=> 'Squad by position',
-    'squad_chart_age_dist'   => 'Age distribution',
-    'squad_chart_players'    => 'Players',
     'squad_contract_alert'   => 'Contracts expiring this season',
 
     // Tactic

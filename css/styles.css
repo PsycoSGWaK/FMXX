@@ -30,7 +30,6 @@
     --chart-2: #eb6834; /* orange */
     --chart-3: #1baf7a; /* aqua */
     --chart-4: #eda100; /* jaune */
-    --chart-seq: #2a78d6; /* hue séquentiel par défaut (magnitude) */
 }
 
 /* ---------- Mode sombre ---------- */
@@ -53,7 +52,6 @@
     --chart-2: #d95926;
     --chart-3: #199e70;
     --chart-4: #c98500;
-    --chart-seq: #3987e5;
 }
 
 /* ---------- Typographie ---------- */

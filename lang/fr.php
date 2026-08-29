@@ -163,8 +163,6 @@ $t = [
     'squad_pos_midfield'     => 'Milieu',
     'squad_pos_attack'       => 'Attaque',
     'squad_chart_by_position'=> 'Répartition par poste',
-    'squad_chart_age_dist'   => 'Distribution des âges',
-    'squad_chart_players'    => 'Joueurs',
     'squad_contract_alert'   => 'Contrats expirant cette saison',
 
     // Tactic
