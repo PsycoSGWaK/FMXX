@@ -43,6 +43,7 @@ require_once(__DIR__ . "/lang.php");
     <script src="js/password-strength.js"></script>
     <script src="js/confirm-modal.js"></script>
     <script src="js/theme-toggle.js"></script>
+    <script src="js/auto-dismiss-alerts.js"></script>
     <style>
         html, body { height: 100%; }
         body { display: flex; flex-direction: column; min-height: 100dvh; }
