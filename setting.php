@@ -9,7 +9,7 @@ $currentIdPays   = $_SESSION['idPays']   ?? null;
 $currentDivision = $_SESSION['division'] ?? null;
 $currentClub     = $_SESSION['club']     ?? '';
 
-$compsEurope = $pdo->query("SELECT idCompetition, nomCompetition, genre FROM competition WHERE typeCompetition = 'Continentale' ORDER BY genre, qualif_rang_min")->fetchAll();
+$compsEurope = $pdo->query("SELECT idCompetition, nomCompetition, genre FROM competition WHERE typeCompetition = 'Continentale' ORDER BY genre, nomCompetition")->fetchAll();
 
 $currentOverride = $pdo->prepare("SELECT comp_europe_override FROM user WHERE idUser = :id");
 $currentOverride->execute(['id' => $_SESSION['idUser']]);

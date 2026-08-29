@@ -133,13 +133,11 @@ switch ($action) {
         $idP     = (int)($_POST['idPays'] ?? 0);
         $div     = $_POST['division'] ?? null;
         $gen     = $_POST['genre'] ?? '';
-        $qualMin = $_POST['qualif_rang_min'] !== '' ? (int)$_POST['qualif_rang_min'] : null;
-        $qualMax = $_POST['qualif_rang_max'] !== '' ? (int)$_POST['qualif_rang_max'] : null;
         if (!$id || !$nom || !$type || !$idP || !$gen) {
             redirect('competitions', 'err', 'Champs obligatoires manquants.');
         }
-        $pdo->prepare("UPDATE competition SET nomCompetition=?, typeCompetition=?, idPays=?, division=?, genre=?, qualif_rang_min=?, qualif_rang_max=? WHERE idCompetition=?")
-            ->execute([$nom, $type, $idP, $div ?: null, $gen, $qualMin, $qualMax, $id]);
+        $pdo->prepare("UPDATE competition SET nomCompetition=?, typeCompetition=?, idPays=?, division=?, genre=? WHERE idCompetition=?")
+            ->execute([$nom, $type, $idP, $div ?: null, $gen, $id]);
         redirect('competitions', 'msg', 'Compétition modifiée.');
 
     case 'edit_club':
