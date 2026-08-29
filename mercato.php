@@ -190,7 +190,8 @@ function formatBudget(int $val): string {
                                 <td><?= htmlspecialchars($a['poste'] ?? '—') ?></td>
                                 <td class="text-end"><?= $a['prix'] !== null ? formatBudget((int)$a['prix']) : '—' ?></td>
                                 <td><span class="badge bg-<?= $statutColors[$a['statut']] ?? 'secondary' ?>"><?= $statutLabels[$a['statut']] ?? $a['statut'] ?></span></td>
-                                <td class="d-flex gap-1 align-items-center">
+                                <td>
+                                <div class="d-flex gap-1 align-items-center">
                                     <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                             data-bs-toggle="modal" data-bs-target="#editArriveeModal"
                                             data-id="<?= $a['idArrivee'] ?>"
@@ -208,6 +209,7 @@ function formatBudget(int $val): string {
                                             <ion-icon name="trash-outline"></ion-icon>
                                         </button>
                                     </form>
+                                </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
