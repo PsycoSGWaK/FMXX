@@ -24,6 +24,12 @@
     --warning-color: #b9720f;
     --warning-bg: #fbead2;
     --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+
+    /* Palette catégorielle (graphiques) — ordre fixe validé CVD, ne jamais réordonner */
+    --chart-1: #2a78d6; /* bleu */
+    --chart-2: #eb6834; /* orange */
+    --chart-3: #1baf7a; /* aqua */
+    --chart-4: #eda100; /* jaune */
 }
 
 /* ---------- Mode sombre ---------- */
@@ -41,6 +47,11 @@
     --heading: #eef1f8;
     --success-bg: #113224;
     --warning-bg: #3a2a0c;
+
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
 }
 
 /* ---------- Typographie ---------- */
@@ -256,6 +267,38 @@ html {
     color: var(--muted);
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
+}
+
+/* Effectif : colonnes moins collées, plus d'air pour la lecture. */
+#effectifTable th, #effectifTable td {
+    padding-left: .85rem;
+    padding-right: .85rem;
+}
+
+#effectifTable td {
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+}
+
+#effectifTable td.text-end,
+#effectifTable th.text-end {
+    white-space: nowrap;
+}
+
+#effectifTable .role-select {
+    width: auto;
+    min-width: 6rem;
+    padding: .2rem 1.6rem .2rem .5rem;
+    font-size: .82rem;
+}
+
+/* Âge -> Poste et Valeur transfert -> Expire le : une colonne alignée à
+   droite suivie d'une colonne alignée à gauche colle sinon les deux
+   valeurs l'une contre l'autre. On ajoute l'air manquant pour retrouver
+   le même écart visuel que Buts -> Note (référence). */
+#effectifTable th:nth-child(3), #effectifTable td:nth-child(3),
+#effectifTable th:nth-child(9), #effectifTable td:nth-child(9) {
+    padding-right: 2.5rem;
 }
 
 .data-table th[data-sort]:hover,
@@ -518,137 +561,34 @@ footer a.text-secondary:hover {
 }
 
 /* =========================================================
-   App shell — sidebar de navigation (utilisateurs connectés)
+   Navbar de navigation (utilisateurs connectés)
    ========================================================= */
 
-.app-shell {
-    display: flex;
-    align-items: stretch;
-}
-
-.sidebar {
-    width: 236px;
-    flex-shrink: 0;
-    align-self: flex-start;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--ink);
-    color: #cdd7ee;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 1.4rem 1rem;
-}
-
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-    padding: 0 .35rem;
-    text-decoration: none;
-}
-
-.sidebar-brand img { width: 32px; height: 32px; display: block; }
-
-.sidebar-brand-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.25rem;
-    letter-spacing: .01em;
-    color: #fff;
-    text-transform: uppercase;
-    line-height: 1;
-}
-
-.sidebar-brand-name em {
-    font-style: normal;
-    color: #ff5a63;
-}
-
-.sidebar-module {
-    margin-top: -1.1rem;
-    padding: 0 .35rem;
+.app-navbar-module {
     font-size: .68rem;
     font-weight: 600;
-    letter-spacing: .08em;
+    letter-spacing: .07em;
     text-transform: uppercase;
-    color: #7f8bb3;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    padding: .15rem .5rem;
+    margin-left: .2rem;
 }
 
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
-    flex: 1;
-}
+.nav-link.admin-link { color: var(--brand); }
 
-.side-link {
-    display: flex;
-    align-items: center;
-    gap: .8rem;
-    padding: .6rem .7rem;
-    border-radius: .55rem;
-    text-decoration: none;
-    color: #b7c1e0;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: .95rem;
-    letter-spacing: .03em;
-    text-transform: uppercase;
-    transition: background-color .15s ease, color .15s ease;
-}
-
-.side-link svg { width: 19px; height: 19px; flex-shrink: 0; }
-
-.side-link:hover { background: var(--ink-raised); color: #fff; }
-
-.side-link.active { background: var(--brand); color: #fff; }
-
-.side-link.admin-link { color: #ff9298; }
-
-.side-link.admin-link:hover { background: rgba(213, 34, 44, .18); color: #ffb0b4; }
-
-.sidebar-foot {
-    display: flex;
-    flex-direction: column;
-    gap: .6rem;
-    padding-top: .8rem;
-    border-top: 1px solid rgba(255, 255, 255, .1);
-}
-
-.sidebar-foot .btn-group a.btn {
-    font-size: .72rem;
-}
-
-.theme-btn {
-    display: flex;
-    align-items: center;
-    gap: .6rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, .16);
-    color: #b7c1e0;
-    border-radius: .55rem;
-    padding: .5rem .7rem;
-    font-size: .82rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color .15s ease, color .15s ease;
-}
-
-.theme-btn:hover { border-color: rgba(255, 255, 255, .4); color: #fff; }
-
-.theme-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-link.admin-link:hover, .nav-link.admin-link.active { color: var(--brand-dark); }
 
 .user-chip {
     display: flex;
     align-items: center;
     gap: .6rem;
-    padding: .4rem .5rem;
+    padding: .3rem .5rem;
     border-radius: .55rem;
 }
+
+.user-chip:hover { background: var(--panel-2); }
 
 .user-avatar {
     width: 30px;
@@ -665,30 +605,40 @@ footer a.text-secondary:hover {
     flex-shrink: 0;
 }
 
-.user-name { font-size: .82rem; font-weight: 600; color: #e6eaf6; }
+.user-name { font-size: .82rem; font-weight: 600; color: var(--text); }
 
-.sidebar .dropdown-menu {
-    max-width: 204px;
+.theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    transition: border-color .15s ease, background-color .15s ease;
 }
 
-.sidebar .dropdown-item {
+.theme-toggle:hover { background: var(--panel-2); border-color: var(--muted); }
+
+.user-role { font-size: .68rem; color: var(--muted); }
+
+.user-dropdown .dropdown-menu {
+    max-width: 220px;
+}
+
+.user-dropdown .dropdown-item {
     white-space: normal;
     padding: .55rem 1rem;
     line-height: 1.35;
 }
 
-.user-role { font-size: .68rem; color: #7f8bb3; }
-
-.main {
-    flex: 1;
-    min-width: 0;
-}
-
 @media (max-width: 900px) {
-    .sidebar { width: 76px; padding: 1.2rem .6rem; }
-    .sidebar-brand-name, .sidebar-module, .side-link span,
-    .user-name, .user-role, .theme-btn span, .sidebar-foot .btn-group { display: none; }
-    .sidebar-brand, .side-link, .user-chip, .theme-btn { justify-content: center; }
+    .app-navbar-module { display: none; }
 }
 
 /* ---------- Contenu principal : contexte, onglets segmentés ---------- */
@@ -712,7 +662,39 @@ footer a.text-secondary:hover {
     flex-wrap: wrap;
 }
 
-.context-left { display: flex; align-items: center; gap: .9rem; }
+.context-left { display: flex; align-items: center; gap: 1.2rem; }
+
+.context-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.context-left .context-brand {
+    padding-right: 1.2rem;
+    border-right: 1px solid var(--border);
+}
+
+.brand-block-center { text-align: center; margin-bottom: 1.5rem; }
+
+.brand-block-center .context-brand-name,
+.brand-block-center .app-navbar-module { text-align: left; }
+
+.context-brand img { width: 46px; height: 46px; object-fit: contain; display: block; }
+
+.context-brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--heading);
+}
+
+.context-brand-name em { font-style: normal; color: var(--brand); }
 
 .context-title {
     font-family: var(--font-display);
@@ -724,9 +706,39 @@ footer a.text-secondary:hover {
     color: var(--heading);
 }
 
-.context-meta { font-size: .82rem; color: var(--muted); margin-top: .25rem; }
+.context-meta {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .82rem;
+    color: var(--muted);
+    margin-top: .3rem;
+}
 
 .context-right { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+
+.tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.lang-flags { display: flex; align-items: center; gap: .3rem; }
+
+.lang-flag {
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: .45;
+    filter: grayscale(60%);
+    transition: opacity .15s ease, filter .15s ease;
+    text-decoration: none;
+}
+
+.lang-flag:hover { opacity: .8; filter: grayscale(0%); }
+
+.lang-flag.active { opacity: 1; filter: grayscale(0%); }
 
 .pill {
     display: inline-flex;
@@ -815,7 +827,7 @@ footer a.text-secondary:hover {
 
 .objective-row {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr auto;
+    grid-template-columns: 1.4fr 1fr 1fr 8.5rem;
     gap: 1.2rem;
     align-items: center;
     padding: 1rem 1.3rem;
@@ -875,6 +887,7 @@ footer a.text-secondary:hover {
     font-size: .75rem;
     font-weight: 700;
     white-space: nowrap;
+    justify-self: start;
 }
 
 .status-chip svg { width: 13px; height: 13px; }
@@ -882,6 +895,144 @@ footer a.text-secondary:hover {
 .status-success { background: var(--success-bg); color: var(--success); }
 .status-danger { background: var(--panel-2); color: var(--brand); }
 .status-pending { background: var(--panel-2); color: var(--muted); }
+
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.player-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .68rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.player-name { display: block; }
+
+/* ---------- Statut mercato (boutons segmentés, colonne Effectif) ---------- */
+
+.mercato-status-toggle {
+    display: inline-flex;
+    background: var(--panel-2);
+    border-radius: .5rem;
+    padding: .15rem;
+    gap: .15rem;
+}
+
+.mercato-status-toggle .ms-opt {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .3rem .55rem;
+    border-radius: .35rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.mercato-status-toggle .ms-opt:hover:not(.active) {
+    color: var(--heading);
+}
+
+.mercato-status-toggle .ms-opt.active {
+    background: var(--panel);
+    color: var(--heading);
+    box-shadow: 0 .15rem .35rem -.2rem hsl(var(--shadow-color) / .3);
+}
+
+.mercato-status-toggle .ms-opt.ms-sell.active { background: var(--success-bg); color: var(--success); }
+.mercato-status-toggle .ms-opt.ms-loan.active { background: rgba(13, 110, 253, .15); color: #0d6efd; }
+.mercato-status-toggle .ms-opt.ms-free.active { background: rgba(213, 34, 44, .12); color: var(--brand); }
+
+/* ---------- Date de fin de contrat (colonne Expire) ---------- */
+
+.expire-this { color: var(--brand); font-weight: 700; }
+.expire-next { color: #e0a030; font-weight: 700; }
+
+/* ---------- Répartition par poste (barre empilée) ---------- */
+
+.poste-bar {
+    display: flex;
+    height: 14px;
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--panel-2);
+}
+
+.poste-seg {
+    height: 100%;
+    border-right: 2px solid var(--panel);
+}
+
+.poste-seg:last-child { border-right: none; }
+
+.poste-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .9rem;
+    margin-top: 1rem;
+}
+
+.poste-legend-item {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: .82rem;
+    color: var(--text);
+}
+
+.poste-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.poste-legend-count { color: var(--muted); }
+
+/* Glossaire des rôles (CB = Défenseur central...), pied du tableau Effectif */
+.role-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.1rem;
+    font-size: .82rem;
+    color: var(--muted);
+}
+
+.role-legend-item strong { color: var(--text); }
+
+.role-legend-sep {
+    margin: .7rem 0;
+    border: none;
+    border-top: 1px solid var(--border);
+}
+
+/* Flash de confirmation après un auto-save (select statut mercato) */
+.mercato-status-saved {
+    animation: mercatoStatusSaved .9s ease;
+}
+
+@keyframes mercatoStatusSaved {
+    0%   { box-shadow: 0 0 0 2px var(--success); }
+    100% { box-shadow: 0 0 0 2px transparent; }
+}
+
+.player-nat {
+    font-size: .74rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
 
 /* ---------- Bandeau budget ---------- */
 
@@ -937,6 +1088,14 @@ footer a.text-secondary:hover {
 .budget-input::placeholder { color: rgba(255, 255, 255, .35); }
 .budget-input:focus { outline: none; }
 
+/* Valeurs elevees : les fleches +/-1 du input[type=number] n'ont pas d'usage ici. */
+.budget-input::-webkit-outer-spin-button,
+.budget-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.budget-input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
 .budget-input-row span {
     font-family: var(--font-body);
     font-weight: 500;
@@ -945,6 +1104,21 @@ footer a.text-secondary:hover {
 }
 
 .budget-field .btn-brand { align-self: flex-start; margin-top: .2rem; }
+
+.budget-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.budget-value small {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: .85rem;
+    color: #b9c6e6;
+}
 
 .btn-brand {
     display: inline-flex;

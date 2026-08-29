@@ -14,6 +14,10 @@ require_once("navbar.php");
 ?>
 <div class="container py-5">
 
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-4">
+        <?php require("usermenu.php"); ?>
+    </div>
+
     <div class="text-center mb-5">
         <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="72" style="object-fit:contain;" class="mb-3">
         <h1 class="fw-bold mb-1">iDev <span class="text-brand">Compagnon</span></h1>

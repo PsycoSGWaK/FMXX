@@ -24,7 +24,18 @@ if ($userType !== '1') {
 $tab = $_GET['tab'] ?? 'users';
 ?>
 <div class="main-content">
-    <div class="context-title">Administration</div>
+    <div class="context-bar">
+        <div class="context-left">
+            <a href="hub.php" class="context-brand">
+                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+            </a>
+            <span class="context-title">Administration</span>
+        </div>
+        <div class="context-right">
+            <?php require("usermenu.php"); ?>
+            <a href="index.php" class="btn-ghost"><?= $t['nav_back_index'] ?></a>
+        </div>
+    </div>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
@@ -86,7 +97,8 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($u['club'] ?? '—') ?></td>
                             <td><?= htmlspecialchars($u['genre'] ?? '—') ?></td>
                             <td><?= htmlspecialchars($u['division'] ?? '—') ?></td>
-                            <td class="d-flex gap-1 align-items-center">
+                            <td>
+                            <div class="d-flex gap-1 align-items-center">
                                 <button class="btn btn-sm btn-warning" title="Réinitialiser le mot de passe" aria-label="Réinitialiser le mot de passe"
                                     data-bs-toggle="modal" data-bs-target="#modalResetPwd"
                                     data-id="<?= $u['idUser'] ?>"
@@ -119,6 +131,7 @@ $tab = $_GET['tab'] ?? 'users';
                                 <?php else: ?>
                                 <span class="text-muted small">Vous</span>
                                 <?php endif; ?>
+                            </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -248,7 +261,8 @@ $tab = $_GET['tab'] ?? 'users';
                                     <?= $c['qualif_rang_min'] ?>–<?= $c['qualif_rang_max'] ?>
                                 <?php else: ?>—<?php endif; ?>
                             </td>
-                            <td class="d-flex gap-1 align-items-center">
+                            <td>
+                            <div class="d-flex gap-1 align-items-center">
                                 <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditComp"
                                     data-id="<?= $c['idCompetition'] ?>"
@@ -271,6 +285,7 @@ $tab = $_GET['tab'] ?? 'users';
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
+                            </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -430,7 +445,8 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($e['nomPays'] ?? '—') ?></td>
                             <td><?= $e['genre'] ?></td>
                             <td><?= $e['division'] ?></td>
-                            <td class="d-flex gap-1 align-items-center">
+                            <td>
+                            <div class="d-flex gap-1 align-items-center">
                                 <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditClub"
                                     data-id="<?= $e['idEquipe'] ?>"
@@ -450,6 +466,7 @@ $tab = $_GET['tab'] ?? 'users';
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
+                            </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -573,7 +590,8 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($p['paysA2C'] ?? '') ?></td>
                             <td><?= htmlspecialchars($p['paysA3C'] ?? '') ?></td>
                             <td><?= $p['paysNum'] ?? '' ?></td>
-                            <td class="d-flex gap-1 align-items-center">
+                            <td>
+                            <div class="d-flex gap-1 align-items-center">
                                 <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
                                     data-bs-toggle="modal" data-bs-target="#modalEditPays"
                                     data-id="<?= $p['idPays'] ?>"
@@ -593,6 +611,7 @@ $tab = $_GET['tab'] ?? 'users';
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </button>
                                 </form>
+                            </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

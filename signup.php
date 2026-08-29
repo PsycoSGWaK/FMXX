@@ -17,16 +17,16 @@ $signupErrCode = $_GET['error'] ?? '';
         </div>
         <div class="modal-body">
             <?php if ($signupErrorCode): ?>
-                <div class="alert alert-danger py-2"><?= htmlspecialchars(validation_message($signupErrorCode, $t)) ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= htmlspecialchars(validation_message($signupErrorCode, $t)) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($signupErrCode === 'signup_username'): ?>
-                <div class="alert alert-danger py-2"><?= $t['signup_err_username'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['signup_err_username'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($signupErrCode === 'signup_mail'): ?>
-                <div class="alert alert-danger py-2"><?= $t['signup_err_mail'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['signup_err_mail'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($signupErrCode === 'signup_missing'): ?>
-                <div class="alert alert-danger py-2"><?= $t['signup_err_missing'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['signup_err_missing'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <?php if (($_GET['signup'] ?? '') === 'ok'): ?>
-                <div class="alert alert-success py-2"><?= $t['signup_ok'] ?></div>
+                <div class="alert alert-success alert-dismissible fade show py-2"><?= $t['signup_ok'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <form class="form-login" action="signup_post.php" method="post">
                 <?= csrf_field() ?>

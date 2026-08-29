@@ -95,6 +95,9 @@ const COL_MAP = [
     'prix demandé'         => 'prixDemande',
     'prix demande'         => 'prixDemande',
     'asking price'         => 'prixDemande',
+    // Salaire
+    'salaire'              => 'salaire',
+    'wage'                 => 'salaire',
     // Expiration contrat
     'expire le'            => 'expireContrat',
     'contract expires'     => 'expireContrat',
@@ -106,6 +109,10 @@ function parseAmount(string $value): ?int {
     if ($v === '' || $v === '-') return null;
     // Supprimer symboles monétaires, espaces normales et insécables
     $v = str_replace(['€', '$', '£', ' ', "\xc2\xa0", "\u{202F}"], '', $v);
+    // Périodicité de salaire FM ("p/m", "p/w", "p/a"...) : le "m" de "p/m" serait sinon
+    // confondu avec le multiplicateur "millions" ci-dessous. Période ignorée (pas de
+    // conversion) : à l'utilisateur de rester cohérent avec la période de son budget salaires.
+    $v = preg_replace('/p\/[a-z]$/i', '', $v);
     $v = trim($v);
     if ($v === '' || $v === '-') return null;
     // Détecter K ou M en fin de chaîne (insensible à la casse)
@@ -193,8 +200,8 @@ $pdo->prepare("DELETE FROM tactic WHERE idUser = :idUser")->execute(['idUser' =>
 $pdo->prepare("DELETE FROM joueur WHERE idUser = :idUser")->execute(['idUser' => $idUser]);
 
 $stmt = $pdo->prepare(
-    'INSERT INTO joueur (nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy, montantTransfert, prixDemande, expireContrat, idUser)
-     VALUES (:nom, :age, :numero, :nat, :pdn, :poste, :app, :pDec, :buts, :noteMoy, :montantTransfert, :prixDemande, :expireContrat, :idUser)'
+    'INSERT INTO joueur (nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy, montantTransfert, prixDemande, salaire, expireContrat, idUser)
+     VALUES (:nom, :age, :numero, :nat, :pdn, :poste, :app, :pDec, :buts, :noteMoy, :montantTransfert, :prixDemande, :salaire, :expireContrat, :idUser)'
 );
 
 function colVal(array $row, array $colIndex, string $field): ?string {
@@ -205,7 +212,8 @@ function colVal(array $row, array $colIndex, string $field): ?string {
 }
 
 foreach ($rows as $row) {
-    $prixRaw = colVal($row, $colIndex, 'prixDemande');
+    $prixRaw    = colVal($row, $colIndex, 'prixDemande');
+    $salaireRaw = colVal($row, $colIndex, 'salaire');
     $stmt->execute([
         'nom'              => colVal($row, $colIndex, 'nom'),
         'age'              => colVal($row, $colIndex, 'age'),
@@ -219,6 +227,7 @@ foreach ($rows as $row) {
         'noteMoy'          => colVal($row, $colIndex, 'noteMoy'),
         'montantTransfert' => colVal($row, $colIndex, 'montantTransfert'),
         'prixDemande'      => $prixRaw !== null ? parseAmount($prixRaw) : null,
+        'salaire'          => $salaireRaw !== null ? parseAmount($salaireRaw) : null,
         'expireContrat'    => colVal($row, $colIndex, 'expireContrat'),
         'idUser'           => $idUser,
     ]);
