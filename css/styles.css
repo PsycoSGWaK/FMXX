@@ -1087,6 +1087,14 @@ footer a.text-secondary:hover {
 .budget-input::placeholder { color: rgba(255, 255, 255, .35); }
 .budget-input:focus { outline: none; }
 
+/* Valeurs elevees : les fleches +/-1 du input[type=number] n'ont pas d'usage ici. */
+.budget-input::-webkit-outer-spin-button,
+.budget-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.budget-input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
 .budget-input-row span {
     font-family: var(--font-body);
     font-weight: 500;
