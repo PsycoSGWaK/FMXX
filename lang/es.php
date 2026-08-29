@@ -1,15 +1,19 @@
 <?php
 $t = [
     // Página de inicio (no conectado)
-    'landing_tagline'        => 'Tu compañero de Football Manager — objetivos de temporada, gestión de plantilla y táctica de suplentes, todo en un solo lugar.',
+    'landing_eyebrow'        => 'Plataforma compañera multijuego',
+    'landing_tagline'        => 'Tu juego, tu gestión. Sigue tus objetivos, organiza tus recursos y afina tu estrategia — optimiza cada decisión crucial, sea cual sea el juego de gestión en el que juegues.',
     'landing_login'          => 'Iniciar sesión',
     'landing_signup'         => 'Crear una cuenta',
-    'landing_feat1_title'    => 'Objetivos de temporada',
-    'landing_feat1_text'     => 'Define tus objetivos por competición y sigue tu tasa de éxito en tiempo real.',
-    'landing_feat2_title'    => 'Gestión de plantilla',
-    'landing_feat2_text'     => 'Importa tu plantilla desde FM26, filtra, ordena y gestiona los estados de mercado y contratos.',
-    'landing_feat3_title'    => 'Táctica de suplentes',
-    'landing_feat3_text'     => 'Compón tu once titular, define tus suplentes y supersuplentes en 6 formaciones.',
+    'landing_games_title'    => 'Juegos disponibles',
+    'landing_game_available' => 'Disponible',
+    'landing_how_title'      => 'Cómo funciona',
+    'landing_how1_title'     => 'Crea una cuenta',
+    'landing_how1_text'      => 'Gratis, en unos segundos. Cada cuenta tiene sus propios datos, aislados de los demás jugadores.',
+    'landing_how2_title'     => 'Elige tu juego',
+    'landing_how2_text'      => 'Football está disponible desde hoy. F1 Manager y Farming Simulator llegarán progresivamente.',
+    'landing_how3_title'     => 'Sigue tu progreso',
+    'landing_how3_text'      => 'Objetivos, recursos, resultados: todo centralizado y actualizado a medida que juegas.',
 
     // Navbar
     'nav_home'         => 'Inicio',

@@ -348,68 +348,286 @@ footer a.text-secondary:hover {
 /* ---------- Landing / Hero ---------- */
 
 .hero-dark {
-    background: radial-gradient(ellipse 120% 80% at 20% -10%, var(--ink-soft), transparent),
+    position: relative;
+    background: radial-gradient(ellipse 90% 90% at 50% 55%, var(--ink-soft), transparent),
                 linear-gradient(135deg, var(--ink) 0%, #0d2a5e 60%, var(--ink) 100%);
-    min-height: calc(100dvh - 120px);
+    overflow: hidden;
+    /* Grandit pour occuper tout l'espace disponible sur les grands ecrans
+       (voir body.visitor-page plus bas) au lieu de laisser un vide sous
+       le footer ; son contenu (.hero-content) est alors centre dedans. */
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-inner {
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.75rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.hero-top {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
 }
 
-.hero-feature-list {
-    border-top: 1px solid rgba(255, 255, 255, .14);
-    max-width: 480px;
-}
-
-.hero-feature-item {
+.hero-content {
+    flex: 1;
     display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    padding: 1.1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, .14);
+    align-items: center;
+    justify-content: center;
 }
 
-.hero-feature-icon {
-    font-size: 1.4rem;
-    line-height: 1;
-    width: 2.25rem;
-    flex-shrink: 0;
-}
+.hero-tools { display: flex; align-items: center; gap: .6rem; }
 
-.hero-feature-item h6 {
-    color: #fff;
-}
-
-.hero-feature-item p {
+.hero-dark .theme-toggle {
+    border-color: rgba(255, 255, 255, .18);
     color: #a8c0e8;
 }
 
-.pitch-panel {
-    background: rgba(255, 255, 255, .05);
+.hero-dark .theme-toggle:hover {
+    background: rgba(255, 255, 255, .08);
+    border-color: rgba(255, 255, 255, .35);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-top { margin-bottom: 3rem; }
+}
+
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: .78rem;
+    letter-spacing: .12em;
+    color: #9fb6e8;
+    margin-bottom: 1.1rem;
+}
+
+.hero-eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 2px;
+    background: var(--brand);
+    display: inline-block;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: .92;
+    font-size: clamp(2.8rem, 6vw, 4.6rem);
+    color: #fff;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+}
+
+.hero-tagline {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: #a8c0e8;
+    max-width: 470px;
+    margin: 0 0 2rem;
+}
+
+.hero-cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-bottom: 3rem; }
+
+.btn-ghost-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem 1rem;
+    border-radius: .55rem;
+    font-weight: 600;
+    font-size: .84rem;
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .35);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-ghost-hero:hover { border-color: #fff; color: #fff; }
+
+/* Panneau "jeux disponibles" */
+
+.game-panel {
+    background: rgba(255, 255, 255, .04);
     border: 1px solid rgba(255, 255, 255, .12);
     border-radius: 1rem;
-    padding: 1.75rem 2.25rem;
-    max-width: 320px;
+    padding: 1.6rem;
+}
+
+.game-panel-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: .85rem;
+    color: #cbd8f2;
+    margin: 0 0 1.1rem;
+}
+
+.game-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: .7rem;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .03);
+    margin-bottom: .7rem;
+}
+
+.game-row:last-child { margin-bottom: 0; }
+
+.game-row.is-active {
+    border-color: rgba(213, 34, 44, .5);
+    background: rgba(213, 34, 44, .1);
+}
+
+.game-row.is-soon { opacity: .55; }
+
+.game-badge {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: .6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: .82rem;
+    letter-spacing: .02em;
+    color: #cbd8f2;
+    background: rgba(255, 255, 255, .08);
+}
+
+.game-row.is-active .game-badge { background: var(--brand); color: #fff; }
+
+.game-body { flex: 1; min-width: 0; }
+
+.game-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    color: #fff;
+    margin: 0 0 .15rem;
+}
+
+.game-desc { margin: 0; font-size: .8rem; color: #93add9; }
+
+.game-tag {
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: .68rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .3rem .6rem;
+    border-radius: .35rem;
+    background: rgba(255, 255, 255, .1);
+    color: #93add9;
+}
+
+.game-row.is-active .game-tag { background: var(--brand); color: #fff; }
+
+/* Section "Comment ça marche" (sous le hero) */
+
+.how-section {
+    max-width: 1180px;
     margin: 0 auto;
+    padding: 3rem 1.75rem;
 }
 
-.pitch-panel svg {
-    width: 100%;
-    height: auto;
-    display: block;
+/* La landing n'utilise pas .main-content (flex:1) : sans element pour
+   absorber l'espace restant, le sticky-footer global (footer en
+   margin-top:auto !important via .mt-auto) collait le footer tout en bas
+   du viewport en laissant un vide au-dessus de lui. C'est .hero-dark
+   (flex:1 0 auto, voir plus haut) qui joue ce role ici a la place :
+   il grandit pour occuper l'espace disponible et son propre contenu
+   (.hero-content) est centre dedans, donc le footer suit .how-section
+   sans vide ni dessus ni dessous, quelle que soit la hauteur de l'ecran. */
+body.visitor-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
 }
 
-.pitch-line {
-    stroke: rgba(255, 255, 255, .35);
-    fill: none;
-    stroke-width: 2;
+body.visitor-page footer {
+    margin-top: 0 !important;
 }
 
-.pitch-dot {
-    fill: #fff;
+.how-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    font-size: 1.6rem;
+    color: var(--heading);
+    border-left: 3px solid var(--brand);
+    padding-left: .8rem;
+    margin: 0 0 2.2rem;
 }
 
-.pitch-dot-gk {
-    fill: var(--brand);
+.how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 800px) {
+    .how-steps { grid-template-columns: 1fr; }
+}
+
+.how-step-num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: .6rem;
+}
+
+.how-step h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    font-size: 1.05rem;
+    color: var(--heading);
+    margin: 0 0 .4rem;
+}
+
+.how-step p {
+    margin: 0;
+    font-size: .9rem;
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 32ch;
 }
 
 /* ---------- Barre de statistiques ---------- */

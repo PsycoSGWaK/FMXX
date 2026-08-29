@@ -18,41 +18,16 @@ function navActive(string $page, string $current): string {
     // à l'endroit qui lui convient.
     ?>
 <body>
-<?php } else { ?>
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
-                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="36" style="object-fit:contain;">
-                iDev <span class="text-brand">Compagnon</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link <?= navActive('index.php', $currentPage) ?>" href="index.php"><?= $t['nav_home'] ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= navActive('about.php', $currentPage) ?>" href="about.php"><?= $t['nav_about'] ?></a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center gap-2">
-                    <!-- Switcher de langue -->
-                    <div class="btn-group btn-group-sm" role="group">
-                        <?php $currentLang = $_SESSION['lang'] ?? 'fr'; ?>
-                        <a href="lang_post.php?lang=fr" class="btn <?= $currentLang === 'fr' ? 'btn-secondary' : 'btn-outline-secondary' ?>">FR</a>
-                        <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
-                        <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
-                        <ion-icon name="moon-outline"></ion-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
+<?php } else {
+    // Pas de barre de nav pour le visiteur : la landing (index.php) compose
+    // son propre en-tête (logo/langue/thème) directement dans le hero.
+    $currentLang = $_SESSION['lang'] ?? 'fr';
+    // La landing ne passe pas par .main-content (flex:1) : sans cette classe,
+    // le footer (sticky via margin-top:auto) se collerait au bas du viewport
+    // et laisserait un vide sous le contenu sur les écrans hauts.
+    $bodyClass = $currentPage === 'index.php' ? ' class="visitor-page"' : '';
+    ?>
+<body<?= $bodyClass ?>>
 <?php } ?>
 <!-- Modal profil -->
 <div class="modal fade" tabindex="-1" id="profileModal" aria-hidden="true">
