@@ -665,14 +665,22 @@ footer a.text-secondary:hover {
 .context-left { display: flex; align-items: center; gap: 1.2rem; }
 
 .context-brand {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: .6rem;
     flex-shrink: 0;
     text-decoration: none;
+}
+
+.context-left .context-brand {
     padding-right: 1.2rem;
     border-right: 1px solid var(--border);
 }
+
+.brand-block-center { text-align: center; margin-bottom: 1.5rem; }
+
+.brand-block-center .context-brand-name,
+.brand-block-center .app-navbar-module { text-align: left; }
 
 .context-brand img { width: 46px; height: 46px; object-fit: contain; display: block; }
 

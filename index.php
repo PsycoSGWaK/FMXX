@@ -539,13 +539,7 @@ if (count($joueurs) > 0) {
     <!-- CONTEXTE -->
     <div class="context-bar">
         <div class="context-left">
-            <a href="hub.php" class="context-brand">
-                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
-                <div>
-                    <div class="context-brand-name">iDev <em>Compagnon</em></div>
-                    <div class="app-navbar-module">Football Manager</div>
-                </div>
-            </a>
+            <?php require("brand_block.php"); ?>
             <div>
                 <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
                 <div class="context-meta">

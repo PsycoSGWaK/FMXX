@@ -6,14 +6,18 @@ require_once("navbar.php");
 <div class="container py-5" style="max-width:760px">
 
     <?php if (isset($_SESSION['mail'])): ?>
-    <div class="d-flex justify-content-end align-items-center gap-2 mb-4">
-        <?php require("usermenu.php"); ?>
+    <div class="brand-block-center">
+        <?php require("brand_block.php"); ?>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <h1 class="fw-bold mb-0">Mentions légales</h1>
         <a href="index.php" class="btn-ghost"><?= $t['nav_back_index'] ?></a>
     </div>
-    <?php endif; ?>
-
+    <p class="text-muted mb-4">iDev Compagnon — iDev Normandie</p>
+    <?php else: ?>
     <h1 class="fw-bold mb-1">Mentions légales</h1>
     <p class="text-muted mb-4">iDev Compagnon — iDev Normandie</p>
+    <?php endif; ?>
 
     <h5 class="fw-bold section-heading">Éditeur du site</h5>
     <p>
