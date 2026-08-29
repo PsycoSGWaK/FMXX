@@ -1423,7 +1423,7 @@ if (count($joueurs) > 0) {
                             'AL' => 'LW', 'AR' => 'RW', 'BU' => 'ST',
                         ];
                         ?>
-                        <div id="tacticWrap">
+                        <div id="tacticWrap" class="pb-3">
                             <div class="table-scroll">
                                 <table class="table table-sm align-middle mb-0 data-table">
                                     <thead>
