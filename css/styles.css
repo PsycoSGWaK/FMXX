@@ -352,20 +352,37 @@ footer a.text-secondary:hover {
     background: radial-gradient(ellipse 120% 80% at 15% -10%, var(--ink-soft), transparent),
                 linear-gradient(135deg, var(--ink) 0%, #0d2a5e 60%, var(--ink) 100%);
     overflow: hidden;
+    /* Grandit pour occuper tout l'espace disponible sur les grands ecrans
+       (voir body.visitor-page plus bas) au lieu de laisser un vide sous
+       le footer ; son contenu (.hero-content) est alors centre dedans. */
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .hero-inner {
     position: relative;
     max-width: 1180px;
     margin: 0 auto;
-    padding: 2rem 1.75rem 7rem;
+    padding: 2rem 1.75rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .hero-top {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-bottom: 7rem;
+    margin-bottom: 2rem;
+}
+
+.hero-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-tools { display: flex; align-items: center; gap: .6rem; }
@@ -546,24 +563,18 @@ footer a.text-secondary:hover {
     padding: 3rem 1.75rem;
 }
 
-/* La landing n'utilise pas .main-content (flex:1) : le mecanisme sticky-
-   footer global (body en flex column + min-height:100dvh + footer en
-   margin-top:auto !important via .mt-auto) force alors la page a occuper
-   tout le viewport, laissant un vide sous le contenu (voire sous le
-   footer lui-meme) des que l'ecran est plus haut que le contenu. On
-   desactive entierement ce mecanisme pour cette page : elle doit faire
-   exactement la hauteur de son contenu, quelle que soit la taille de
-   l'ecran, footer collé juste apres .how-section.
-   Ne pas etendre a body (sans classe) : les autres pages visiteur (about,
-   mentions legales) dependent encore du footer pinne en bas d'ecran. */
-html:has(body.visitor-page) {
-    height: auto;
-}
-
+/* La landing n'utilise pas .main-content (flex:1) : sans element pour
+   absorber l'espace restant, le sticky-footer global (footer en
+   margin-top:auto !important via .mt-auto) collait le footer tout en bas
+   du viewport en laissant un vide au-dessus de lui. C'est .hero-dark
+   (flex:1 0 auto, voir plus haut) qui joue ce role ici a la place :
+   il grandit pour occuper l'espace disponible et son propre contenu
+   (.hero-content) est centre dedans, donc le footer suit .how-section
+   sans vide ni dessus ni dessous, quelle que soit la hauteur de l'ecran. */
 body.visitor-page {
-    display: block;
-    height: auto;
-    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
 }
 
 body.visitor-page footer {

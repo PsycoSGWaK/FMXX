@@ -22,46 +22,48 @@ if (!isset($_SESSION['mail'])) {
                 </div>
             </div>
 
-            <div class="hero-grid">
-                <div>
-                    <span class="hero-eyebrow"><?= $t['landing_eyebrow'] ?></span>
-                    <h1 class="hero-title">iDev<br><span class="text-brand">Compagnon</span></h1>
-                    <p class="hero-tagline"><?= $t['landing_tagline'] ?></p>
-                    <div class="hero-cta">
-                        <button class="btn-brand" data-bs-toggle="modal" data-bs-target="#LoginModal">
-                            <?= $t['landing_login'] ?>
-                        </button>
-                        <button class="btn-ghost-hero" data-bs-toggle="modal" data-bs-target="#SignupModal">
-                            <?= $t['landing_signup'] ?>
-                        </button>
+            <div class="hero-content">
+                <div class="hero-grid">
+                    <div>
+                        <span class="hero-eyebrow"><?= $t['landing_eyebrow'] ?></span>
+                        <h1 class="hero-title">iDev<br><span class="text-brand">Compagnon</span></h1>
+                        <p class="hero-tagline"><?= $t['landing_tagline'] ?></p>
+                        <div class="hero-cta">
+                            <button class="btn-brand" data-bs-toggle="modal" data-bs-target="#LoginModal">
+                                <?= $t['landing_login'] ?>
+                            </button>
+                            <button class="btn-ghost-hero" data-bs-toggle="modal" data-bs-target="#SignupModal">
+                                <?= $t['landing_signup'] ?>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="game-panel">
-                    <p class="game-panel-title"><?= $t['landing_games_title'] ?></p>
-                    <div class="game-row is-active">
-                        <span class="game-badge">FB</span>
-                        <div class="game-body">
-                            <p class="game-name"><?= $t['hub_football_title'] ?></p>
-                            <p class="game-desc"><?= $t['hub_football_desc'] ?></p>
+                    <div class="game-panel">
+                        <p class="game-panel-title"><?= $t['landing_games_title'] ?></p>
+                        <div class="game-row is-active">
+                            <span class="game-badge">FB</span>
+                            <div class="game-body">
+                                <p class="game-name"><?= $t['hub_football_title'] ?></p>
+                                <p class="game-desc"><?= $t['hub_football_desc'] ?></p>
+                            </div>
+                            <span class="game-tag"><?= $t['landing_game_available'] ?></span>
                         </div>
-                        <span class="game-tag"><?= $t['landing_game_available'] ?></span>
-                    </div>
-                    <div class="game-row is-soon">
-                        <span class="game-badge">F1</span>
-                        <div class="game-body">
-                            <p class="game-name"><?= $t['hub_f1_title'] ?></p>
-                            <p class="game-desc"><?= $t['hub_f1_desc'] ?></p>
+                        <div class="game-row is-soon">
+                            <span class="game-badge">F1</span>
+                            <div class="game-body">
+                                <p class="game-name"><?= $t['hub_f1_title'] ?></p>
+                                <p class="game-desc"><?= $t['hub_f1_desc'] ?></p>
+                            </div>
+                            <span class="game-tag"><?= $t['hub_soon'] ?></span>
                         </div>
-                        <span class="game-tag"><?= $t['hub_soon'] ?></span>
-                    </div>
-                    <div class="game-row is-soon">
-                        <span class="game-badge">FS</span>
-                        <div class="game-body">
-                            <p class="game-name"><?= $t['hub_fs_title'] ?></p>
-                            <p class="game-desc"><?= $t['hub_fs_desc'] ?></p>
+                        <div class="game-row is-soon">
+                            <span class="game-badge">FS</span>
+                            <div class="game-body">
+                                <p class="game-name"><?= $t['hub_fs_title'] ?></p>
+                                <p class="game-desc"><?= $t['hub_fs_desc'] ?></p>
+                            </div>
+                            <span class="game-tag"><?= $t['hub_soon'] ?></span>
                         </div>
-                        <span class="game-tag"><?= $t['hub_soon'] ?></span>
                     </div>
                 </div>
             </div>
