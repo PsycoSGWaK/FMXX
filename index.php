@@ -1414,6 +1414,14 @@ if (count($joueurs) > 0) {
                         foreach ($tacticsStmt->fetchAll() as $tacticRow) {
                             $tactics[$tacticRow['position']] = $tacticRow;
                         }
+                        // Codes de poste Tactic Sub -> role canonique de l'Effectif (meme
+                        // dictionnaire/abreviations que $roleOptions), pour l'affichage
+                        // traduit et pour filtrer la liste des joueurs par poste.
+                        $tacticRoleMap = [
+                            'GK' => 'GK', 'DC' => 'CB', 'DL' => 'LB', 'DR' => 'RB',
+                            'MC' => 'CM', 'MG' => 'LM', 'MD' => 'RM', 'MO' => 'CAM',
+                            'AL' => 'LW', 'AR' => 'RW', 'BU' => 'ST',
+                        ];
                         ?>
                         <form action="tactic_post.php" method="post">
                             <?= csrf_field() ?>
@@ -1428,17 +1436,30 @@ if (count($joueurs) > 0) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php for ($i = 1; $i <= 11; $i++): ?>
+                                        <?php for ($i = 1; $i <= 11; $i++):
+                                            $posCode  = $positions[$i-1];
+                                            $roleCode = $tacticRoleMap[$posCode] ?? null;
+                                            $currentIds = array_filter([
+                                                $tactics[$i]['titulaire']  ?? null,
+                                                $tactics[$i]['remplacant'] ?? null,
+                                                $tactics[$i]['supersub']   ?? null,
+                                            ]);
+                                            $rowPlayers = $roleCode
+                                                ? array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRole) {
+                                                    return $effectiveRole($j) === $roleCode || in_array($j['idJoueur'], $currentIds);
+                                                })
+                                                : $joueursDispo;
+                                        ?>
                                             <tr>
-                                                <td><span class="pos-tag"><?= $positions[$i-1] ?></span></td>
+                                                <td><span class="pos-tag"><?= htmlspecialchars($roleCode ? ($t['role_abbr_' . $roleCode] ?? $posCode) : $posCode) ?></span></td>
                                                 <?php foreach (['titulaire','remplacant','supersub'] as $role): ?>
                                                     <td>
                                                         <select class="form-select form-select-sm" name="line_<?= $i ?>_<?= $role ?>">
                                                             <option value="">—</option>
-                                                            <?php foreach ($joueursDispo as $j): ?>
+                                                            <?php foreach ($rowPlayers as $j): ?>
                                                                 <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
                                                                 <option value="<?= $j['idJoueur'] ?>" <?= $selected ?>>
-                                                                    <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($j['poste']) ?>)
+                                                                    <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $effectiveRole($j)] ?? $effectiveRole($j)) ?>)
                                                                 </option>
                                                             <?php endforeach; ?>
                                                         </select>
