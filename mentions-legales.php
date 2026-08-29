@@ -5,6 +5,13 @@ require_once("navbar.php");
 ?>
 <div class="container py-5" style="max-width:760px">
 
+    <?php if (isset($_SESSION['mail'])): ?>
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-4">
+        <?php require("usermenu.php"); ?>
+        <a href="index.php" class="btn-ghost"><?= $t['nav_back_index'] ?></a>
+    </div>
+    <?php endif; ?>
+
     <h1 class="fw-bold mb-1">Mentions légales</h1>
     <p class="text-muted mb-4">iDev Compagnon — iDev Normandie</p>
 

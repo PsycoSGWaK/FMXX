@@ -24,7 +24,18 @@ if ($userType !== '1') {
 $tab = $_GET['tab'] ?? 'users';
 ?>
 <div class="main-content">
-    <div class="context-title">Administration</div>
+    <div class="context-bar">
+        <div class="context-left">
+            <a href="hub.php" class="context-brand">
+                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+            </a>
+            <span class="context-title">Administration</span>
+        </div>
+        <div class="context-right">
+            <?php require("usermenu.php"); ?>
+            <a href="index.php" class="btn-ghost"><?= $t['nav_back_index'] ?></a>
+        </div>
+    </div>
 
     <?php if (isset($_GET['msg'])): ?>
         <div class="alert alert-success alert-dismissible fade show">

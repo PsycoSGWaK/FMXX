@@ -16,6 +16,7 @@ $t = [
     'nav_palmares'     => 'Palmarés',
     'nav_about'        => 'Acerca de',
     'nav_admin'        => 'Admin',
+    'nav_back_index'   => '← Volver',
     'nav_logout'       => 'Cerrar sesión',
 
     // Footer
@@ -78,7 +79,7 @@ $t = [
     'btn_next_season'   => 'Temporada siguiente →',
     'btn_back'          => '← Volver',
     'btn_back_squad'    => '← Volver a la plantilla',
-    'btn_settings'      => 'Ajustes',
+    'btn_settings'      => 'Ajustes de temporada',
     'confirm_clear_squad'  => '¿Vaciar toda la plantilla?',
     'confirm_next_season'  => '¿Pasar a la siguiente temporada?',
 

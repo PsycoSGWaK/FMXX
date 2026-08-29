@@ -539,8 +539,14 @@ if (count($joueurs) > 0) {
     <!-- CONTEXTE -->
     <div class="context-bar">
         <div class="context-left">
+            <a href="hub.php" class="context-brand">
+                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+            </a>
             <div>
-                <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
+                <div class="context-title-row">
+                    <span class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></span>
+                    <span class="app-navbar-module">Football Manager</span>
+                </div>
                 <div class="context-meta">
                     <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?>
                 </div>
@@ -554,6 +560,7 @@ if (count($joueurs) > 0) {
                     <?= $pct ?>% <?= $t['obj_success_rate'] ?>
                 </span>
             <?php endif; ?>
+            <?php require("usermenu.php"); ?>
             <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
         </div>
     </div>

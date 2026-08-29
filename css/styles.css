@@ -646,6 +646,12 @@ footer a.text-secondary:hover {
 
 .context-left { display: flex; align-items: center; gap: .9rem; }
 
+.context-brand { display: flex; flex-shrink: 0; }
+
+.context-brand img { width: 40px; height: 40px; object-fit: contain; display: block; }
+
+.context-title-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+
 .context-title {
     font-family: var(--font-display);
     font-weight: 700;
@@ -659,6 +665,21 @@ footer a.text-secondary:hover {
 .context-meta { font-size: .82rem; color: var(--muted); margin-top: .25rem; }
 
 .context-right { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+
+.lang-flags { display: flex; align-items: center; gap: .3rem; }
+
+.lang-flag {
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: .45;
+    filter: grayscale(60%);
+    transition: opacity .15s ease, filter .15s ease;
+    text-decoration: none;
+}
+
+.lang-flag:hover { opacity: .8; filter: grayscale(0%); }
+
+.lang-flag.active { opacity: 1; filter: grayscale(0%); }
 
 .pill {
     display: inline-flex;
