@@ -585,6 +585,69 @@ if (count($joueurs) > 0) {
 
         <!-- ===================== ONGLET OBJECTIFS ===================== -->
         <div class="tab-pane <?= $activeTab === 'objectifs' ? 'show active' : '' ?>" id="pane-objectifs">
+            <!-- BUDGET -->
+            <div class="budget-strip mb-3" id="budgetWrap" data-masse-salariale="<?= (int)$masseSalariale ?>">
+                <div class="budget-field">
+                    <span class="budget-label"><?= $t['budget_transfer'] ?></span>
+                    <div class="budget-input-row">
+                        <input type="number" id="budgetTransfertInput" class="budget-input"
+                               value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>"
+                               placeholder="0" min="0">
+                        <span>€</span>
+                    </div>
+                </div>
+                <div class="budget-field">
+                    <span class="budget-label"><?= $t['budget_wages'] ?></span>
+                    <div class="budget-input-row">
+                        <input type="number" id="budgetSalairesInput" class="budget-input"
+                               value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>"
+                               placeholder="0" min="0">
+                        <span>€</span>
+                    </div>
+                </div>
+                <div class="budget-field">
+                    <span class="budget-label"><?= $t['budget_wage_used'] ?></span>
+                    <div class="budget-value" id="budgetWageUsedValue">
+                        <?= $pctMasseSalariale !== null ? $pctMasseSalariale . '<small>%</small>' : '—' ?>
+                    </div>
+                </div>
+            </div>
+            <script>
+            (function () {
+                const wrap = document.getElementById('budgetWrap');
+                const masseSalariale = parseInt(wrap.dataset.masseSalariale, 10) || 0;
+                const btInput = document.getElementById('budgetTransfertInput');
+                const bsInput = document.getElementById('budgetSalairesInput');
+                const wageUsedEl = document.getElementById('budgetWageUsedValue');
+
+                function refreshWageUsed() {
+                    const bs = parseInt(bsInput.value, 10) || 0;
+                    wageUsedEl.innerHTML = bs > 0 ? Math.round(masseSalariale / bs * 100) + '<small>%</small>' : '—';
+                }
+
+                function save(input) {
+                    fetch('budget_field_post.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            budget_transfert: btInput.value,
+                            budget_salaires: bsInput.value,
+                            csrf_token: <?= json_encode(csrf_token()) ?>
+                        })
+                    }).then(r => r.json()).then(function (data) {
+                        if (!data.ok) return;
+                        input.classList.add('mercato-status-saved');
+                        setTimeout(() => input.classList.remove('mercato-status-saved'), 900);
+                        refreshWageUsed();
+                    });
+                }
+
+                [btInput, bsInput].forEach(function (input) {
+                    input.addEventListener('change', function () { save(input); });
+                });
+            })();
+            </script>
+
             <?php if (!$idPays || !$division): ?>
                 <p class="text-muted mb-3"><?= $t['obj_no_config'] ?> <a href="#" data-bs-toggle="modal" data-bs-target="#settingModal"><ion-icon name="open-outline"></ion-icon></a></p>
             <?php elseif (empty($competitions)): ?>
@@ -731,39 +794,6 @@ if (count($joueurs) > 0) {
                 </script>
             <?php endif; ?>
 
-            <!-- BUDGET -->
-            <div class="budget-strip mt-3">
-                <form class="budget-field" action="budget_post.php" method="post">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="budget_salaires" value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>">
-                    <span class="budget-label"><?= $t['budget_transfer'] ?></span>
-                    <div class="budget-input-row">
-                        <input type="number" name="budget_transfert" class="budget-input"
-                               value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>"
-                               placeholder="0" min="0">
-                        <span>€</span>
-                    </div>
-                    <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
-                </form>
-                <form class="budget-field" action="budget_post.php" method="post">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="budget_transfert" value="<?= $budgetTransfert !== null ? $budgetTransfert : '' ?>">
-                    <span class="budget-label"><?= $t['budget_wages'] ?></span>
-                    <div class="budget-input-row">
-                        <input type="number" name="budget_salaires" class="budget-input"
-                               value="<?= $budgetSalaires !== null ? $budgetSalaires : '' ?>"
-                               placeholder="0" min="0">
-                        <span>€</span>
-                    </div>
-                    <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
-                </form>
-                <div class="budget-field">
-                    <span class="budget-label"><?= $t['budget_wage_used'] ?></span>
-                    <div class="budget-value">
-                        <?= $pctMasseSalariale !== null ? $pctMasseSalariale . '<small>%</small>' : '—' ?>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- ===================== ONGLET EFFECTIF ===================== -->
