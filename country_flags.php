@@ -59,15 +59,3 @@ if (!function_exists('fmxx_flag_emoji')) {
         return mb_chr(0x1F1E6 + (ord($chars[0]) - 65)) . mb_chr(0x1F1E6 + (ord($chars[1]) - 65));
     }
 }
-
-if (!function_exists('fmxx_initials')) {
-    /** Initiales (2 lettres max) d'un nom, pour l'avatar de l'effectif. */
-    function fmxx_initials(string $name): string {
-        $parts = preg_split('/\s+/', trim($name));
-        $parts = array_filter($parts);
-        if (count($parts) >= 2) {
-            return mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[array_key_last($parts)], 0, 1));
-        }
-        return mb_strtoupper(mb_substr($name, 0, 2));
-    }
-}

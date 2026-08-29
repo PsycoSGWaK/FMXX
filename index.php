@@ -683,15 +683,13 @@ if (count($joueurs) > 0) {
                                         <th>#</th>
                                         <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end"><?= $t['squad_col_number'] ?></th>
-                                        <th><?= $t['squad_col_pob'] ?></th>
-                                        <th data-sort="text" data-col="5" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="6"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="7"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="8"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="9" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th class="text-end" data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="text" data-col="3" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="4"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="5"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="6"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="7" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="8" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num"  data-col="9" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th><?= $t['squad_col_status'] ?></th>
                                     </tr>
                                 </thead>
@@ -724,7 +722,7 @@ if (count($joueurs) > 0) {
                                             <td><?= $i + 1 ?></td>
                                             <td>
                                                 <div class="player-cell">
-                                                    <span class="player-avatar"><?= htmlspecialchars(fmxx_initials($j['nom'] ?? '')) ?></span>
+                                                    <span class="player-avatar"><?= htmlspecialchars($j['numero'] ?? '') ?></span>
                                                     <div>
                                                         <a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="player-name text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a>
                                                         <div class="player-nat"><?= fmxx_flag_emoji($j['nat'] ?? null) ?> <?= htmlspecialchars($j['nat'] ?? '') ?></div>
@@ -732,8 +730,6 @@ if (count($joueurs) > 0) {
                                                 </div>
                                             </td>
                                             <td class="text-end"><?= $j['age'] ?? '' ?></td>
-                                            <td class="text-end"><?= $j['numero'] ?? '' ?></td>
-                                            <td><?= htmlspecialchars($j['pdn'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
                                             <td class="text-end"><?= $j['app'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['pDec'] ?? '' ?></td>
@@ -749,7 +745,7 @@ if (count($joueurs) > 0) {
                                     <tr>
                                         <td colspan="2"><?= count($joueurs) ?> <?= $t['squad_players'] ?></td>
                                         <td><?= $ageMoyen ?> <?= $t['squad_avg_age'] ?></td>
-                                        <td colspan="10"></td>
+                                        <td colspan="8"></td>
                                     </tr>
                                 </tfoot>
                             </table>

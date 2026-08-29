@@ -258,6 +258,22 @@ html {
     white-space: nowrap;
 }
 
+/* Effectif : colonnes moins collées, plus d'air pour la lecture. */
+#effectifTable th, #effectifTable td {
+    padding-left: .85rem;
+    padding-right: .85rem;
+}
+
+#effectifTable td {
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+}
+
+#effectifTable td.text-end,
+#effectifTable th.text-end {
+    white-space: nowrap;
+}
+
 .data-table th[data-sort]:hover,
 .data-table th[data-sort]:hover .sort-icon {
     color: var(--brand) !important;
