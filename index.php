@@ -549,8 +549,7 @@ if (count($joueurs) > 0) {
             <div>
                 <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
                 <div class="context-meta">
-                    <span><?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?></span>
-                    <span class="pill"><?= htmlspecialchars($saison) ?></span>
+                    <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male'], $saison]))) ?>
                 </div>
             </div>
         </div>
