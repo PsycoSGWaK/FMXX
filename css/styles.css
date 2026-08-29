@@ -349,7 +349,7 @@ footer a.text-secondary:hover {
 
 .hero-dark {
     position: relative;
-    background: radial-gradient(ellipse 120% 80% at 15% -10%, var(--ink-soft), transparent),
+    background: radial-gradient(ellipse 90% 90% at 50% 55%, var(--ink-soft), transparent),
                 linear-gradient(135deg, var(--ink) 0%, #0d2a5e 60%, var(--ink) 100%);
     overflow: hidden;
     /* Grandit pour occuper tout l'espace disponible sur les grands ecrans
