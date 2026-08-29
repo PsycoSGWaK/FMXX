@@ -724,14 +724,18 @@ if (count($joueurs) > 0) {
                                     <?php foreach ($joueurs as $i => $j): ?>
                                         <?php
                                         $expireYear  = '';
-                                        $expireBadge = '';
+                                        $expireClass = '';
+                                        $expireTitle = '';
                                         if ($j['expireContrat']) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
-                                            if ((int)$expireYear === $saisonFin)
-                                                $expireBadge = '<span class="badge bg-danger ms-2"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
-                                            elseif ((int)$expireYear === $saisonFinNext)
-                                                $expireBadge = '<span class="badge bg-warning text-dark ms-2"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                            if ((int)$expireYear === $saisonFin) {
+                                                $expireClass = 'expire-this';
+                                                $expireTitle = $t['squad_badge_expiry_this'];
+                                            } elseif ((int)$expireYear === $saisonFinNext) {
+                                                $expireClass = 'expire-next';
+                                                $expireTitle = $t['squad_badge_expiry_next'];
+                                            }
                                         }
                                         $status = $j['mercato_status'];
                                         ?>
@@ -756,13 +760,17 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
-                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
+                                            <td>
+                                                <span class="<?= $expireClass ?>" <?= $expireTitle ? 'title="' . htmlspecialchars($expireTitle) . '"' : '' ?>>
+                                                    <?= htmlspecialchars($j['expireContrat'] ?? '') ?>
+                                                </span>
+                                            </td>
                                             <td>
                                                 <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
-                                                    <button type="button" class="ms-opt <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
-                                                    <button type="button" class="ms-opt <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
-                                                    <button type="button" class="ms-opt <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
-                                                    <button type="button" class="ms-opt <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
+                                                    <button type="button" class="ms-opt ms-none <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
+                                                    <button type="button" class="ms-opt ms-sell <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
+                                                    <button type="button" class="ms-opt ms-loan <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
+                                                    <button type="button" class="ms-opt ms-free <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
                                                 </div>
                                             </td>
                                         </tr>
