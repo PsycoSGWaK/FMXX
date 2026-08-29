@@ -189,9 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Tout supprimer',
     'mercato_arr_delete_all_confirm' => 'Supprimer toutes les arrivées mercato ? Cette action est irréversible.',
     'mercato_arr_empty'      => 'Aucune arrivée enregistrée.',
-    'mercato_opt_sell'   => 'Vendre',
-    'mercato_opt_loan'   => 'Prêt',
-    'mercato_opt_free'   => 'Libérer (ne renouvelle pas)',
 
     // Fiche joueur
     'player_back'         => '← Retour Effectif',

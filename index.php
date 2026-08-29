@@ -758,13 +758,12 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
                                             <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
                                             <td>
-                                                <select class="form-select form-select-sm mercato-status-select" style="min-width:100px"
-                                                        data-id="<?= $j['idJoueur'] ?>">
-                                                    <option value=""     <?= $status === null   ? 'selected' : '' ?>>—</option>
-                                                    <option value="sell" <?= $status === 'sell' ? 'selected' : '' ?>><?= $t['mercato_opt_sell'] ?></option>
-                                                    <option value="loan" <?= $status === 'loan' ? 'selected' : '' ?>><?= $t['mercato_opt_loan'] ?></option>
-                                                    <option value="free" <?= $status === 'free' ? 'selected' : '' ?>><?= $t['mercato_opt_free'] ?></option>
-                                                </select>
+                                                <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
+                                                    <button type="button" class="ms-opt <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
+                                                    <button type="button" class="ms-opt <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
+                                                    <button type="button" class="ms-opt <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
+                                                    <button type="button" class="ms-opt <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -850,22 +849,28 @@ if (count($joueurs) > 0) {
                         });
                         </script>
                         <script>
-                        document.querySelectorAll('.mercato-status-select').forEach(function (sel) {
-                            sel.addEventListener('change', function () {
-                                const tr = sel.closest('tr');
-                                fetch('mercato_status_post.php', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                    body: new URLSearchParams({
-                                        idJoueur: sel.dataset.id,
-                                        status: sel.value,
-                                        csrf_token: <?= json_encode(csrf_token()) ?>
-                                    })
-                                }).then(r => r.json()).then(function (data) {
-                                    if (!data.ok) return;
-                                    tr.dataset.statut = sel.value;
-                                    sel.classList.add('mercato-status-saved');
-                                    setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
+                        document.querySelectorAll('.mercato-status-toggle').forEach(function (toggle) {
+                            toggle.querySelectorAll('.ms-opt').forEach(function (btn) {
+                                btn.addEventListener('click', function () {
+                                    if (btn.classList.contains('active')) return;
+                                    const tr = toggle.closest('tr');
+                                    const status = btn.dataset.status;
+                                    fetch('mercato_status_post.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        body: new URLSearchParams({
+                                            idJoueur: toggle.dataset.id,
+                                            status: status,
+                                            csrf_token: <?= json_encode(csrf_token()) ?>
+                                        })
+                                    }).then(r => r.json()).then(function (data) {
+                                        if (!data.ok) return;
+                                        tr.dataset.statut = status;
+                                        toggle.querySelectorAll('.ms-opt').forEach(b => b.classList.remove('active'));
+                                        btn.classList.add('active');
+                                        btn.classList.add('mercato-status-saved');
+                                        setTimeout(() => btn.classList.remove('mercato-status-saved'), 900);
+                                    });
                                 });
                             });
                         });

@@ -189,9 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Delete all',
     'mercato_arr_delete_all_confirm' => 'Delete all mercato arrivals? This action cannot be undone.',
     'mercato_arr_empty'      => 'No incoming transfers recorded.',
-    'mercato_opt_sell'   => 'Sell',
-    'mercato_opt_loan'   => 'Loan',
-    'mercato_opt_free'   => 'Free transfer (won\'t renew)',
 
     // Player card
     'player_back'         => '← Back to Squad',

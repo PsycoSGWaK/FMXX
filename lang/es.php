@@ -189,9 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Eliminar todo',
     'mercato_arr_delete_all_confirm' => '¿Eliminar todas las llegadas del mercado? Esta acción no se puede deshacer.',
     'mercato_arr_empty'      => 'No hay llegadas registradas.',
-    'mercato_opt_sell'   => 'Vender',
-    'mercato_opt_loan'   => 'Ceder',
-    'mercato_opt_free'   => 'Libre (no renueva)',
 
     // Ficha jugador
     'player_back'         => '← Volver a la plantilla',

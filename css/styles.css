@@ -932,6 +932,39 @@ footer a.text-secondary:hover {
 
 .player-name { display: block; }
 
+/* ---------- Statut mercato (boutons segmentés, colonne Effectif) ---------- */
+
+.mercato-status-toggle {
+    display: inline-flex;
+    background: var(--panel-2);
+    border-radius: .5rem;
+    padding: .15rem;
+    gap: .15rem;
+}
+
+.mercato-status-toggle .ms-opt {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .3rem .55rem;
+    border-radius: .35rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.mercato-status-toggle .ms-opt:hover:not(.active) {
+    color: var(--heading);
+}
+
+.mercato-status-toggle .ms-opt.active {
+    background: var(--panel);
+    color: var(--heading);
+    box-shadow: 0 .15rem .35rem -.2rem hsl(var(--shadow-color) / .3);
+}
+
 /* ---------- Répartition par poste (barre empilée) ---------- */
 
 .poste-bar {
