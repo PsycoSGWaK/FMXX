@@ -244,7 +244,7 @@ $tab = $_GET['tab'] ?? 'users';
                     <thead>
                         <tr>
                             <th>#</th><th>Nom</th><th>Type</th><th>Pays</th>
-                            <th>Division</th><th>Genre</th><th>Qualif.</th><th>Actions</th>
+                            <th>Division</th><th>Genre</th><th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -256,11 +256,6 @@ $tab = $_GET['tab'] ?? 'users';
                             <td><?= htmlspecialchars($c['nomPays'] ?? '—') ?></td>
                             <td><?= htmlspecialchars($c['division'] ?? '—') ?></td>
                             <td><?= $c['genre'] ?></td>
-                            <td class="text-muted small">
-                                <?php if ($c['qualif_rang_min'] !== null): ?>
-                                    <?= $c['qualif_rang_min'] ?>–<?= $c['qualif_rang_max'] ?>
-                                <?php else: ?>—<?php endif; ?>
-                            </td>
                             <td>
                             <div class="d-flex gap-1 align-items-center">
                                 <button class="btn btn-sm btn-outline-primary" title="Modifier" aria-label="Modifier"
@@ -270,9 +265,7 @@ $tab = $_GET['tab'] ?? 'users';
                                     data-type="<?= $c['typeCompetition'] ?>"
                                     data-pays="<?= $c['idPays'] ?>"
                                     data-division="<?= $c['division'] ?? '' ?>"
-                                    data-genre="<?= $c['genre'] ?>"
-                                    data-qualifmin="<?= $c['qualif_rang_min'] ?? '' ?>"
-                                    data-qualifmax="<?= $c['qualif_rang_max'] ?? '' ?>">
+                                    data-genre="<?= $c['genre'] ?>">
                                     <ion-icon name="pencil-outline"></ion-icon>
                                 </button>
                                 <form action="admin_post.php" method="post" style="display:contents"
@@ -330,7 +323,7 @@ $tab = $_GET['tab'] ?? 'users';
                             </div>
                         </div>
                         <div class="setting-group row g-3">
-                            <div class="setting-group-title col-12">Qualification</div>
+                            <div class="setting-group-title col-12">Contexte</div>
                             <div class="col-6">
                                 <label class="form-label fw-semibold">Division</label>
                                 <select name="division" id="editCompDiv" class="form-select">
@@ -343,14 +336,6 @@ $tab = $_GET['tab'] ?? 'users';
                                 <select name="genre" id="editCompGenre" class="form-select" required>
                                     <option value="M">M</option><option value="F">F</option>
                                 </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">Qualif. rang min</label>
-                                <input type="number" name="qualif_rang_min" id="editCompQualifMin" class="form-control" min="1" max="20" placeholder="ex: 1">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">Qualif. rang max</label>
-                                <input type="number" name="qualif_rang_max" id="editCompQualifMax" class="form-control" min="1" max="20" placeholder="ex: 3">
                             </div>
                         </div>
                     </div>
@@ -371,8 +356,6 @@ $tab = $_GET['tab'] ?? 'users';
         document.getElementById('editCompPays').value     = b.dataset.pays;
         document.getElementById('editCompDiv').value      = b.dataset.division;
         document.getElementById('editCompGenre').value    = b.dataset.genre;
-        document.getElementById('editCompQualifMin').value = b.dataset.qualifmin || '';
-        document.getElementById('editCompQualifMax').value = b.dataset.qualifmax || '';
     });
     </script>
 

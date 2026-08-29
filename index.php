@@ -202,7 +202,7 @@ if ($idPays && $division) {
             OR (c.typeCompetition IN ('Nationale','Ligue') AND c.idPays = :idPays2)
             OR (c.typeCompetition = 'Continentale' AND :division2 = 'D1')
           )
-        ORDER BY FIELD(c.typeCompetition,'Championnat','Ligue','Nationale','Continentale'),c.qualif_rang_min
+        ORDER BY FIELD(c.typeCompetition,'Championnat','Ligue','Nationale','Continentale'),c.nomCompetition
     ");
     $cStmt->execute([
         'idUser'    => $idUser,
@@ -274,8 +274,9 @@ foreach ($optionsParType as $opts) {
     }
 }
 
-// Compétition européenne forcée (paramètres) ou déduite du résultat du championnat de la saison précédente
-// (la qualification européenne d'une saison se décide sur le classement déjà joué la saison d'avant, jamais sur l'objectif de la saison en cours)
+// Compétition européenne forcée (paramètres) ou déduite des règles de qualification
+// (la qualification européenne d'une saison se décide sur des résultats déjà joués
+// la saison d'avant, jamais sur l'objectif de la saison en cours)
 $overrideStmt = $pdo->prepare("SELECT comp_europe_override FROM user WHERE idUser = :id");
 $overrideStmt->execute(['id' => $idUser]);
 $compEuropeOverride = $overrideStmt->fetchColumn();
@@ -283,23 +284,37 @@ $compEuropeOverride = $overrideStmt->fetchColumn();
 [$saisonDebut, $saisonFinBrute] = explode('/', $saison);
 $saisonPrecedente = ((int)$saisonDebut - 1) . '/' . ((int)$saisonFinBrute - 1);
 
-$prevChampStmt = $pdo->prepare("
-    SELECT o.resultat
-    FROM objectif o
-    JOIN competition c ON c.idCompetition = o.idCompetition
-    WHERE o.idUser = :idUser AND o.saison = :saisonPrecedente AND c.typeCompetition = 'Championnat'
-    LIMIT 1
+// Règles de qualification (table competition_qualif_rule) : une compétition
+// continentale peut avoir plusieurs règles réunies en OR — qualif par rang
+// (ex: 1er du championnat national, une règle par pays) OU par résultat exact
+// (ex: avoir gagné une autre compétition, cf FIFA Women Champions Cup qui se
+// débloque en ayant gagné l'UEFA Women's Champions League). Chaque règle est
+// évaluée sur le résultat sauvegardé de sa compétition source la saison
+// précédente.
+$qualifStmt = $pdo->prepare("
+    SELECT r.idCompetition, r.rang_min, r.rang_max, r.resultat_exact, o.resultat
+    FROM competition_qualif_rule r
+    LEFT JOIN objectif o ON o.idCompetition = r.idCompetitionSource AND o.idUser = :idUser AND o.saison = :saisonPrecedente
 ");
-$prevChampStmt->execute(['idUser' => $idUser, 'saisonPrecedente' => $saisonPrecedente]);
-$prevChampResultat = $prevChampStmt->fetchColumn();
-$champRank = $prevChampResultat ? ($ranking[$prevChampResultat] ?? null) : null;
-$competitions = array_values(array_filter($competitions, function($c) use ($champRank, $compEuropeOverride) {
+$qualifStmt->execute(['idUser' => $idUser, 'saisonPrecedente' => $saisonPrecedente]);
+$qualifRules = [];
+foreach ($qualifStmt->fetchAll() as $r) {
+    $qualifRules[$r['idCompetition']][] = $r;
+}
+
+$competitions = array_values(array_filter($competitions, function($c) use ($qualifRules, $compEuropeOverride, $ranking) {
     if ($c['typeCompetition'] !== 'Continentale') return true;
     if ($compEuropeOverride) return (int)$c['idCompetition'] === (int)$compEuropeOverride;
-    if ($champRank === null) return false;
-    $min = $c['qualif_rang_min'];
-    $max = $c['qualif_rang_max'];
-    return $min !== null && $max !== null && $champRank >= (int)$min && $champRank <= (int)$max;
+    foreach ($qualifRules[$c['idCompetition']] ?? [] as $rule) {
+        if ($rule['resultat'] === null) continue;
+        if ($rule['resultat_exact'] !== null) {
+            if ($rule['resultat'] === $rule['resultat_exact']) return true;
+        } elseif ($rule['rang_min'] !== null && $rule['rang_max'] !== null) {
+            $rank = $ranking[$rule['resultat']] ?? null;
+            if ($rank !== null && $rank >= (int)$rule['rang_min'] && $rank <= (int)$rule['rang_max']) return true;
+        }
+    }
+    return false;
 }));
 
 $totalAvecObjectif = 0; $reussites = 0;
