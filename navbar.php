@@ -22,8 +22,12 @@ function navActive(string $page, string $current): string {
     // Pas de barre de nav pour le visiteur : la landing (index.php) compose
     // son propre en-tête (logo/langue/thème) directement dans le hero.
     $currentLang = $_SESSION['lang'] ?? 'fr';
+    // La landing ne passe pas par .main-content (flex:1) : sans cette classe,
+    // le footer (sticky via margin-top:auto) se collerait au bas du viewport
+    // et laisserait un vide sous le contenu sur les écrans hauts.
+    $bodyClass = $currentPage === 'index.php' ? ' class="visitor-page"' : '';
     ?>
-<body>
+<body<?= $bodyClass ?>>
 <?php } ?>
 <!-- Modal profil -->
 <div class="modal fade" tabindex="-1" id="profileModal" aria-hidden="true">

@@ -543,7 +543,14 @@ footer a.text-secondary:hover {
 .how-section {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 3rem 1.75rem 0;
+    padding: 3rem 1.75rem;
+}
+
+/* La page visiteur n'utilise pas .main-content (flex:1) : sans ce reset,
+   le footer (classe Bootstrap .mt-auto, en !important) se colle au bas du
+   viewport et laisse un vide sous .how-section sur les ecrans hauts. */
+body.visitor-page footer {
+    margin-top: 0 !important;
 }
 
 .how-title {
