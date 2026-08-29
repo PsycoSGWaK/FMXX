@@ -32,10 +32,6 @@ function navActive(string $page, string $current): string {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4"/><path d="M17 5h3a3 3 0 0 1-3 4"/></svg>
                 <span><?= $t['nav_palmares'] ?></span>
             </a>
-            <a class="side-link <?= navActive('about.php', $currentPage) ?>" href="about.php">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
-                <span><?= $t['nav_about'] ?></span>
-            </a>
             <?php if ($isAdmin): ?>
             <a class="side-link admin-link <?= navActive('admin.php', $currentPage) ?>" href="admin.php">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.7 7.5 9 4.3-1.3 7.5-4.5 7.5-9V6L12 3Z"/></svg>

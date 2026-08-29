@@ -285,6 +285,15 @@ html {
     white-space: nowrap;
 }
 
+/* Âge -> Poste et Valeur transfert -> Expire le : une colonne alignée à
+   droite suivie d'une colonne alignée à gauche colle sinon les deux
+   valeurs l'une contre l'autre. On ajoute l'air manquant pour retrouver
+   le même écart visuel que Buts -> Note (référence). */
+#effectifTable th:nth-child(3), #effectifTable td:nth-child(3),
+#effectifTable th:nth-child(9), #effectifTable td:nth-child(9) {
+    padding-right: 2.5rem;
+}
+
 .data-table th[data-sort]:hover,
 .data-table th[data-sort]:hover .sort-icon {
     color: var(--brand) !important;
@@ -972,7 +981,7 @@ footer a.text-secondary:hover {
 /* ---------- Date de fin de contrat (colonne Expire) ---------- */
 
 .expire-this { color: var(--brand); font-weight: 700; }
-.expire-next { color: var(--warning-color); font-weight: 700; }
+.expire-next { color: #e0a030; font-weight: 700; }
 
 /* ---------- Répartition par poste (barre empilée) ---------- */
 

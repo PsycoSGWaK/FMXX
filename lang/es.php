@@ -17,6 +17,9 @@ $t = [
     'nav_about'        => 'Acerca de',
     'nav_admin'        => 'Admin',
     'nav_logout'       => 'Cerrar sesión',
+
+    // Footer
+    'footer_legal'     => 'Aviso legal',
     'nav_signup'       => 'Registrarse',
     'nav_theme_toggle' => 'Alternar tema oscuro',
     'nav_theme_dark'   => 'Modo oscuro',
@@ -153,8 +156,8 @@ $t = [
     'squad_stat_avg_age'     => 'Edad media',
     'squad_stat_expiring'    => 'Contratos que expiran',
     'squad_stat_selling'     => 'En venta',
-    'squad_badge_expiry_this'=> 'Esta temporada',
-    'squad_badge_expiry_next'=> 'T+1',
+    'squad_badge_expiry_this'=> 'Expira esta temporada',
+    'squad_badge_expiry_next'=> 'Expira la próxima temporada',
     'squad_pos_goalkeeper'   => 'Portera',
     'squad_pos_defense'      => 'Defensa',
     'squad_pos_midfield'     => 'Centrocampo',
