@@ -1031,6 +1031,23 @@ footer a.text-secondary:hover {
 
 .poste-legend-count { color: var(--muted); }
 
+/* Glossaire des rôles (CB = Défenseur central...), pied du tableau Effectif */
+.role-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.1rem;
+    font-size: .78rem;
+    color: var(--muted);
+}
+
+.role-legend-item strong { color: var(--text); }
+
+.role-legend-sep {
+    margin: .7rem 0;
+    border: none;
+    border-top: 1px solid var(--border);
+}
+
 /* Flash de confirmation après un auto-save (select statut mercato) */
 .mercato-status-saved {
     animation: mercatoStatusSaved .9s ease;

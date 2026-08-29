@@ -163,6 +163,23 @@ $t = [
     'squad_pos_midfield'     => 'Centrocampo',
     'squad_pos_attack'       => 'Ataque',
     'squad_chart_by_position'=> 'Plantilla por posición',
+    // Glosario de roles (leyenda debajo de la tabla de Plantilla)
+    'role_GK'  => 'Portero',
+    'role_CB'  => 'Defensa central',
+    'role_RB'  => 'Lateral derecho',
+    'role_LB'  => 'Lateral izquierdo',
+    'role_RWB' => 'Carrilero derecho',
+    'role_LWB' => 'Carrilero izquierdo',
+    'role_SW'  => 'Líbero',
+    'role_CDM' => 'Mediocentro defensivo',
+    'role_CM'  => 'Centrocampista',
+    'role_CAM' => 'Mediapunta',
+    'role_RM'  => 'Interior derecho',
+    'role_LM'  => 'Interior izquierdo',
+    'role_RW'  => 'Extremo derecho',
+    'role_LW'  => 'Extremo izquierdo',
+    'role_ST'  => 'Delantero centro',
+    'role_FW'  => 'Delantero',
     'squad_contract_alert'   => 'Contratos que expiran esta temporada',
 
     // Táctica

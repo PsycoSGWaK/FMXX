@@ -163,6 +163,23 @@ $t = [
     'squad_pos_midfield'     => 'Milieu',
     'squad_pos_attack'       => 'Attaque',
     'squad_chart_by_position'=> 'Répartition par poste',
+    // Glossaire des rôles (légende sous le tableau Effectif)
+    'role_GK'  => 'Gardien de but',
+    'role_CB'  => 'Défenseur central',
+    'role_RB'  => 'Défenseur droit',
+    'role_LB'  => 'Défenseur gauche',
+    'role_RWB' => 'Piston droit',
+    'role_LWB' => 'Piston gauche',
+    'role_SW'  => 'Libéro',
+    'role_CDM' => 'Milieu défensif',
+    'role_CM'  => 'Milieu central',
+    'role_CAM' => 'Milieu offensif',
+    'role_RM'  => 'Milieu droit',
+    'role_LM'  => 'Milieu gauche',
+    'role_RW'  => 'Ailier droit',
+    'role_LW'  => 'Ailier gauche',
+    'role_ST'  => 'Buteur',
+    'role_FW'  => 'Attaquant',
     'squad_contract_alert'   => 'Contrats expirant cette saison',
 
     // Tactic

@@ -163,6 +163,23 @@ $t = [
     'squad_pos_midfield'     => 'Midfield',
     'squad_pos_attack'       => 'Attack',
     'squad_chart_by_position'=> 'Squad by position',
+    // Role glossary (legend under the Squad table)
+    'role_GK'  => 'Goalkeeper',
+    'role_CB'  => 'Centre-back',
+    'role_RB'  => 'Right-back',
+    'role_LB'  => 'Left-back',
+    'role_RWB' => 'Right wing-back',
+    'role_LWB' => 'Left wing-back',
+    'role_SW'  => 'Sweeper',
+    'role_CDM' => 'Defensive midfielder',
+    'role_CM'  => 'Central midfielder',
+    'role_CAM' => 'Attacking midfielder',
+    'role_RM'  => 'Right midfielder',
+    'role_LM'  => 'Left midfielder',
+    'role_RW'  => 'Right winger',
+    'role_LW'  => 'Left winger',
+    'role_ST'  => 'Striker',
+    'role_FW'  => 'Forward',
     'squad_contract_alert'   => 'Contracts expiring this season',
 
     // Tactic

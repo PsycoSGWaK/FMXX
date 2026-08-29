@@ -917,6 +917,12 @@ if (count($joueurs) > 0) {
                                 <tfoot class="table-secondary">
                                     <tr>
                                         <td colspan="11">
+                                            <div class="role-legend">
+                                                <?php foreach ($roleOptions as $code): ?>
+                                                    <span class="role-legend-item"><strong><?= htmlspecialchars($code) ?></strong> = <?= htmlspecialchars($t['role_' . $code] ?? $code) ?></span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <hr class="role-legend-sep">
                                             <div class="poste-legend" style="margin-top:0">
                                                 <span class="poste-legend-item">
                                                     <span class="poste-legend-dot" style="background:var(--brand)"></span>
