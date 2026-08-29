@@ -607,6 +607,24 @@ footer a.text-secondary:hover {
 
 .user-name { font-size: .82rem; font-weight: 600; color: var(--text); }
 
+.theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    transition: border-color .15s ease, background-color .15s ease;
+}
+
+.theme-toggle:hover { background: var(--panel-2); border-color: var(--muted); }
+
 .user-role { font-size: .68rem; color: var(--muted); }
 
 .user-dropdown .dropdown-menu {

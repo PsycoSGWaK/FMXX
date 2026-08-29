@@ -11,7 +11,7 @@
     <a href="lang_post.php?lang=en" class="lang-flag <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">🇬🇧</a>
     <a href="lang_post.php?lang=es" class="lang-flag <?= $currentLang === 'es' ? 'active' : '' ?>" title="Español">🇪🇸</a>
 </div>
-<button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+<button type="button" class="theme-toggle" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
     <ion-icon name="moon-outline"></ion-icon>
 </button>
 <div class="dropdown user-dropdown">
