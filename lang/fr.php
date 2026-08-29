@@ -1,15 +1,19 @@
 <?php
 $t = [
     // Landing page (non connecté)
-    'landing_tagline'        => 'Ton compagnon Football Manager — objectifs de saison, gestion d\'effectif et tactique sub, tout au même endroit.',
+    'landing_eyebrow'        => 'Plateforme compagnon multi-jeux',
+    'landing_tagline'        => 'Ton jeu, ta gestion. Suis tes objectifs, organise tes ressources et affine ta stratégie — optimise chaque décision cruciale, quel que soit le jeu de gestion sur lequel tu joues.',
     'landing_login'          => 'Se connecter',
     'landing_signup'         => 'Créer un compte',
-    'landing_feat1_title'    => 'Objectifs de saison',
-    'landing_feat1_text'     => 'Définis tes objectifs par compétition et suis ton taux de réussite en temps réel.',
-    'landing_feat2_title'    => 'Gestion d\'effectif',
-    'landing_feat2_text'     => 'Importe ton effectif depuis FM26, filtre, trie et gère les statuts mercato et contrats.',
-    'landing_feat3_title'    => 'Tactique Sub',
-    'landing_feat3_text'     => 'Compose ta ligne de onze, définis tes remplaçants et super-subs selon 6 formations.',
+    'landing_games_title'    => 'Jeux disponibles',
+    'landing_game_available' => 'Disponible',
+    'landing_how_title'      => 'Comment ça marche',
+    'landing_how1_title'     => 'Crée un compte',
+    'landing_how1_text'      => 'Gratuit, en quelques secondes. Chaque compte a ses propres données, isolées des autres joueurs.',
+    'landing_how2_title'     => 'Choisis ton jeu',
+    'landing_how2_text'      => 'Football est disponible dès aujourd\'hui. F1 Manager et Farming Simulator arrivent progressivement.',
+    'landing_how3_title'     => 'Suis ta progression',
+    'landing_how3_text'      => 'Objectifs, ressources, résultats : tout est centralisé et mis à jour au fil de tes parties.',
 
     // Navbar
     'nav_home'         => 'Accueil',

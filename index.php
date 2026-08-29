@@ -8,83 +8,83 @@ require_once("navbar.php");
 if (!isset($_SESSION['mail'])) {
     ?>
     <div class="hero-dark">
-        <div class="container py-5">
-            <div class="row align-items-center g-4 g-lg-5">
+        <div class="hero-inner">
+            <div class="hero-top">
+                <div class="hero-tools">
+                    <div class="lang-flags">
+                        <a href="lang_post.php?lang=fr" class="lang-flag <?= $currentLang === 'fr' ? 'active' : '' ?>" title="Français">🇫🇷</a>
+                        <a href="lang_post.php?lang=en" class="lang-flag <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">🇬🇧</a>
+                        <a href="lang_post.php?lang=es" class="lang-flag <?= $currentLang === 'es' ? 'active' : '' ?>" title="Español">🇪🇸</a>
+                    </div>
+                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
+                </div>
+            </div>
 
-                <!-- Texte + CTA + features -->
-                <div class="col-lg-6">
-                    <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="72" style="object-fit:contain;" class="mb-4">
-                    <h1 class="display-4 fw-bold mb-3" style="color:#fff;">
-                        iDev <span class="text-brand">Compagnon</span>
-                    </h1>
-                    <p class="lead mb-4" style="color:#a8c0e8; max-width:480px;">
-                        <?= $t['landing_tagline'] ?>
-                    </p>
-                    <div class="d-grid d-sm-flex gap-3 mb-5">
-                        <button class="btn btn-lg btn-primary px-4 fw-semibold"
-                                data-bs-toggle="modal" data-bs-target="#LoginModal">
+            <div class="hero-grid">
+                <div>
+                    <span class="hero-eyebrow"><?= $t['landing_eyebrow'] ?></span>
+                    <h1 class="hero-title">iDev<br><span class="text-brand">Compagnon</span></h1>
+                    <p class="hero-tagline"><?= $t['landing_tagline'] ?></p>
+                    <div class="hero-cta">
+                        <button class="btn-brand" data-bs-toggle="modal" data-bs-target="#LoginModal">
                             <?= $t['landing_login'] ?>
                         </button>
-                        <button class="btn btn-lg px-4 fw-semibold btn-outline-light"
-                                data-bs-toggle="modal" data-bs-target="#SignupModal">
+                        <button class="btn-ghost-hero" data-bs-toggle="modal" data-bs-target="#SignupModal">
                             <?= $t['landing_signup'] ?>
                         </button>
                     </div>
-
-                    <div class="hero-feature-list">
-                        <div class="hero-feature-item">
-                            <span class="hero-feature-icon">🎯</span>
-                            <div>
-                                <h6 class="fw-bold mb-1"><?= $t['landing_feat1_title'] ?></h6>
-                                <p class="mb-0 small"><?= $t['landing_feat1_text'] ?></p>
-                            </div>
-                        </div>
-                        <div class="hero-feature-item">
-                            <span class="hero-feature-icon">🗂️</span>
-                            <div>
-                                <h6 class="fw-bold mb-1"><?= $t['landing_feat2_title'] ?></h6>
-                                <p class="mb-0 small"><?= $t['landing_feat2_text'] ?></p>
-                            </div>
-                        </div>
-                        <div class="hero-feature-item">
-                            <span class="hero-feature-icon">📋</span>
-                            <div>
-                                <h6 class="fw-bold mb-1"><?= $t['landing_feat3_title'] ?></h6>
-                                <p class="mb-0 small"><?= $t['landing_feat3_text'] ?></p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Visuel : plan tactique -->
-                <div class="col-lg-6 d-none d-lg-block">
-                    <div class="pitch-panel">
-                        <svg viewBox="0 0 260 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="6" y="6" width="248" height="368" rx="10" class="pitch-line"/>
-                            <line x1="6" y1="190" x2="254" y2="190" class="pitch-line"/>
-                            <circle cx="130" cy="190" r="38" class="pitch-line"/>
-                            <rect x="65" y="6" width="130" height="55" class="pitch-line"/>
-                            <rect x="65" y="319" width="130" height="55" class="pitch-line"/>
-                            <rect x="100" y="6" width="60" height="22" class="pitch-line"/>
-                            <rect x="100" y="352" width="60" height="22" class="pitch-line"/>
-                            <circle cx="130" cy="350" r="7" class="pitch-dot-gk"/>
-                            <circle cx="40" cy="290" r="7" class="pitch-dot"/>
-                            <circle cx="100" cy="300" r="7" class="pitch-dot"/>
-                            <circle cx="160" cy="300" r="7" class="pitch-dot"/>
-                            <circle cx="220" cy="290" r="7" class="pitch-dot"/>
-                            <circle cx="70" cy="210" r="7" class="pitch-dot"/>
-                            <circle cx="130" cy="220" r="7" class="pitch-dot"/>
-                            <circle cx="190" cy="210" r="7" class="pitch-dot"/>
-                            <circle cx="60" cy="110" r="7" class="pitch-dot"/>
-                            <circle cx="130" cy="90" r="7" class="pitch-dot"/>
-                            <circle cx="200" cy="110" r="7" class="pitch-dot"/>
-                        </svg>
-                        <div class="text-center mt-2">
-                            <span class="badge bg-secondary">4-3-3</span>
+                <div class="game-panel">
+                    <p class="game-panel-title"><?= $t['landing_games_title'] ?></p>
+                    <div class="game-row is-active">
+                        <span class="game-badge">FB</span>
+                        <div class="game-body">
+                            <p class="game-name"><?= $t['hub_football_title'] ?></p>
+                            <p class="game-desc"><?= $t['hub_football_desc'] ?></p>
                         </div>
+                        <span class="game-tag"><?= $t['landing_game_available'] ?></span>
+                    </div>
+                    <div class="game-row is-soon">
+                        <span class="game-badge">F1</span>
+                        <div class="game-body">
+                            <p class="game-name"><?= $t['hub_f1_title'] ?></p>
+                            <p class="game-desc"><?= $t['hub_f1_desc'] ?></p>
+                        </div>
+                        <span class="game-tag"><?= $t['hub_soon'] ?></span>
+                    </div>
+                    <div class="game-row is-soon">
+                        <span class="game-badge">FS</span>
+                        <div class="game-body">
+                            <p class="game-name"><?= $t['hub_fs_title'] ?></p>
+                            <p class="game-desc"><?= $t['hub_fs_desc'] ?></p>
+                        </div>
+                        <span class="game-tag"><?= $t['hub_soon'] ?></span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="how-section">
+        <h2 class="how-title"><?= $t['landing_how_title'] ?></h2>
+        <div class="how-steps">
+            <div class="how-step">
+                <div class="how-step-num">01</div>
+                <h3><?= $t['landing_how1_title'] ?></h3>
+                <p><?= $t['landing_how1_text'] ?></p>
+            </div>
+            <div class="how-step">
+                <div class="how-step-num">02</div>
+                <h3><?= $t['landing_how2_title'] ?></h3>
+                <p><?= $t['landing_how2_text'] ?></p>
+            </div>
+            <div class="how-step">
+                <div class="how-step-num">03</div>
+                <h3><?= $t['landing_how3_title'] ?></h3>
+                <p><?= $t['landing_how3_text'] ?></p>
             </div>
         </div>
     </div>

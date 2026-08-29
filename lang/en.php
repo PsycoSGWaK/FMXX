@@ -1,15 +1,19 @@
 <?php
 $t = [
     // Landing page (not logged in)
-    'landing_tagline'        => 'Your Football Manager companion — season objectives, squad management and tactic subs, all in one place.',
+    'landing_eyebrow'        => 'Multi-game companion platform',
+    'landing_tagline'        => 'Your game, your management. Track your objectives, organise your resources and sharpen your strategy — every crucial decision, whichever management game you play.',
     'landing_login'          => 'Log in',
     'landing_signup'         => 'Create an account',
-    'landing_feat1_title'    => 'Season Objectives',
-    'landing_feat1_text'     => 'Set your targets per competition and track your success rate in real time.',
-    'landing_feat2_title'    => 'Squad Management',
-    'landing_feat2_text'     => 'Import your squad from FM26, filter, sort and manage transfer statuses and contracts.',
-    'landing_feat3_title'    => 'Tactic Sub',
-    'landing_feat3_text'     => 'Build your starting eleven, set your substitutes and super-subs across 6 formations.',
+    'landing_games_title'    => 'Available games',
+    'landing_game_available' => 'Available',
+    'landing_how_title'      => 'How it works',
+    'landing_how1_title'     => 'Create an account',
+    'landing_how1_text'      => 'Free, in a few seconds. Each account has its own data, isolated from other players.',
+    'landing_how2_title'     => 'Choose your game',
+    'landing_how2_text'      => 'Football is available today. F1 Manager and Farming Simulator are coming progressively.',
+    'landing_how3_title'     => 'Track your progress',
+    'landing_how3_text'      => 'Objectives, resources, results: everything centralised and updated as you play.',
 
     // Navbar
     'nav_home'         => 'Home',
