@@ -557,12 +557,14 @@ if (count($joueurs) > 0) {
     <div class="segmented">
         <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
             <?= $t['tab_objectives'] ?>
+            <span id="obj-pct-badge">
             <?php if ($pct !== null): ?>
                 <span class="pill <?= $pct >= 50 ? 'pill-success' : '' ?>">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                     <?= $pct ?>% <?= $t['obj_success_rate'] ?>
                 </span>
             <?php endif; ?>
+            </span>
         </a>
         <a class="<?= $activeTab === 'effectif' ? 'active' : '' ?>" href="?tab=effectif">
             <?= $t['tab_squad'] ?>
@@ -596,9 +598,7 @@ if (count($joueurs) > 0) {
                     'Continentale' => $t['obj_type_cup_continental'],
                 ];
                 ?>
-                <form action="objectif_post.php" method="post">
-                    <input type="hidden" name="saison" value="<?= htmlspecialchars($saison) ?>">
-                    <?= csrf_field() ?>
+                <div id="objectifsWrap" data-saison="<?= htmlspecialchars($saison, ENT_QUOTES) ?>">
                     <div class="objectives">
                         <?php foreach ($competitions as $c):
                             $type  = $c['typeCompetition'];
@@ -614,14 +614,14 @@ if (count($joueurs) > 0) {
                                 $statusLabel = $t['obj_status_pending'];
                             }
                         ?>
-                        <div class="objective-row">
+                        <div class="objective-row" data-id="<?= $c['idCompetition'] ?>">
                             <div class="objective-comp">
                                 <span class="objective-type"><?= $label ?></span>
                                 <span class="objective-name"><?= htmlspecialchars($c['nomCompetition']) ?></span>
                             </div>
                             <div>
                                 <div class="field-label"><?= $t['obj_target'] ?></div>
-                                <select class="obj-select" name="objectif[<?= $c['idCompetition'] ?>]">
+                                <select class="obj-select obj-select-objectif">
                                     <?php foreach ($opts as $optLabel => $rank): ?>
                                         <option value="<?= $optLabel ?>" <?= $c['objectif'] === $optLabel ? 'selected' : '' ?>>
                                             <?= $optLabel ?: $t['obj_placeholder'] ?>
@@ -631,7 +631,7 @@ if (count($joueurs) > 0) {
                             </div>
                             <div>
                                 <div class="field-label"><?= $t['obj_result'] ?></div>
-                                <select class="obj-select" name="resultat[<?= $c['idCompetition'] ?>]">
+                                <select class="obj-select obj-select-resultat">
                                     <?php foreach ($opts as $optLabel => $rank): ?>
                                         <option value="<?= $optLabel ?>" <?= ($c['resultat'] ?? '') === $optLabel ? 'selected' : '' ?>>
                                             <?= $optLabel ?: $t['obj_result_placeholder'] ?>
@@ -648,15 +648,87 @@ if (count($joueurs) > 0) {
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <div class="mt-3 d-flex gap-2">
-                        <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                    <div class="mt-3">
                         <a href="saison_next.php" class="btn-ghost"
                            data-confirm="<?= htmlspecialchars($t['confirm_next_season'], ENT_QUOTES) ?>"
                            data-confirm-variant="warning">
                             <?= $t['btn_next_season'] ?>
                         </a>
                     </div>
-                </form>
+                </div>
+                <script>
+                (function () {
+                    const RANKING = <?= json_encode($ranking) ?>;
+                    const LABELS = {
+                        exceeded: <?= json_encode($t['obj_status_exceeded']) ?>,
+                        success:  <?= json_encode($t['obj_status_success']) ?>,
+                        failed:   <?= json_encode($t['obj_status_failed']) ?>,
+                        pending:  <?= json_encode($t['obj_status_pending']) ?>
+                    };
+                    const wrap = document.getElementById('objectifsWrap');
+                    const saison = wrap.dataset.saison;
+
+                    function refreshPctBadge() {
+                        const badgeWrap = document.getElementById('obj-pct-badge');
+                        if (!badgeWrap) return;
+                        let total = 0, ok = 0;
+                        wrap.querySelectorAll('.objective-row').forEach(function (row) {
+                            const obj = row.querySelector('.obj-select-objectif').value;
+                            const res = row.querySelector('.obj-select-resultat').value;
+                            if (!obj || !res) return;
+                            total++;
+                            const rObj = RANKING[obj] ?? 99;
+                            const rRes = RANKING[res] ?? 99;
+                            if (rRes <= rObj) ok++;
+                        });
+                        if (total === 0) { badgeWrap.innerHTML = ''; return; }
+                        const pct = Math.round(ok / total * 100);
+                        badgeWrap.innerHTML = '<span class="pill' + (pct >= 50 ? ' pill-success' : '') + '">'
+                            + '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> '
+                            + pct + '% <?= $t['obj_success_rate'] ?></span>';
+                    }
+
+                    function updateRowStatus(row) {
+                        const obj = row.querySelector('.obj-select-objectif').value;
+                        const res = row.querySelector('.obj-select-resultat').value;
+                        const chip = row.querySelector('.status-chip');
+                        const rObj = RANKING[obj] ?? null;
+                        const rRes = RANKING[res] ?? null;
+                        chip.classList.remove('status-success', 'status-danger', 'status-pending');
+                        let cls, label, showCheck = false;
+                        if (rObj && rRes) {
+                            if (rRes <= rObj) { cls = 'status-success'; label = rRes < rObj ? LABELS.exceeded : LABELS.success; showCheck = true; }
+                            else { cls = 'status-danger'; label = LABELS.failed; }
+                        } else {
+                            cls = 'status-pending'; label = LABELS.pending;
+                        }
+                        chip.classList.add(cls);
+                        chip.innerHTML = (showCheck ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : '') + label;
+                    }
+
+                    wrap.querySelectorAll('.objective-row').forEach(function (row) {
+                        row.querySelectorAll('.obj-select').forEach(function (sel) {
+                            sel.addEventListener('change', function () {
+                                fetch('objectif_field_post.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: new URLSearchParams({
+                                        idCompetition: row.dataset.id,
+                                        objectif: row.querySelector('.obj-select-objectif').value,
+                                        resultat: row.querySelector('.obj-select-resultat').value,
+                                        saison: saison,
+                                        csrf_token: <?= json_encode(csrf_token()) ?>
+                                    })
+                                }).then(r => r.json()).then(function (data) {
+                                    if (!data.ok) return;
+                                    updateRowStatus(row);
+                                    refreshPctBadge();
+                                });
+                            });
+                        });
+                    });
+                })();
+                </script>
             <?php endif; ?>
 
             <!-- BUDGET -->
