@@ -317,21 +317,36 @@ $pctColor = $pct === null ? 'secondary' : ($pct >= 75 ? 'success' : ($pct >= 50 
 
 // Graphiques effectif
 if (count($joueurs) > 0) {
-    $catPoste = function(string $poste): string {
-        $tokens = array_filter(preg_split('/[\s,\/\-]+/', strtoupper(trim($poste))));
+    // Dictionnaire explicite FR + EN (codes FM). Les qualificatifs de côté
+    // entre parenthèses ("D (C)", "MO (DGC)"...) sont retirés avant le
+    // découpage : seul le rôle de base (avant la parenthèse) est classé.
+    $posteMap = [
+        // Gardien
+        'GB' => 'Gardien', 'GK' => 'Gardien',
+        // Défense
+        'D' => 'Défense', 'DC' => 'Défense', 'DD' => 'Défense', 'DG' => 'Défense',
+        'PD' => 'Défense', 'PG' => 'Défense', 'LIB' => 'Défense',
+        'CB' => 'Défense', 'RB' => 'Défense', 'LB' => 'Défense',
+        'RWB' => 'Défense', 'LWB' => 'Défense', 'WB' => 'Défense', 'SW' => 'Défense',
+        // Milieu
+        'M' => 'Milieu', 'MD' => 'Milieu', 'MC' => 'Milieu', 'MOC' => 'Milieu',
+        'MO' => 'Milieu', 'MG' => 'Milieu',
+        'CDM' => 'Milieu', 'DM' => 'Milieu', 'CM' => 'Milieu', 'CAM' => 'Milieu',
+        'AM' => 'Milieu', 'RM' => 'Milieu', 'LM' => 'Milieu',
+        // Attaque
+        'AD' => 'Attaque', 'AG' => 'Attaque', 'AL' => 'Attaque',
+        'BU' => 'Attaque', 'BT' => 'Attaque', 'ATT' => 'Attaque',
+        'RW' => 'Attaque', 'LW' => 'Attaque', 'ST' => 'Attaque', 'FW' => 'Attaque',
+    ];
+    $rankOrder = ['Gardien' => 0, 'Défense' => 1, 'Milieu' => 2, 'Attaque' => 3];
+    $catPoste = function(string $poste) use ($posteMap, $rankOrder): string {
+        $clean  = preg_replace('/\([^)]*\)/', '', strtoupper(trim($poste)));
+        $tokens = array_filter(preg_split('/[\s,\/\-]+/', $clean));
         $best = 99; $result = 'Autre';
-        foreach ($tokens as $t) {
-            if (preg_match('/^(GK|GB|TW|PO|GL|GR|P)$/', $t))
-                [$rank, $cat] = [0, 'Gardien'];
-            elseif (preg_match('/^(DC|DL|DR|DG|DD|DI|WBL|WBR|WB|SW|CB|LB|RB|IV|ZV|LAT|TS|TD|TI|LCD|RCD)$/', $t))
-                [$rank, $cat] = [1, 'Défense'];
-            elseif (preg_match('/^(MC|ML|MR|MG|MD|MO|MDC|MOC|MLC|MRC|DM|DML|DMR|AM|AML|AMR|AMC|ZM|OM|LM|RM|CC|TRQ|VOL|PIV|INI|CAI|CAO)$/', $t))
-                [$rank, $cat] = [2, 'Milieu'];
-            elseif (preg_match('/^(ST|STC|STL|STR|BU|AL|AR|IF|AG|AD|EI|ED|PC|FW|ATT|AK|SP)$/', $t))
-                [$rank, $cat] = [3, 'Attaque'];
-            else
-                [$rank, $cat] = [99, 'Autre'];
-            if ($rank < $best) { $best = $rank; $result = $cat; }
+        foreach ($tokens as $tok) {
+            if (!isset($posteMap[$tok])) continue;
+            $rank = $rankOrder[$posteMap[$tok]];
+            if ($rank < $best) { $best = $rank; $result = $posteMap[$tok]; }
         }
         return $result;
     };
