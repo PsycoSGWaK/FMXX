@@ -572,6 +572,9 @@ if (count($joueurs) > 0) {
             <?= $t['tab_tactic'] ?>
             <span class="count"><?= htmlspecialchars($formation) ?></span>
         </a>
+        <a class="<?= $activeTab === 'palmares' ? 'active' : '' ?>" href="?tab=palmares">
+            <?= $t['nav_palmares'] ?>
+        </a>
     </div>
 
     <div class="tab-content">
@@ -1348,6 +1351,236 @@ if (count($joueurs) > 0) {
                         </form>
                     <?php endif; ?>
             </div>
+        </div>
+
+        <!-- ===================== ONGLET PALMARES ===================== -->
+        <div class="tab-pane <?= $activeTab === 'palmares' ? 'show active' : '' ?>" id="pane-palmares">
+            <?php
+            $palSaisonsStmt = $pdo->prepare("
+                SELECT sm.*, p.nomPays
+                FROM saison_meta sm
+                LEFT JOIN pays p ON p.idPays = sm.idPays
+                WHERE sm.idUser = :idUser
+                ORDER BY sm.saison DESC
+            ");
+            $palSaisonsStmt->execute(['idUser' => $idUser]);
+            $palSaisons = $palSaisonsStmt->fetchAll();
+
+            $palObjStmt = $pdo->prepare("
+                SELECT o.*, c.nomCompetition, c.typeCompetition
+                FROM objectif o
+                JOIN competition c ON c.idCompetition = o.idCompetition
+                WHERE o.idUser = :idUser
+                ORDER BY o.saison DESC, FIELD(c.typeCompetition,'Championnat','Ligue','Nationale','Continentale')
+            ");
+            $palObjStmt->execute(['idUser' => $idUser]);
+            $palAllObjectifs = $palObjStmt->fetchAll();
+
+            $palBySaison = [];
+            foreach ($palAllObjectifs as $o) {
+                $palBySaison[$o['saison']][] = $o;
+            }
+
+            $palCalcPct = function (array $objectifs) use ($ranking): ?int {
+                $total = $ok = 0;
+                foreach ($objectifs as $o) {
+                    if (!$o['objectif'] || !$o['resultat']) continue;
+                    $total++;
+                    $rObj = $ranking[$o['objectif']] ?? 99;
+                    $rRes = $ranking[$o['resultat']] ?? 99;
+                    if ($rRes <= $rObj) $ok++;
+                }
+                return $total > 0 ? (int)round($ok / $total * 100) : null;
+            };
+            $palTrophees = fn(array $objectifs): array => array_filter($objectifs, fn($o) => in_array($o['resultat'], ['1er', 'Gagner']));
+            ?>
+
+            <?php if (empty($palSaisons)): ?>
+                <div class="text-muted text-center py-5"><?= $t['pal_empty'] ?></div>
+            <?php else: ?>
+                <?php
+                $palTotalTrophees = 0;
+                $palTotalSaisons  = count($palSaisons);
+                $palSumPct = 0; $palCountPct = 0;
+                foreach ($palSaisons as $s) {
+                    $objs = $palBySaison[$s['saison']] ?? [];
+                    $palTotalTrophees += count($palTrophees($objs));
+                    $pctS = $palCalcPct($objs);
+                    if ($pctS !== null) { $palSumPct += $pctS; $palCountPct++; }
+                }
+                $palAvgPct = $palCountPct > 0 ? round($palSumPct / $palCountPct) : null;
+
+                $palChartSaisons = []; $palChartPct = []; $palChartTitres = [];
+                foreach (array_reverse($palSaisons) as $s) {
+                    $objs = $palBySaison[$s['saison']] ?? [];
+                    $palChartSaisons[] = $s['saison'];
+                    $palChartPct[]     = $palCalcPct($objs) ?? 0;
+                    $palChartTitres[]  = count($palTrophees($objs));
+                }
+                ?>
+                <div class="table-panel mb-4">
+                    <div class="stat-bar">
+                        <div class="stat-item">
+                            <div class="stat-value text-warning"><?= $palTotalTrophees ?></div>
+                            <div class="stat-label"><?= $t['pal_trophies'] ?></div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value text-primary"><?= $palTotalSaisons ?></div>
+                            <div class="stat-label"><?= $t['pal_seasons'] ?></div>
+                        </div>
+                        <div class="stat-item">
+                            <?php $palAvgPctColor = $palAvgPct === null ? 'text-secondary' : ($palAvgPct >= 75 ? 'text-success' : ($palAvgPct >= 50 ? 'text-warning' : 'text-danger')); ?>
+                            <div class="stat-value <?= $palAvgPctColor ?>"><?= $palAvgPct !== null ? $palAvgPct . ' %' : '—' ?></div>
+                            <div class="stat-label"><?= $t['pal_avg_success'] ?></div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if (count($palChartSaisons) > 1): ?>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-muted mb-3"><?= $t['pal_chart_pct'] ?></h6>
+                                <canvas id="chartPct" height="50"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-muted mb-3"><?= $t['pal_chart_trophies'] ?></h6>
+                                <canvas id="chartTitres" height="50"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                const palSaisonLabels = <?= json_encode($palChartSaisons) ?>;
+                const palPctData      = <?= json_encode($palChartPct) ?>;
+                const palTitresData   = <?= json_encode($palChartTitres) ?>;
+
+                new Chart(document.getElementById('chartPct'), {
+                    type: 'line',
+                    data: {
+                        labels: palSaisonLabels,
+                        datasets: [{
+                            label: <?= json_encode($t['pal_success_rate']) ?>,
+                            data: palPctData,
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13,110,253,0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 5,
+                        }]
+                    },
+                    options: {
+                        scales: { y: { min: 0, max: 100, ticks: { callback: v => v + ' %' } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                new Chart(document.getElementById('chartTitres'), {
+                    type: 'bar',
+                    data: {
+                        labels: palSaisonLabels,
+                        datasets: [{
+                            label: <?= json_encode($t['pal_trophies']) ?>,
+                            data: palTitresData,
+                            backgroundColor: '#ffc107',
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                </script>
+                <?php endif; ?>
+
+                <?php
+                $palTypeLabels = [
+                    'Championnat'  => $t['obj_type_league'],
+                    'Ligue'        => $t['obj_type_cup_league'],
+                    'Nationale'    => $t['obj_type_cup_national'],
+                    'Continentale' => $t['obj_type_cup_continental'],
+                ];
+                ?>
+                <?php foreach ($palSaisons as $s):
+                    $objs   = $palBySaison[$s['saison']] ?? [];
+                    $pctS   = $palCalcPct($objs);
+                    $trophs = $palTrophees($objs);
+                    $pctSColor = $pctS === null ? '' : ($pctS >= 75 ? 'pill-success' : ($pctS >= 50 ? 'pill-warning' : 'pill-danger'));
+                ?>
+                <div class="table-panel mb-3">
+                    <div class="table-panel-head">
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <span class="section-title"><span style="color:var(--heading); font-size:1.05rem;"><?= htmlspecialchars($s['saison']) ?></span></span>
+                            <?php if ($s['club']): ?>
+                                <span class="pill"><?= htmlspecialchars($s['club']) ?></span>
+                            <?php endif; ?>
+                            <?php if ($s['nomPays']): ?>
+                                <span class="text-muted small">
+                                    <?= htmlspecialchars($s['nomPays']) ?> — <?= $s['division'] ?> — <?= $s['genre'] === 'F' ? $t['pal_female'] : $t['pal_male'] ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <?php $tc = count($trophs); if ($tc > 0): ?>
+                                <span class="pill pill-success">🏆 <?= $tc ?> <?= $tc > 1 ? $t['pal_trophy_pl'] : $t['pal_trophy_s'] ?></span>
+                            <?php endif; ?>
+                            <?php if ($pctS !== null): ?>
+                                <span class="pill <?= $pctSColor ?>"><?= $pctS ?> <?= $t['pal_success_rate'] ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                        <?php if (empty($objs)): ?>
+                            <span class="text-muted small p-3 d-block"><?= $t['pal_no_objectives'] ?></span>
+                        <?php else: ?>
+                            <div class="objectives" style="border:none; border-radius:0;">
+                                <?php foreach ($objs as $o):
+                                    $label = $palTypeLabels[$o['typeCompetition']] ?? $o['typeCompetition'];
+                                    $rObj  = $ranking[$o['objectif']] ?? null;
+                                    $rRes  = $ranking[$o['resultat']]  ?? null;
+                                    $won   = in_array($o['resultat'], ['1er', 'Gagner']);
+                                    if ($rObj && $rRes) {
+                                        $statusClass = $rRes <= $rObj ? 'status-success' : 'status-danger';
+                                        $statusLabel = $rRes <= $rObj ? ($rRes < $rObj ? $t['obj_status_exceeded'] : $t['obj_status_success']) : $t['obj_status_failed'];
+                                    } elseif ($o['resultat']) {
+                                        $statusClass = 'status-pending';
+                                        $statusLabel = $o['resultat'];
+                                    } else {
+                                        $statusClass = 'status-pending';
+                                        $statusLabel = $t['obj_status_pending'];
+                                    }
+                                ?>
+                                <div class="objective-row" style="grid-template-columns: 1.4fr 1fr 1fr auto;">
+                                    <div class="objective-comp">
+                                        <span class="objective-type"><?= $label ?></span>
+                                        <span class="objective-name"><?= htmlspecialchars($o['nomCompetition']) ?><?= $won ? ' 🏆' : '' ?></span>
+                                    </div>
+                                    <div>
+                                        <div class="field-label"><?= $t['pal_obj_label'] ?></div>
+                                        <div class="field-value"><?= $o['objectif'] ?: '—' ?></div>
+                                    </div>
+                                    <div>
+                                        <div class="field-label"><?= $t['obj_result'] ?></div>
+                                        <div class="field-value"><?= $o['resultat'] ?: '—' ?></div>
+                                    </div>
+                                    <span class="status-chip <?= $statusClass ?>">
+                                        <?php if ($statusClass === 'status-success'): ?>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                        <?php endif; ?>
+                                        <?= $statusLabel ?>
+                                    </span>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
 
     </div><!-- /tab-content -->
