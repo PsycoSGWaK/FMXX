@@ -681,27 +681,6 @@ body.visitor-page footer {
     border-top-color: var(--brand);
 }
 
-.hub-badge {
-    width: 4rem;
-    height: 4rem;
-    margin: 0 auto 1rem;
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.3rem;
-    letter-spacing: .02em;
-    background: rgba(213, 34, 44, .1);
-    color: var(--brand);
-}
-
-.hub-card-active .hub-badge {
-    background: var(--brand);
-    color: #fff;
-}
-
 .hub-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 .6rem 1.4rem -.4rem hsl(var(--shadow-color) / .25) !important;
