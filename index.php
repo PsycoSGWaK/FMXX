@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("db.php");
+require_once("country_flags.php");
 require_once("head.php");
 require_once("navbar.php");
 
@@ -521,6 +522,35 @@ if (count($joueurs) > 0) {
         <div class="tab-pane <?= $activeTab === 'effectif' ? 'show active' : '' ?>" id="pane-effectif">
 
             <?php if (count($joueurs) > 0): ?>
+            <?php
+            $expiresUrgent = array_filter($joueurs, function($j) use ($saisonFin) {
+                if (!$j['expireContrat']) return false;
+                $parts = explode('/', $j['expireContrat']);
+                return (int)end($parts) === $saisonFin;
+            });
+            $enVente = count(array_filter($joueurs, fn($j) => $j['mercato_status'] === 'sell'));
+            ?>
+            <!-- Stats rapides -->
+            <div class="table-panel mb-3">
+                <div class="stat-bar">
+                    <div class="stat-item">
+                        <div class="stat-value"><?= count($joueurs) ?></div>
+                        <div class="stat-label"><?= $t['squad_stat_count'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><?= $ageMoyen ?? '—' ?></div>
+                        <div class="stat-label"><?= $t['squad_stat_avg_age'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value <?= count($expiresUrgent) > 0 ? 'text-warning' : '' ?>"><?= count($expiresUrgent) ?></div>
+                        <div class="stat-label"><?= $t['squad_stat_expiring'] ?></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value <?= $enVente > 0 ? 'text-danger' : '' ?>"><?= $enVente ?></div>
+                        <div class="stat-label"><?= $t['squad_stat_selling'] ?></div>
+                    </div>
+                </div>
+            </div>
             <!-- Graphiques -->
             <div class="row g-3 mb-4">
                 <div class="col-md-5">
@@ -591,13 +621,6 @@ if (count($joueurs) > 0) {
                     <?php endif; ?>
                 </div>
                     <?php if (count($joueurs) > 0): ?>
-                        <?php
-                        $expiresUrgent = array_filter($joueurs, function($j) use ($saisonFin) {
-                            if (!$j['expireContrat']) return false;
-                            $parts = explode('/', $j['expireContrat']);
-                            return (int)end($parts) === $saisonFin;
-                        });
-                        ?>
                         <?php if (!empty($expiresUrgent)): ?>
                         <div class="alert alert-danger mb-0 rounded-0 border-0 border-bottom py-2 px-3">
                             <strong><ion-icon name="warning-outline"></ion-icon> <?= $t['squad_contract_alert'] ?> (<?= $saisonFin ?>) :</strong>
@@ -657,38 +680,45 @@ if (count($joueurs) > 0) {
                                         <th class="text-end" data-sort="num"  data-col="10" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="11" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th data-sort="num"  data-col="12" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th><?= $t['squad_col_status'] ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($joueurs as $i => $j): ?>
                                         <?php
-                                        $rowClass = match($j['mercato_status']) {
-                                            'sell' => 'table-danger',
-                                            'loan' => 'table-primary',
-                                            'free' => 'table-danger',
-                                            default => ''
-                                        };
-                                        $expireYear  = '';
-                                        $expireBadge = '';
+                                        $expireYear = '';
                                         if ($j['expireContrat']) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
-                                            if ((int)$expireYear === $saisonFin)
-                                                $expireBadge = '<span class="badge bg-danger ms-3"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
-                                            elseif ((int)$expireYear === $saisonFinNext)
-                                                $expireBadge = '<span class="badge bg-warning text-dark ms-3"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                        }
+                                        if ($j['mercato_status'] === 'sell') {
+                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_status_sell']) . '</span>';
+                                        } elseif ($j['mercato_status'] === 'loan') {
+                                            $statutChip = '<span class="status-chip status-info">' . htmlspecialchars($t['squad_status_loan']) . '</span>';
+                                        } elseif ($j['mercato_status'] === 'free') {
+                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_status_free']) . '</span>';
+                                        } elseif ($expireYear !== '' && (int)$expireYear === $saisonFin) {
+                                            $statutChip = '<span class="status-chip status-danger">' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
+                                        } elseif ($expireYear !== '' && (int)$expireYear === $saisonFinNext) {
+                                            $statutChip = '<span class="status-chip status-warning">' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                        } else {
+                                            $statutChip = '<span class="text-muted">—</span>';
                                         }
                                         ?>
-                                        <tr class="<?= $rowClass ?>"
-                                            data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
+                                        <tr data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
                                             data-poste="<?= htmlspecialchars($j['poste'] ?? '') ?>"
                                             data-expire="<?= $expireYear ?>"
                                             data-statut="<?= $j['mercato_status'] ?? '' ?>">
                                             <td><?= $i + 1 ?></td>
-                                            <td><a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a></td>
+                                            <td>
+                                                <div class="player-cell">
+                                                    <span class="player-avatar"><?= htmlspecialchars(fmxx_initials($j['nom'] ?? '')) ?></span>
+                                                    <a href="joueur.php?id=<?= $j['idJoueur'] ?>" class="text-decoration-none fw-semibold"><?= htmlspecialchars($j['nom'] ?? '') ?></a>
+                                                </div>
+                                            </td>
                                             <td class="text-end"><?= $j['age'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['numero'] ?? '' ?></td>
-                                            <td><?= htmlspecialchars($j['nat'] ?? '') ?></td>
+                                            <td><?= fmxx_flag_emoji($j['nat'] ?? null) ?> <?= htmlspecialchars($j['nat'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['pdn'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
                                             <td class="text-end"><?= $j['app'] ?? '' ?></td>
@@ -696,7 +726,8 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
-                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
+                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?></td>
+                                            <td><?= $statutChip ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -704,7 +735,7 @@ if (count($joueurs) > 0) {
                                     <tr>
                                         <td colspan="2"><?= count($joueurs) ?> <?= $t['squad_players'] ?></td>
                                         <td><?= $ageMoyen ?> <?= $t['squad_avg_age'] ?></td>
-                                        <td colspan="10"></td>
+                                        <td colspan="11"></td>
                                     </tr>
                                 </tfoot>
                             </table>
