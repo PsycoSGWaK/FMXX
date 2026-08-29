@@ -64,7 +64,7 @@ $t = [
     // Página 404
     'page404_title' => 'Fuera de juego.',
     'page404_text'  => 'Esta página no existe o ha sido movida.',
-    'page404_home'  => 'Volver al juego',
+    'page404_home'  => 'Volver al hub',
 
     // Modal de confirmación genérico
     'confirm_title'  => 'Confirmación',

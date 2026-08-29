@@ -16,7 +16,6 @@ require_once("navbar.php");
 
     <div class="d-flex justify-content-end align-items-center gap-2 mb-4">
         <?php require("usermenu.php"); ?>
-        <a href="index.php" class="btn-ghost"><?= $t['nav_back_index'] ?></a>
     </div>
 
     <div class="text-center mb-5">
