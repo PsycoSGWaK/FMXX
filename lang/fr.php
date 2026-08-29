@@ -64,7 +64,7 @@ $t = [
     // Page 404
     'page404_title' => 'Hors-jeu.',
     'page404_text'  => 'Cette page n\'existe pas ou a été déplacée.',
-    'page404_home'  => 'Retour au jeu',
+    'page404_home'  => 'Retour au hub',
 
     // Modale de confirmation générique
     'confirm_title'  => 'Confirmation',
