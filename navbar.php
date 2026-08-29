@@ -15,74 +15,72 @@ function navActive(string $page, string $current): string {
     $initials = mb_strtoupper(mb_substr($_SESSION['username'] ?? '?', 0, 2));
     ?>
 <body>
-<div class="app-shell">
-    <aside class="sidebar">
-        <a class="sidebar-brand" href="hub.php">
-            <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
-            <span class="sidebar-brand-name">iDev <em>Compagnon</em></span>
-        </a>
-        <div class="sidebar-module">Football Manager</div>
-
-        <nav class="sidebar-nav">
-            <a class="side-link <?= navActive('index.php', $currentPage) ?>" href="index.php">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
-                <span><?= $t['nav_home'] ?></span>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary app-navbar">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="hub.php">
+                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon" height="32" style="object-fit:contain;">
+                iDev <span class="text-brand">Compagnon</span>
+                <span class="app-navbar-module">Football Manager</span>
             </a>
-            <?php if ($isAdmin): ?>
-            <a class="side-link admin-link <?= navActive('admin.php', $currentPage) ?>" href="admin.php">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.7 7.5 9 4.3-1.3 7.5-4.5 7.5-9V6L12 3Z"/></svg>
-                <span><?= $t['nav_admin'] ?></span>
-            </a>
-            <?php endif; ?>
-        </nav>
-
-        <div class="sidebar-foot">
-            <div class="btn-group btn-group-sm" role="group">
-                <a href="lang_post.php?lang=fr" class="btn <?= $currentLang === 'fr' ? 'btn-secondary' : 'btn-outline-secondary' ?>">FR</a>
-                <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
-                <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
-            </div>
-            <button type="button" class="theme-btn" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>"
-                    data-label-dark="<?= htmlspecialchars($t['nav_theme_dark']) ?>" data-label-light="<?= htmlspecialchars($t['nav_theme_light']) ?>">
-                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
-                <span><?= $t['nav_theme_dark'] ?></span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="dropdown">
-                <button type="button" class="user-chip w-100" data-bs-toggle="dropdown" style="background:none; border:none; cursor:pointer;">
-                    <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
-                    <div class="text-start">
-                        <div class="user-name"><?= htmlspecialchars($_SESSION['username'] ?? '') ?></div>
-                        <div class="user-role"><?= $isAdmin ? 'Admin' : '' ?></div>
-                    </div>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                            <?= $t['dropdown_edit_profile'] ?>
-                        </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link <?= navActive('index.php', $currentPage) ?>" href="index.php"><?= $t['nav_home'] ?></a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
-                    <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
-                    <li>
-                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#restoreBackupModal">
-                            <?= $t['dropdown_restore_backup'] ?>
-                        </a>
+                    <?php if ($isAdmin): ?>
+                    <li class="nav-item">
+                        <a class="nav-link admin-link <?= navActive('admin.php', $currentPage) ?>" href="admin.php"><?= $t['nav_admin'] ?></a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            <?= $t['dropdown_delete_account'] ?>
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="logout.php"><?= $t['nav_logout'] ?></a></li>
+                    <?php endif; ?>
                 </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="lang_post.php?lang=fr" class="btn <?= $currentLang === 'fr' ? 'btn-secondary' : 'btn-outline-secondary' ?>">FR</a>
+                        <a href="lang_post.php?lang=en" class="btn <?= $currentLang === 'en' ? 'btn-secondary' : 'btn-outline-secondary' ?>">EN</a>
+                        <a href="lang_post.php?lang=es" class="btn <?= $currentLang === 'es' ? 'btn-secondary' : 'btn-outline-secondary' ?>">ES</a>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="<?= $t['nav_theme_toggle'] ?>">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
+                    <div class="dropdown user-dropdown">
+                        <button type="button" class="user-chip" data-bs-toggle="dropdown" style="background:none; border:none; cursor:pointer;">
+                            <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
+                            <div class="text-start">
+                                <div class="user-name"><?= htmlspecialchars($_SESSION['username'] ?? '') ?></div>
+                                <div class="user-role"><?= $isAdmin ? 'Admin' : '' ?></div>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                    <?= $t['dropdown_edit_profile'] ?>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="export_data.php"><?= $t['dropdown_export'] ?></a></li>
+                            <li><a class="dropdown-item" href="backup_export.php"><?= $t['dropdown_backup'] ?></a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#restoreBackupModal">
+                                    <?= $t['dropdown_restore_backup'] ?>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                    <?= $t['dropdown_delete_account'] ?>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="logout.php"><?= $t['nav_logout'] ?></a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </aside>
-
-    <main class="main">
+    </nav>
 <?php } else { ?>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">

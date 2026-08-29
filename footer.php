@@ -1,7 +1,3 @@
-<?php if (isset($_SESSION['mail'])): ?>
-    </main>
-</div><!-- /app-shell -->
-<?php endif; ?>
 <footer class="mt-auto border-top bg-body-tertiary">
     <div class="container-fluid px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
 

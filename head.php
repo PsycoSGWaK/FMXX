@@ -46,7 +46,7 @@ require_once(__DIR__ . "/lang.php");
     <style>
         html, body { height: 100%; }
         body { display: flex; flex-direction: column; min-height: 100dvh; }
-        body > .container-fluid, body > .container, body > .app-shell { flex: 1; }
+        body > .container-fluid, body > .container, body > .main-content { flex: 1; }
         footer { margin-top: auto; }
     </style>
 </head>

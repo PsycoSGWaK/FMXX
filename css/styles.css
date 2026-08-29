@@ -561,137 +561,34 @@ footer a.text-secondary:hover {
 }
 
 /* =========================================================
-   App shell — sidebar de navigation (utilisateurs connectés)
+   Navbar de navigation (utilisateurs connectés)
    ========================================================= */
 
-.app-shell {
-    display: flex;
-    align-items: stretch;
-}
-
-.sidebar {
-    width: 236px;
-    flex-shrink: 0;
-    align-self: flex-start;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--ink);
-    color: #cdd7ee;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 1.4rem 1rem;
-}
-
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-    padding: 0 .35rem;
-    text-decoration: none;
-}
-
-.sidebar-brand img { width: 32px; height: 32px; display: block; }
-
-.sidebar-brand-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.25rem;
-    letter-spacing: .01em;
-    color: #fff;
-    text-transform: uppercase;
-    line-height: 1;
-}
-
-.sidebar-brand-name em {
-    font-style: normal;
-    color: #ff5a63;
-}
-
-.sidebar-module {
-    margin-top: -1.1rem;
-    padding: 0 .35rem;
+.app-navbar-module {
     font-size: .68rem;
     font-weight: 600;
-    letter-spacing: .08em;
+    letter-spacing: .07em;
     text-transform: uppercase;
-    color: #7f8bb3;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    padding: .15rem .5rem;
+    margin-left: .2rem;
 }
 
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
-    flex: 1;
-}
+.nav-link.admin-link { color: var(--brand); }
 
-.side-link {
-    display: flex;
-    align-items: center;
-    gap: .8rem;
-    padding: .6rem .7rem;
-    border-radius: .55rem;
-    text-decoration: none;
-    color: #b7c1e0;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: .95rem;
-    letter-spacing: .03em;
-    text-transform: uppercase;
-    transition: background-color .15s ease, color .15s ease;
-}
-
-.side-link svg { width: 19px; height: 19px; flex-shrink: 0; }
-
-.side-link:hover { background: var(--ink-raised); color: #fff; }
-
-.side-link.active { background: var(--brand); color: #fff; }
-
-.side-link.admin-link { color: #ff9298; }
-
-.side-link.admin-link:hover { background: rgba(213, 34, 44, .18); color: #ffb0b4; }
-
-.sidebar-foot {
-    display: flex;
-    flex-direction: column;
-    gap: .6rem;
-    padding-top: .8rem;
-    border-top: 1px solid rgba(255, 255, 255, .1);
-}
-
-.sidebar-foot .btn-group a.btn {
-    font-size: .72rem;
-}
-
-.theme-btn {
-    display: flex;
-    align-items: center;
-    gap: .6rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, .16);
-    color: #b7c1e0;
-    border-radius: .55rem;
-    padding: .5rem .7rem;
-    font-size: .82rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color .15s ease, color .15s ease;
-}
-
-.theme-btn:hover { border-color: rgba(255, 255, 255, .4); color: #fff; }
-
-.theme-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-link.admin-link:hover, .nav-link.admin-link.active { color: var(--brand-dark); }
 
 .user-chip {
     display: flex;
     align-items: center;
     gap: .6rem;
-    padding: .4rem .5rem;
+    padding: .3rem .5rem;
     border-radius: .55rem;
 }
+
+.user-chip:hover { background: var(--panel-2); }
 
 .user-avatar {
     width: 30px;
@@ -708,30 +605,22 @@ footer a.text-secondary:hover {
     flex-shrink: 0;
 }
 
-.user-name { font-size: .82rem; font-weight: 600; color: #e6eaf6; }
+.user-name { font-size: .82rem; font-weight: 600; color: var(--text); }
 
-.sidebar .dropdown-menu {
-    max-width: 204px;
+.user-role { font-size: .68rem; color: var(--muted); }
+
+.user-dropdown .dropdown-menu {
+    max-width: 220px;
 }
 
-.sidebar .dropdown-item {
+.user-dropdown .dropdown-item {
     white-space: normal;
     padding: .55rem 1rem;
     line-height: 1.35;
 }
 
-.user-role { font-size: .68rem; color: #7f8bb3; }
-
-.main {
-    flex: 1;
-    min-width: 0;
-}
-
 @media (max-width: 900px) {
-    .sidebar { width: 76px; padding: 1.2rem .6rem; }
-    .sidebar-brand-name, .sidebar-module, .side-link span,
-    .user-name, .user-role, .theme-btn span, .sidebar-foot .btn-group { display: none; }
-    .sidebar-brand, .side-link, .user-chip, .theme-btn { justify-content: center; }
+    .app-navbar-module { display: none; }
 }
 
 /* ---------- Contenu principal : contexte, onglets segmentés ---------- */
