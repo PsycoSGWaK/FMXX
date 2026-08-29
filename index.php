@@ -581,11 +581,11 @@ if (count($joueurs) > 0) {
                         <div class="stat-label"><?= $t['squad_stat_expiring'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value <?= $enVente > 0 ? 'text-danger' : '' ?>"><?= $enVente ?></div>
+                        <div class="stat-value <?= $enVente > 0 ? 'text-danger' : '' ?>" id="stat-en-vente"><?= $enVente ?></div>
                         <div class="stat-label"><?= $t['squad_stat_selling'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value text-primary"><?= $enPret ?></div>
+                        <div class="stat-value text-primary" id="stat-en-pret"><?= $enPret ?></div>
                         <div class="stat-label"><?= $t['mercato_loan'] ?></div>
                     </div>
                     <div class="stat-item">
@@ -596,13 +596,13 @@ if (count($joueurs) > 0) {
                         <div class="stat-value text-success"><?= $nbSignes ?></div>
                         <div class="stat-label"><?= $t['mercato_arr_signed'] ?></div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-value <?= $mercatoSolde >= 0 ? 'text-success' : 'text-danger' ?>">
+                    <div class="stat-item" data-mercato-depenses="<?= $mercatoDepenses ?>">
+                        <div class="stat-value <?= $mercatoSolde >= 0 ? 'text-success' : 'text-danger' ?>" id="stat-mercato-solde">
                             <?= $mercatoSolde > 0 ? '+' : '' ?><?= formatBudget($mercatoSolde) ?>
                         </div>
                         <div class="stat-label"><?= $t['mercato_revenue'] ?></div>
                         <?php if ($mercatoDepenses > 0): ?>
-                            <div class="stat-sub">+<?= formatBudget($mercatoRecettes) ?> / −<?= formatBudget($mercatoDepenses) ?></div>
+                            <div class="stat-sub" id="stat-mercato-sub">+<?= formatBudget($mercatoRecettes) ?> / −<?= formatBudget($mercatoDepenses) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -724,21 +724,23 @@ if (count($joueurs) > 0) {
                                     <?php foreach ($joueurs as $i => $j): ?>
                                         <?php
                                         $expireYear  = '';
-                                        $expireBadge = '';
+                                        $expireClass = '';
                                         if ($j['expireContrat']) {
                                             $parts = explode('/', $j['expireContrat']);
                                             $expireYear = end($parts);
-                                            if ((int)$expireYear === $saisonFin)
-                                                $expireBadge = '<span class="badge bg-danger ms-2"><ion-icon name="warning-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_this']) . '</span>';
-                                            elseif ((int)$expireYear === $saisonFinNext)
-                                                $expireBadge = '<span class="badge bg-warning text-dark ms-2"><ion-icon name="trending-up-outline"></ion-icon> ' . htmlspecialchars($t['squad_badge_expiry_next']) . '</span>';
+                                            if ((int)$expireYear === $saisonFin) {
+                                                $expireClass = 'expire-this';
+                                            } elseif ((int)$expireYear === $saisonFinNext) {
+                                                $expireClass = 'expire-next';
+                                            }
                                         }
                                         $status = $j['mercato_status'];
                                         ?>
                                         <tr data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
                                             data-poste="<?= htmlspecialchars($j['poste'] ?? '') ?>"
                                             data-expire="<?= $expireYear ?>"
-                                            data-statut="<?= $j['mercato_status'] ?? '' ?>">
+                                            data-statut="<?= $j['mercato_status'] ?? '' ?>"
+                                            data-prix="<?= (int)($j['prixDemande'] ?? 0) ?>">
                                             <td><?= $i + 1 ?></td>
                                             <td>
                                                 <div class="player-cell">
@@ -756,23 +758,34 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
-                                            <td><?= htmlspecialchars($j['expireContrat'] ?? '') ?><?= $expireBadge ?></td>
+                                            <td>
+                                                <span class="<?= $expireClass ?>"><?= htmlspecialchars($j['expireContrat'] ?? '') ?></span>
+                                            </td>
                                             <td>
                                                 <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
-                                                    <button type="button" class="ms-opt <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
-                                                    <button type="button" class="ms-opt <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
-                                                    <button type="button" class="ms-opt <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
-                                                    <button type="button" class="ms-opt <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
+                                                    <button type="button" class="ms-opt ms-none <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
+                                                    <button type="button" class="ms-opt ms-sell <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
+                                                    <button type="button" class="ms-opt ms-loan <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
+                                                    <button type="button" class="ms-opt ms-free <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
                                                 </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                                <tfoot class="table-secondary fw-bold">
+                                <tfoot class="table-secondary">
                                     <tr>
-                                        <td colspan="2"><?= count($joueurs) ?> <?= $t['squad_players'] ?></td>
-                                        <td><?= $ageMoyen ?> <?= $t['squad_avg_age'] ?></td>
-                                        <td colspan="8"></td>
+                                        <td colspan="11">
+                                            <div class="poste-legend" style="margin-top:0">
+                                                <span class="poste-legend-item">
+                                                    <span class="poste-legend-dot" style="background:var(--brand)"></span>
+                                                    <?= htmlspecialchars($t['squad_badge_expiry_this']) ?>
+                                                </span>
+                                                <span class="poste-legend-item">
+                                                    <span class="poste-legend-dot" style="background:#e0a030"></span>
+                                                    <?= htmlspecialchars($t['squad_badge_expiry_next']) ?>
+                                                </span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -849,6 +862,35 @@ if (count($joueurs) > 0) {
                         });
                         </script>
                         <script>
+                        function formatBudgetJs(val) {
+                            return val.toLocaleString('fr-FR') + ' €';
+                        }
+                        function refreshMercatoStats() {
+                            const rows = document.querySelectorAll('#effectifTable tbody tr');
+                            let enVente = 0, enPret = 0, recettes = 0;
+                            rows.forEach(function (row) {
+                                const prix = parseInt(row.dataset.prix, 10) || 0;
+                                if (row.dataset.statut === 'sell') { enVente++; recettes += prix; }
+                                if (row.dataset.statut === 'loan') { enPret++; }
+                            });
+                            const venteEl = document.getElementById('stat-en-vente');
+                            if (venteEl) {
+                                venteEl.textContent = enVente;
+                                venteEl.classList.toggle('text-danger', enVente > 0);
+                            }
+                            const pretEl = document.getElementById('stat-en-pret');
+                            if (pretEl) pretEl.textContent = enPret;
+                            const soldeEl = document.getElementById('stat-mercato-solde');
+                            const subEl   = document.getElementById('stat-mercato-sub');
+                            if (soldeEl) {
+                                const depenses = parseInt(soldeEl.closest('.stat-item').dataset.mercatoDepenses, 10) || 0;
+                                const solde = recettes - depenses;
+                                soldeEl.textContent = (solde > 0 ? '+' : '') + formatBudgetJs(solde);
+                                soldeEl.classList.toggle('text-success', solde >= 0);
+                                soldeEl.classList.toggle('text-danger', solde < 0);
+                                if (subEl) subEl.textContent = '+' + formatBudgetJs(recettes) + ' / −' + formatBudgetJs(depenses);
+                            }
+                        }
                         document.querySelectorAll('.mercato-status-toggle').forEach(function (toggle) {
                             toggle.querySelectorAll('.ms-opt').forEach(function (btn) {
                                 btn.addEventListener('click', function () {
@@ -870,6 +912,7 @@ if (count($joueurs) > 0) {
                                         btn.classList.add('active');
                                         btn.classList.add('mercato-status-saved');
                                         setTimeout(() => btn.classList.remove('mercato-status-saved'), 900);
+                                        refreshMercatoStats();
                                     });
                                 });
                             });
