@@ -539,30 +539,30 @@ if (count($joueurs) > 0) {
     <!-- CONTEXTE -->
     <div class="context-bar">
         <div class="context-left">
+            <?php require("brand_block.php"); ?>
             <div>
                 <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
                 <div class="context-meta">
-                    <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?>
+                    <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male'], $saison]))) ?>
                 </div>
             </div>
         </div>
         <div class="context-right">
-            <span class="pill"><?= htmlspecialchars($saison) ?></span>
+            <?php require("usermenu.php"); ?>
+        </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <div class="tabs-row">
+    <div class="segmented">
+        <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
+            <?= $t['tab_objectives'] ?>
             <?php if ($pct !== null): ?>
                 <span class="pill <?= $pct >= 50 ? 'pill-success' : '' ?>">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                     <?= $pct ?>% <?= $t['obj_success_rate'] ?>
                 </span>
             <?php endif; ?>
-            <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
-        </div>
-    </div>
-
-    <!-- NAV TABS -->
-    <div class="segmented">
-        <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
-            <?= $t['tab_objectives'] ?>
-            <?php if ($pct !== null): ?><span class="count"><?= $pct ?>%</span><?php endif; ?>
         </a>
         <a class="<?= $activeTab === 'effectif' ? 'active' : '' ?>" href="?tab=effectif">
             <?= $t['tab_squad'] ?>
@@ -575,6 +575,8 @@ if (count($joueurs) > 0) {
         <a class="<?= $activeTab === 'palmares' ? 'active' : '' ?>" href="?tab=palmares">
             <?= $t['nav_palmares'] ?>
         </a>
+    </div>
+    <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
     </div>
 
     <div class="tab-content">

@@ -16,6 +16,7 @@ $t = [
     'nav_palmares'     => 'Trophy Cabinet',
     'nav_about'        => 'About',
     'nav_admin'        => 'Admin',
+    'nav_back_index'   => '← Back',
     'nav_logout'       => 'Log out',
 
     // Footer
@@ -78,7 +79,7 @@ $t = [
     'btn_next_season'   => 'Next season →',
     'btn_back'          => '← Back',
     'btn_back_squad'    => '← Back to Squad',
-    'btn_settings'      => 'Settings',
+    'btn_settings'      => 'Season settings',
     'confirm_clear_squad'  => 'Clear the entire squad?',
     'confirm_next_season'  => 'Move to the next season?',
 

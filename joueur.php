@@ -32,7 +32,12 @@ $saved = isset($_GET['saved']);
 <div class="main-content">
 
     <div class="context-bar">
-        <div class="context-title"><?= htmlspecialchars($j['nom'] ?? '—') ?></div>
+        <div class="context-left">
+            <a href="hub.php" class="context-brand">
+                <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+            </a>
+            <span class="context-title"><?= htmlspecialchars($j['nom'] ?? '—') ?></span>
+        </div>
         <div class="context-right">
             <?php
             $badgeClass = match($j['mercato_status']) {
@@ -49,6 +54,7 @@ $saved = isset($_GET['saved']);
             };
             ?>
             <span class="status-chip <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+            <?php require("usermenu.php"); ?>
             <a href="index.php?tab=effectif" class="btn-ghost"><?= $t['player_back'] ?></a>
         </div>
     </div>

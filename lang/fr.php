@@ -16,6 +16,7 @@ $t = [
     'nav_palmares'     => 'Palmarès',
     'nav_about'        => 'À propos',
     'nav_admin'        => 'Admin',
+    'nav_back_index'   => '← Retour',
     'nav_logout'       => 'Déconnexion',
 
     // Footer
@@ -78,7 +79,7 @@ $t = [
     'btn_next_season'   => 'Saison suivante →',
     'btn_back'          => '← Retour',
     'btn_back_squad'    => '← Retour Effectif',
-    'btn_settings'      => 'Paramètres',
+    'btn_settings'      => 'Paramètres saison',
     'confirm_clear_squad'  => 'Vider tout l\'effectif ?',
     'confirm_next_season'  => 'Passer à la saison suivante ?',
 
