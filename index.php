@@ -417,27 +417,40 @@ if (count($joueurs) > 0) {
         return $side !== '' ? "$enRole ($side)" : $enRole;
     };
 
-    // Les 16 rôles "utilisés en match" proposés dans le sélecteur (liste
-    // FR/EN fournie par Guillaume, 2026-08-29). Contrairement à
-    // $simplifyPoste (affichage libre, peut combiner plusieurs côtés type
-    // "D (RLC)"), cette liste est fermée : un seul côté par rôle, ou aucun
-    // pour les rôles sans variante latérale (GK, SW, CDM, ST, FW, et AM qui
-    // n'a que la variante centrale dans la liste actée).
-    $roleOptions = ['GK', 'D (C)', 'D (R)', 'D (L)', 'WB (R)', 'WB (L)', 'SW', 'CDM', 'M (C)', 'AM (C)', 'M (R)', 'M (L)', 'W (R)', 'W (L)', 'ST', 'FW'];
+    // Les 16 rôles "utilisés en match" proposés dans le sélecteur (codes
+    // courts de la liste FR/EN fournie par Guillaume, 2026-08-29 —
+    // "Défenseur central : DC/CB" etc., pas le format libre "D (C)" utilisé
+    // par $simplifyPoste). Cette liste est fermée : un seul rôle par
+    // combinaison rôle+côté, ex. pas de "D (RLC)".
+    $roleOptions = ['GK', 'CB', 'RB', 'LB', 'RWB', 'LWB', 'SW', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST', 'FW'];
     $roleCategory = [
         'GK' => 'Gardien',
-        'D (C)' => 'Défense', 'D (R)' => 'Défense', 'D (L)' => 'Défense',
-        'WB (R)' => 'Défense', 'WB (L)' => 'Défense', 'SW' => 'Défense',
-        'CDM' => 'Milieu', 'M (C)' => 'Milieu', 'AM (C)' => 'Milieu', 'M (R)' => 'Milieu', 'M (L)' => 'Milieu',
-        'W (R)' => 'Attaque', 'W (L)' => 'Attaque', 'ST' => 'Attaque', 'FW' => 'Attaque',
+        'CB' => 'Défense', 'RB' => 'Défense', 'LB' => 'Défense',
+        'RWB' => 'Défense', 'LWB' => 'Défense', 'SW' => 'Défense',
+        'CDM' => 'Milieu', 'CM' => 'Milieu', 'CAM' => 'Milieu', 'RM' => 'Milieu', 'LM' => 'Milieu',
+        'RW' => 'Attaque', 'LW' => 'Attaque', 'ST' => 'Attaque', 'FW' => 'Attaque',
     ];
-    $suggestRoleMatch = function(string $poste) use ($findBestRoleToken, $roleEnMap, $sideCharMap, $roleCategory): string {
+    // enRole (issu de $roleEnMap) + côté -> code final de la liste fermée.
+    $finalRoleMap = [
+        'GK|' => 'GK',
+        'D|C' => 'CB', 'D|R' => 'RB', 'D|L' => 'LB',
+        'WB|R' => 'RWB', 'WB|L' => 'LWB',
+        'SW|' => 'SW',
+        'CDM|' => 'CDM',
+        'M|C' => 'CM', 'M|R' => 'RM', 'M|L' => 'LM',
+        'AM|C' => 'CAM',
+        'W|R' => 'RW', 'W|L' => 'LW',
+        'ST|' => 'ST',
+        'FW|' => 'FW',
+    ];
+    $suggestRoleMatch = function(string $poste) use ($findBestRoleToken, $roleEnMap, $sideCharMap, $finalRoleMap): string {
         [$bestRole, $bestSide] = $findBestRoleToken($poste);
-        if ($bestRole === null) return 'M (C)';
+        if ($bestRole === null) return 'CM';
         [$enRole, $impliedSide] = $roleEnMap[$bestRole] ?? ['M', null];
-        if (in_array($enRole, ['GK', 'SW', 'CDM', 'AM', 'ST', 'FW'], true)) {
-            $label = $enRole === 'AM' ? 'AM (C)' : $enRole;
-            return isset($roleCategory[$label]) ? $label : 'M (C)';
+        // AM n'a que la variante centrale (CAM) dans la liste actée.
+        if ($enRole === 'AM') return 'CAM';
+        if (in_array($enRole, ['GK', 'SW', 'CDM', 'ST', 'FW'], true)) {
+            return $finalRoleMap["$enRole|"] ?? 'CM';
         }
         $side = '';
         if ($bestSide !== '') {
@@ -448,11 +461,11 @@ if (count($joueurs) > 0) {
             elseif (in_array('L', $translated, true)) $side = 'L';
         } elseif ($impliedSide) {
             $side = $impliedSide;
-        } else {
-            $side = $enRole === 'WB' ? 'R' : 'C';
         }
-        $label = "$enRole ($side)";
-        return isset($roleCategory[$label]) ? $label : 'M (C)';
+        if ($side === '') {
+            $side = ($enRole === 'W' || $enRole === 'WB') ? 'R' : 'C';
+        }
+        return $finalRoleMap["$enRole|$side"] ?? 'CM';
     };
     // Rôle effectif : le choix manuel de l'utilisateur (role_match) prime
     // sur la suggestion déduite de l'import.

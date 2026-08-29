@@ -25,7 +25,7 @@ if (!hash_equals(csrf_token(), $token)) {
 }
 
 // Doit rester synchronisé avec $roleOptions dans index.php.
-$validRoles = ['GK', 'D (C)', 'D (R)', 'D (L)', 'WB (R)', 'WB (L)', 'SW', 'CDM', 'M (C)', 'AM (C)', 'M (R)', 'M (L)', 'W (R)', 'W (L)', 'ST', 'FW'];
+$validRoles = ['GK', 'CB', 'RB', 'LB', 'RWB', 'LWB', 'SW', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST', 'FW'];
 
 $idUser   = $_SESSION['idUser'];
 $idJoueur = (int)($_POST['idJoueur'] ?? 0);
