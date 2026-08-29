@@ -143,7 +143,6 @@ $t = [
     'squad_col_name'         => 'Nom',
     'squad_col_age'          => 'Âge',
     'squad_col_number'       => 'N°',
-    'squad_col_nat'          => 'Nat',
     'squad_col_pob'          => 'PdN',
     'squad_col_position'     => 'Poste',
     'squad_col_apps'         => 'App',

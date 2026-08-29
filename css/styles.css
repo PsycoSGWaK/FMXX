@@ -905,6 +905,14 @@ footer a.text-secondary:hover {
     flex-shrink: 0;
 }
 
+.player-name { display: block; }
+
+.player-nat {
+    font-size: .74rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
 /* ---------- Bandeau budget ---------- */
 
 .budget-strip {
