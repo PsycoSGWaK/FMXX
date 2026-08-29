@@ -70,14 +70,14 @@ function navActive(string $page, string $current): string {
                 $profileErrCode = $_GET['error'] ?? '';
                 ?>
                 <?php if ($profileErrorCode): ?>
-                    <div class="alert alert-danger py-2"><?= htmlspecialchars(validation_message($profileErrorCode, $t)) ?></div>
+                    <div class="alert alert-danger alert-dismissible fade show py-2"><?= htmlspecialchars(validation_message($profileErrorCode, $t)) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <?php elseif ($profileErrCode === 'profile_conflict'): ?>
-                    <div class="alert alert-danger py-2"><?= $t['profile_error_conflict'] ?></div>
+                    <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['profile_error_conflict'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <?php elseif ($profileErrCode === 'profile_missing'): ?>
-                    <div class="alert alert-danger py-2"><?= $t['profile_error_missing'] ?></div>
+                    <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['profile_error_missing'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <?php endif; ?>
                 <?php if (($_GET['profile'] ?? '') === 'ok'): ?>
-                    <div class="alert alert-success py-2"><?= $t['profile_ok'] ?></div>
+                    <div class="alert alert-success alert-dismissible fade show py-2"><?= $t['profile_ok'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <?php endif; ?>
                 <form action="profile_post.php" method="post">
                     <?= csrf_field() ?>

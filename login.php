@@ -14,13 +14,13 @@
             unset($_SESSION['unverified_mail']);
             ?>
             <?php if ($loginError === 'login'): ?>
-                <div class="alert alert-danger py-2"><?= $t['alert_login_error'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['alert_login_error'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($loginError === 'form'): ?>
-                <div class="alert alert-danger py-2"><?= $t['alert_login_missing'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['alert_login_missing'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($loginError === 'session_expired'): ?>
-                <div class="alert alert-warning py-2"><?= $t['alert_session_expired'] ?></div>
+                <div class="alert alert-warning alert-dismissible fade show py-2"><?= $t['alert_session_expired'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($loginError === 'too_many_attempts'): ?>
-                <div class="alert alert-danger py-2"><?= $t['alert_login_ratelimited'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['alert_login_ratelimited'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php elseif ($loginError === 'unverified'): ?>
                 <div class="alert alert-warning py-2">
                     <?= $t['alert_login_unverified'] ?>
@@ -31,13 +31,13 @@
                     </form>
                 </div>
             <?php elseif ($loginError === 'confirm_invalid'): ?>
-                <div class="alert alert-danger py-2"><?= $t['alert_confirm_invalid'] ?></div>
+                <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['alert_confirm_invalid'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <?php if (($_GET['confirmed'] ?? '') === 'ok'): ?>
-                <div class="alert alert-success py-2"><?= $t['alert_email_confirmed'] ?></div>
+                <div class="alert alert-success alert-dismissible fade show py-2"><?= $t['alert_email_confirmed'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <?php if (($_GET['resend'] ?? '') === 'ok'): ?>
-                <div class="alert alert-success py-2"><?= $t['alert_resend_sent'] ?></div>
+                <div class="alert alert-success alert-dismissible fade show py-2"><?= $t['alert_resend_sent'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <form class="form-login" action="login_post.php" method="post">
                 <?= csrf_field() ?>
