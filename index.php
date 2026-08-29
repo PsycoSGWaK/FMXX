@@ -1414,9 +1414,16 @@ if (count($joueurs) > 0) {
                         foreach ($tacticsStmt->fetchAll() as $tacticRow) {
                             $tactics[$tacticRow['position']] = $tacticRow;
                         }
+                        // Codes de poste Tactic Sub -> role canonique de l'Effectif (meme
+                        // dictionnaire/abreviations que $roleOptions), pour l'affichage
+                        // traduit et pour filtrer la liste des joueurs par poste.
+                        $tacticRoleMap = [
+                            'GK' => 'GK', 'DC' => 'CB', 'DL' => 'LB', 'DR' => 'RB',
+                            'MC' => 'CM', 'MG' => 'LM', 'MD' => 'RM', 'MO' => 'CAM',
+                            'AL' => 'LW', 'AR' => 'RW', 'BU' => 'ST',
+                        ];
                         ?>
-                        <form action="tactic_post.php" method="post">
-                            <?= csrf_field() ?>
+                        <div id="tacticWrap" class="pb-3">
                             <div class="table-scroll">
                                 <table class="table table-sm align-middle mb-0 data-table">
                                     <thead>
@@ -1428,17 +1435,30 @@ if (count($joueurs) > 0) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php for ($i = 1; $i <= 11; $i++): ?>
-                                            <tr>
-                                                <td><span class="pos-tag"><?= $positions[$i-1] ?></span></td>
+                                        <?php for ($i = 1; $i <= 11; $i++):
+                                            $posCode  = $positions[$i-1];
+                                            $roleCode = $tacticRoleMap[$posCode] ?? null;
+                                            $currentIds = array_filter([
+                                                $tactics[$i]['titulaire']  ?? null,
+                                                $tactics[$i]['remplacant'] ?? null,
+                                                $tactics[$i]['supersub']   ?? null,
+                                            ]);
+                                            $rowPlayers = $roleCode
+                                                ? array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRole) {
+                                                    return $effectiveRole($j) === $roleCode || in_array($j['idJoueur'], $currentIds);
+                                                })
+                                                : $joueursDispo;
+                                        ?>
+                                            <tr data-position="<?= $i ?>">
+                                                <td><span class="pos-tag"><?= htmlspecialchars($roleCode ? ($t['role_abbr_' . $roleCode] ?? $posCode) : $posCode) ?></span></td>
                                                 <?php foreach (['titulaire','remplacant','supersub'] as $role): ?>
                                                     <td>
-                                                        <select class="form-select form-select-sm" name="line_<?= $i ?>_<?= $role ?>">
+                                                        <select class="form-select form-select-sm tactic-select" data-role="<?= $role ?>">
                                                             <option value="">—</option>
-                                                            <?php foreach ($joueursDispo as $j): ?>
+                                                            <?php foreach ($rowPlayers as $j): ?>
                                                                 <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
                                                                 <option value="<?= $j['idJoueur'] ?>" <?= $selected ?>>
-                                                                    <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($j['poste']) ?>)
+                                                                    <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $effectiveRole($j)] ?? $effectiveRole($j)) ?>)
                                                                 </option>
                                                             <?php endforeach; ?>
                                                         </select>
@@ -1449,10 +1469,28 @@ if (count($joueurs) > 0) {
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="p-3">
-                                <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
-                            </div>
-                        </form>
+                        </div>
+                        <script>
+                        document.querySelectorAll('#tacticWrap .tactic-select').forEach(function (sel) {
+                            sel.addEventListener('change', function () {
+                                const row = sel.closest('tr');
+                                fetch('tactic_field_post.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: new URLSearchParams({
+                                        position: row.dataset.position,
+                                        role: sel.dataset.role,
+                                        value: sel.value,
+                                        csrf_token: <?= json_encode(csrf_token()) ?>
+                                    })
+                                }).then(r => r.json()).then(function (data) {
+                                    if (!data.ok) return;
+                                    sel.classList.add('mercato-status-saved');
+                                    setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
+                                });
+                            });
+                        });
+                        </script>
                     <?php endif; ?>
             </div>
         </div>
