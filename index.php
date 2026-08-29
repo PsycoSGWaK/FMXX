@@ -618,31 +618,29 @@ if (count($joueurs) > 0) {
                 'Attaque' => $t['squad_pos_attack'],
             ];
             ?>
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="fw-bold text-muted mb-3"><?= $t['squad_chart_by_position'] ?></h6>
-                            <?php if ($posteTotal > 0): ?>
-                            <div class="poste-bar">
-                                <?php foreach ($parCategorie as $cat => $n): if ($n === 0) continue; ?>
-                                    <div class="poste-seg" style="width:<?= round($n / $posteTotal * 100, 2) ?>%; background:<?= $posteColors[$cat] ?>"></div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="poste-legend">
-                                <?php foreach ($parCategorie as $cat => $n): ?>
-                                    <span class="poste-legend-item">
-                                        <span class="poste-legend-dot" style="background:<?= $posteColors[$cat] ?>"></span>
-                                        <?= htmlspecialchars($posteLabels[$cat]) ?>
-                                        <span class="poste-legend-count"><?= $n ?> (<?= round($n / $posteTotal * 100) ?>%)</span>
-                                    </span>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
+            <?php if ($posteTotal > 0): ?>
+            <div class="table-panel mb-4">
+                <div class="table-panel-head">
+                    <span class="section-title"><span style="color:var(--heading)"><?= $t['squad_chart_by_position'] ?></span></span>
+                    <div class="poste-legend" style="margin-top:0">
+                        <?php foreach ($parCategorie as $cat => $n): ?>
+                            <span class="poste-legend-item">
+                                <span class="poste-legend-dot" style="background:<?= $posteColors[$cat] ?>"></span>
+                                <?= htmlspecialchars($posteLabels[$cat]) ?>
+                                <span class="poste-legend-count"><?= $n ?> (<?= round($n / $posteTotal * 100) ?>%)</span>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div class="poste-bar">
+                        <?php foreach ($parCategorie as $cat => $n): if ($n === 0) continue; ?>
+                            <div class="poste-seg" style="width:<?= round($n / $posteTotal * 100, 2) ?>%; background:<?= $posteColors[$cat] ?>"></div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             <?php endif; ?>
 
             <!-- Tableau effectif -->
