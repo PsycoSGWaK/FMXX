@@ -882,6 +882,28 @@ footer a.text-secondary:hover {
 .status-success { background: var(--success-bg); color: var(--success); }
 .status-danger { background: var(--panel-2); color: var(--brand); }
 .status-pending { background: var(--panel-2); color: var(--muted); }
+.status-warning { background: var(--warning-bg); color: var(--warning-color); }
+.status-info { background: rgba(13, 110, 253, .12); color: #0d6efd; }
+
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.player-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .68rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
 
 /* ---------- Bandeau budget ---------- */
 
