@@ -31,7 +31,6 @@ require_once("navbar.php");
             <a href="index.php" class="text-decoration-none">
                 <div class="card h-100 shadow-sm border-0 hub-card hub-card-active">
                     <div class="card-body text-center p-4">
-                        <div class="display-4 mb-3">⚽</div>
                         <h4 class="fw-bold mb-2"><?= $t['hub_football_title'] ?></h4>
                         <p class="text-muted small mb-3"><?= $t['hub_football_desc'] ?></p>
                         <span class="btn btn-sm btn-primary px-4 fw-semibold"><?= $t['hub_open'] ?></span>
@@ -44,7 +43,6 @@ require_once("navbar.php");
         <div class="col-md-5 col-lg-4">
             <div class="card h-100 shadow-sm border-0" style="opacity:.55;">
                 <div class="card-body text-center p-4">
-                    <div class="display-4 mb-3">🏎️</div>
                     <h4 class="fw-bold mb-2"><?= $t['hub_f1_title'] ?></h4>
                     <p class="text-muted small mb-3"><?= $t['hub_f1_desc'] ?></p>
                     <span class="badge bg-secondary"><?= $t['hub_soon'] ?></span>
@@ -56,7 +54,6 @@ require_once("navbar.php");
         <div class="col-md-5 col-lg-4">
             <div class="card h-100 shadow-sm border-0" style="opacity:.55;">
                 <div class="card-body text-center p-4">
-                    <div class="display-4 mb-3">🚜</div>
                     <h4 class="fw-bold mb-2"><?= $t['hub_fs_title'] ?></h4>
                     <p class="text-muted small mb-3"><?= $t['hub_fs_desc'] ?></p>
                     <span class="badge bg-secondary"><?= $t['hub_soon'] ?></span>

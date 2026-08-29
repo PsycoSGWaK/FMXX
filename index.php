@@ -41,7 +41,6 @@ if (!isset($_SESSION['mail'])) {
                     <div class="game-panel">
                         <p class="game-panel-title"><?= $t['landing_games_title'] ?></p>
                         <div class="game-row is-active">
-                            <span class="game-badge">FB</span>
                             <div class="game-body">
                                 <p class="game-name"><?= $t['hub_football_title'] ?></p>
                                 <p class="game-desc"><?= $t['hub_football_desc'] ?></p>
@@ -49,7 +48,6 @@ if (!isset($_SESSION['mail'])) {
                             <span class="game-tag"><?= $t['landing_game_available'] ?></span>
                         </div>
                         <div class="game-row is-soon">
-                            <span class="game-badge">F1</span>
                             <div class="game-body">
                                 <p class="game-name"><?= $t['hub_f1_title'] ?></p>
                                 <p class="game-desc"><?= $t['hub_f1_desc'] ?></p>
@@ -57,7 +55,6 @@ if (!isset($_SESSION['mail'])) {
                             <span class="game-tag"><?= $t['hub_soon'] ?></span>
                         </div>
                         <div class="game-row is-soon">
-                            <span class="game-badge">FS</span>
                             <div class="game-body">
                                 <p class="game-name"><?= $t['hub_fs_title'] ?></p>
                                 <p class="game-desc"><?= $t['hub_fs_desc'] ?></p>

@@ -332,10 +332,12 @@ $t = [
 
     // iDev Compagnon hub (game selection)
     'hub_subtitle'        => 'Pick your game to get started.',
-    'hub_football_title'  => 'Football',
+    'hub_football_title'  => 'Football Manager',
     'hub_football_desc'   => 'Football Manager — season objectives, squad, tactics and transfers.',
     'hub_f1_title'        => 'F1 Manager',
     'hub_f1_desc'         => 'Teams, drivers and race strategy.',
+    'hub_fs_title'        => 'Farming Simulator',
+    'hub_fs_desc'         => 'TBD.',
     'hub_open'            => 'Open',
     'hub_soon'            => 'Coming soon',
 ];
