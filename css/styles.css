@@ -546,9 +546,26 @@ footer a.text-secondary:hover {
     padding: 3rem 1.75rem;
 }
 
-/* La page visiteur n'utilise pas .main-content (flex:1) : sans ce reset,
-   le footer (classe Bootstrap .mt-auto, en !important) se colle au bas du
-   viewport et laisse un vide sous .how-section sur les ecrans hauts. */
+/* La landing n'utilise pas .main-content (flex:1) : le mecanisme sticky-
+   footer global (body en flex column + min-height:100dvh + footer en
+   margin-top:auto !important via .mt-auto) force alors la page a occuper
+   tout le viewport, laissant un vide sous le contenu (voire sous le
+   footer lui-meme) des que l'ecran est plus haut que le contenu. On
+   desactive entierement ce mecanisme pour cette page : elle doit faire
+   exactement la hauteur de son contenu, quelle que soit la taille de
+   l'ecran, footer collé juste apres .how-section.
+   Ne pas etendre a body (sans classe) : les autres pages visiteur (about,
+   mentions legales) dependent encore du footer pinne en bas d'ecran. */
+html:has(body.visitor-page) {
+    height: auto;
+}
+
+body.visitor-page {
+    display: block;
+    height: auto;
+    min-height: 0;
+}
+
 body.visitor-page footer {
     margin-top: 0 !important;
 }
