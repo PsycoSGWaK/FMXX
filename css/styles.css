@@ -674,15 +674,15 @@ footer a.text-secondary:hover {
     border-right: 1px solid var(--border);
 }
 
-.context-brand img { width: 36px; height: 36px; object-fit: contain; display: block; }
+.context-brand img { width: 46px; height: 46px; object-fit: contain; display: block; }
 
 .context-brand-name {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.7rem;
     letter-spacing: .01em;
     text-transform: uppercase;
-    line-height: 1.15;
+    line-height: 1;
     color: var(--heading);
 }
 
