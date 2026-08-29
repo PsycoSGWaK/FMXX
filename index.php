@@ -541,35 +541,35 @@ if (count($joueurs) > 0) {
         <div class="context-left">
             <a href="hub.php" class="context-brand">
                 <img src="assets/pictures/fmxx_logo.png" alt="iDev Compagnon">
+                <div>
+                    <div class="context-brand-name">iDev <em>Compagnon</em></div>
+                    <div class="app-navbar-module">Football Manager</div>
+                </div>
             </a>
             <div>
-                <div class="context-title-row">
-                    <span class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></span>
-                    <span class="app-navbar-module">Football Manager</span>
-                </div>
+                <div class="context-title"><?= $nomClub ? htmlspecialchars($nomClub) : $t['setting_title'] ?></div>
                 <div class="context-meta">
-                    <?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?>
+                    <span><?= htmlspecialchars(implode(' · ', array_filter([$division, $paysNom, $genre === 'F' ? $t['setting_female'] : $t['setting_male']]))) ?></span>
+                    <span class="pill"><?= htmlspecialchars($saison) ?></span>
                 </div>
             </div>
         </div>
         <div class="context-right">
-            <span class="pill"><?= htmlspecialchars($saison) ?></span>
+            <?php require("usermenu.php"); ?>
+        </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <div class="tabs-row">
+    <div class="segmented">
+        <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
+            <?= $t['tab_objectives'] ?>
             <?php if ($pct !== null): ?>
                 <span class="pill <?= $pct >= 50 ? 'pill-success' : '' ?>">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                     <?= $pct ?>% <?= $t['obj_success_rate'] ?>
                 </span>
             <?php endif; ?>
-            <?php require("usermenu.php"); ?>
-            <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
-        </div>
-    </div>
-
-    <!-- NAV TABS -->
-    <div class="segmented">
-        <a class="<?= $activeTab === 'objectifs' ? 'active' : '' ?>" href="?tab=objectifs">
-            <?= $t['tab_objectives'] ?>
-            <?php if ($pct !== null): ?><span class="count"><?= $pct ?>%</span><?php endif; ?>
         </a>
         <a class="<?= $activeTab === 'effectif' ? 'active' : '' ?>" href="?tab=effectif">
             <?= $t['tab_squad'] ?>
@@ -582,6 +582,8 @@ if (count($joueurs) > 0) {
         <a class="<?= $activeTab === 'palmares' ? 'active' : '' ?>" href="?tab=palmares">
             <?= $t['nav_palmares'] ?>
         </a>
+    </div>
+    <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#settingModal"><?= $t['btn_settings'] ?></button>
     </div>
 
     <div class="tab-content">
