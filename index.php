@@ -350,6 +350,65 @@ if (count($joueurs) > 0) {
         }
         return $result;
     };
+    // Affichage simplifié de la colonne "Poste" : un seul rôle principal
+    // (même priorité Gardien>Défense>Milieu>Attaque que pour le graphique),
+    // traduit en abréviation EN. Les lettres de côté FR (C/D/G = Centre/
+    // Droite/Gauche) et EN (C/L/R) ne se chevauchent jamais caractère par
+    // caractère : D et G n'existent qu'en FR, L n'existe qu'en EN — donc la
+    // traduction lettre à lettre est sans ambiguïté quelle que soit la
+    // langue d'import.
+    $roleEnMap = [
+        'GB' => ['GK', null], 'GK' => ['GK', null],
+        'D'  => ['D', null],
+        'DC' => ['D', 'C'], 'DD' => ['D', 'R'], 'DG' => ['D', 'L'],
+        'CB' => ['D', 'C'], 'RB' => ['D', 'R'], 'LB' => ['D', 'L'],
+        'PD' => ['WB', 'R'], 'PG' => ['WB', 'L'],
+        'RWB' => ['WB', 'R'], 'LWB' => ['WB', 'L'], 'WB' => ['WB', null],
+        'LIB' => ['SW', null], 'SW' => ['SW', null],
+        'M'  => ['M', null],
+        'MC' => ['M', 'C'], 'CM' => ['M', 'C'],
+        'MD' => ['CDM', null], 'CDM' => ['CDM', null], 'DM' => ['CDM', null],
+        'MOC' => ['AM', 'C'], 'CAM' => ['AM', 'C'],
+        'MO' => ['AM', null], 'AM' => ['AM', null],
+        'MG' => ['M', 'L'], 'LM' => ['M', 'L'], 'RM' => ['M', 'R'],
+        'AD' => ['W', 'R'], 'RW' => ['W', 'R'],
+        'AG' => ['W', 'L'], 'LW' => ['W', 'L'],
+        'AL' => ['W', null],
+        'BU' => ['ST', null], 'BT' => ['ST', null], 'ST' => ['ST', null],
+        'ATT' => ['FW', null], 'FW' => ['FW', null],
+    ];
+    $sideCharMap = ['D' => 'R', 'G' => 'L', 'C' => 'C', 'L' => 'L', 'R' => 'R'];
+    $simplifyPoste = function(string $poste) use ($posteMap, $rankOrder, $roleEnMap, $sideCharMap): string {
+        $groups = array_filter(array_map('trim', explode(',', $poste)));
+        $bestRank = 100; $bestRole = null; $bestSide = '';
+        foreach ($groups as $group) {
+            $sideRaw = '';
+            if (preg_match('/\(([^)]*)\)/', $group, $m)) {
+                $sideRaw = strtoupper($m[1]);
+            }
+            $rolePart = trim(preg_replace('/\([^)]*\)/', '', $group));
+            if ($rolePart === '') continue;
+            foreach (explode('/', $rolePart) as $tok) {
+                $tok = strtoupper(trim($tok));
+                if ($tok === '' || !isset($posteMap[$tok])) continue;
+                $rank = $rankOrder[$posteMap[$tok]];
+                if ($rank < $bestRank) {
+                    $bestRank = $rank;
+                    $bestRole = $tok;
+                    $bestSide = $sideRaw;
+                }
+            }
+        }
+        if ($bestRole === null) return $poste;
+        [$enRole, $impliedSide] = $roleEnMap[$bestRole] ?? [$bestRole, null];
+        $side = '';
+        if ($bestSide !== '') {
+            $side = implode('', array_map(fn($c) => $sideCharMap[$c] ?? $c, str_split($bestSide)));
+        } elseif ($impliedSide) {
+            $side = $impliedSide;
+        }
+        return $side !== '' ? "$enRole ($side)" : $enRole;
+    };
     $parCategorie = ['Gardien' => 0, 'Défense' => 0, 'Milieu' => 0, 'Attaque' => 0];
     foreach ($joueurs as $j) {
         $cat = $catPoste($j['poste'] ?? '');
@@ -765,7 +824,7 @@ if (count($joueurs) > 0) {
                                                 </div>
                                             </td>
                                             <td class="text-end"><?= $j['age'] ?? '' ?></td>
-                                            <td><?= htmlspecialchars($j['poste'] ?? '') ?></td>
+                                            <td><?= htmlspecialchars($simplifyPoste($j['poste'] ?? '')) ?></td>
                                             <td class="text-end"><?= $j['app'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['pDec'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
