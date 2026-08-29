@@ -13,7 +13,6 @@ $t = [
 
     // Navbar
     'nav_home'         => 'Accueil',
-    'nav_mercato'      => 'Mercato',
     'nav_palmares'     => 'Palmarès',
     'nav_about'        => 'À propos',
     'nav_admin'        => 'Admin',
@@ -174,12 +173,8 @@ $t = [
     'tactic_no_squad' => 'Importez un effectif pour configurer les remplacements.',
 
     // Mercato
-    'mercato_title'      => 'MERCATO',
-    'mercato_sell'       => 'À vendre',
     'mercato_loan'       => 'En prêt',
-    'mercato_kept'       => 'Conservés',
     'mercato_revenue'    => 'Recettes estimées',
-    'mercato_arrivals'       => 'Arrivées',
     'mercato_arr_targets'    => 'Cibles',
     'mercato_arr_signed'     => 'Signés',
     'mercato_arr_title'      => 'Arrivées mercato',
@@ -194,19 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Tout supprimer',
     'mercato_arr_delete_all_confirm' => 'Supprimer toutes les arrivées mercato ? Cette action est irréversible.',
     'mercato_arr_empty'      => 'Aucune arrivée enregistrée.',
-    'mercato_empty'      => 'Aucun joueur.',
-    'mercato_import_link'=> 'Importer un effectif',
-    'mercato_col_name'   => 'Nom',
-    'mercato_col_age'    => 'Âge',
-    'mercato_col_pos'    => 'Poste',
-    'mercato_col_apps'   => 'App',
-    'mercato_col_rating' => 'Note moy',
-    'mercato_col_value'  => 'Valeur transfert',
-    'mercato_col_asking' => 'Prix demandé',
-    'mercato_col_status' => 'Statut',
-    'mercato_opt_sell'   => 'Vendre',
-    'mercato_opt_loan'   => 'Prêt',
-    'mercato_opt_free'   => 'Libérer (ne renouvelle pas)',
 
     // Fiche joueur
     'player_back'         => '← Retour Effectif',

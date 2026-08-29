@@ -13,7 +13,6 @@ $t = [
 
     // Navbar
     'nav_home'         => 'Inicio',
-    'nav_mercato'      => 'Mercado',
     'nav_palmares'     => 'Palmarés',
     'nav_about'        => 'Acerca de',
     'nav_admin'        => 'Admin',
@@ -174,12 +173,8 @@ $t = [
     'tactic_no_squad' => 'Importa una plantilla para configurar los cambios.',
 
     // Mercado
-    'mercato_title'      => 'MERCADO',
-    'mercato_sell'       => 'En venta',
     'mercato_loan'       => 'Cedidos',
-    'mercato_kept'       => 'Conservados',
     'mercato_revenue'    => 'Ingresos estimados',
-    'mercato_arrivals'       => 'Llegadas',
     'mercato_arr_targets'    => 'Objetivos',
     'mercato_arr_signed'     => 'Fichados',
     'mercato_arr_title'      => 'Llegadas de mercado',
@@ -194,19 +189,6 @@ $t = [
     'mercato_arr_delete_all' => 'Eliminar todo',
     'mercato_arr_delete_all_confirm' => '¿Eliminar todas las llegadas del mercado? Esta acción no se puede deshacer.',
     'mercato_arr_empty'      => 'No hay llegadas registradas.',
-    'mercato_empty'      => 'Sin jugadores.',
-    'mercato_import_link'=> 'Importar una plantilla',
-    'mercato_col_name'   => 'Nombre',
-    'mercato_col_age'    => 'Edad',
-    'mercato_col_pos'    => 'Posición',
-    'mercato_col_apps'   => 'Partidos',
-    'mercato_col_rating' => 'Nota med',
-    'mercato_col_value'  => 'Valor de mercado',
-    'mercato_col_asking' => 'Precio pedido',
-    'mercato_col_status' => 'Estado',
-    'mercato_opt_sell'   => 'Vender',
-    'mercato_opt_loan'   => 'Ceder',
-    'mercato_opt_free'   => 'Libre (no renueva)',
 
     // Ficha jugador
     'player_back'         => '← Volver a la plantilla',
