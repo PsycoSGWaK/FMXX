@@ -86,6 +86,8 @@ $t = [
     'btn_settings'      => 'Ajustes de temporada',
     'confirm_clear_squad'  => '¿Vaciar toda la plantilla?',
     'confirm_next_season'  => '¿Pasar a la siguiente temporada?',
+    'confirm_remove_objective' => '¿Quitar esta competición de la temporada?',
+    'btn_remove_objective'  => 'Quitar',
 
     // Alertas
     'alert_squad_imported'  => '¡Plantilla importada con éxito!',
@@ -117,6 +119,8 @@ $t = [
     'obj_result'             => 'Resultado obtenido',
     'obj_no_config'          => 'Configura tu club, país y división en Ajustes para ver tus competiciones.',
     'obj_no_competitions'    => 'No se encontraron competiciones para estos ajustes.',
+    'obj_add_placeholder'    => '— Añadir una competición —',
+    'obj_add_button'         => 'Añadir',
     'obj_type_league'        => 'Liga',
     'obj_type_cup_league'    => 'Copa de la Liga',
     'obj_type_cup_national'  => 'Copa Nacional',
