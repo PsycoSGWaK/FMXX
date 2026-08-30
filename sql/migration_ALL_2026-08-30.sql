@@ -1,9 +1,11 @@
 -- =============================================================
--- Script consolide : toutes les migrations de la session du 2026-08-30
--- restant a executer en prod, dans l'ordre. NE CONTIENT PAS
--- migration_qualif_rules.sql ni migration_nat_pdn_varchar.sql,
--- deja executees en prod par Guillaume.
--- A executer en une fois (phpMyAdmin o2switch), APRES deploiement du code.
+-- Migration consolidee -- toutes les migrations en attente pour
+-- la production (o2switch), a executer en une seule fois via
+-- phpMyAdmin. Regeneree le 2026-08-30 : chaque migration est
+-- rendue idempotente (rejouable sans doublon/erreur) et portable
+-- (sans VALUES ROW(...), qui necessite MySQL 8.0.19+).
+-- N'inclut pas les migrations deja executees en prod :
+-- migration_qualif_rules.sql ni migration_nat_pdn_varchar.sql.
 -- =============================================================
 
 -- =============================================================
@@ -34,8 +36,19 @@ WHERE `idCompetition` = 41;
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-ALTER TABLE `objectif`
-    ADD COLUMN `manuel` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'ajoutee a la main via le selecteur "Ajouter une competition", toujours affichee quelle que soit la deduction automatique';
+-- Rendu rejouable sans erreur si la colonne existe deja (portable, pas
+-- besoin de "ADD COLUMN IF NOT EXISTS" qui necessite MySQL 8.0.29+).
+SET @col_exists = (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'objectif' AND COLUMN_NAME = 'manuel'
+);
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE `objectif` ADD COLUMN `manuel` TINYINT(1) NOT NULL DEFAULT 0 COMMENT ''ajoutee a la main via le selecteur Ajouter une competition, toujours affichee quelle que soit la deduction automatique''',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- =============================================================
 -- migration_fix_france_women_d1_name.sql
@@ -84,38 +97,34 @@ UPDATE `competition` SET `nomCompetition` = 'Women''s Super League 2' WHERE `idC
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
--- Autriche (idPays 10)
-('Bundesliga', 'Championnat', 10, 'D1', 'M'),
--- Belgique (idPays 11)
-('Pro League', 'Championnat', 11, 'D1', 'M'),
-('Challenger Pro League', 'Championnat', 11, 'D2', 'M'),
--- Bresil (idPays 12)
-('Campeonato Brasileiro Série A', 'Championnat', 12, 'D1', 'M'),
-('Campeonato Brasileiro Série B', 'Championnat', 12, 'D2', 'M'),
--- Pays-Bas (idPays 13)
-('Eredivisie', 'Championnat', 13, 'D1', 'M'),
-('Eerste Divisie', 'Championnat', 13, 'D2', 'M'),
--- Portugal (idPays 14)
-('Primeira Liga', 'Championnat', 14, 'D1', 'M'),
-('Liga Portugal 2', 'Championnat', 14, 'D2', 'M'),
--- Turquie (idPays 15)
-('Süper Lig', 'Championnat', 15, 'D1', 'M'),
-('1. Lig', 'Championnat', 15, 'D2', 'M'),
--- Japon (idPays 7)
-('J1 League', 'Championnat', 7, 'D1', 'M'),
-('J2 League', 'Championnat', 7, 'D2', 'M'),
-('WE League', 'Championnat', 7, 'D1', 'F'),
--- Etats-Unis (idPays 6)
-('Major League Soccer', 'Championnat', 6, 'D1', 'M'),
-('National Women''s Soccer League', 'Championnat', 6, 'D1', 'F'),
--- Suede (idPays 9)
-('Allsvenskan', 'Championnat', 9, 'D1', 'M'),
-('Damallsvenskan', 'Championnat', 9, 'D1', 'F'),
-('Elitettan', 'Championnat', 9, 'D2', 'F'),
--- France (idPays 5) : National 2 (D4) manquait alors que les 48 clubs
--- sont deja importes
-('National 2', 'Championnat', 5, 'D4', 'M');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/idPays/division/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT * FROM (
+    SELECT 'Bundesliga' AS n, 'Championnat' AS t, 10 AS p, 'D1' AS d, 'M' AS g
+    UNION ALL SELECT 'Pro League', 'Championnat', 11, 'D1', 'M'
+    UNION ALL SELECT 'Challenger Pro League', 'Championnat', 11, 'D2', 'M'
+    UNION ALL SELECT 'Campeonato Brasileiro Série A', 'Championnat', 12, 'D1', 'M'
+    UNION ALL SELECT 'Campeonato Brasileiro Série B', 'Championnat', 12, 'D2', 'M'
+    UNION ALL SELECT 'Eredivisie', 'Championnat', 13, 'D1', 'M'
+    UNION ALL SELECT 'Eerste Divisie', 'Championnat', 13, 'D2', 'M'
+    UNION ALL SELECT 'Primeira Liga', 'Championnat', 14, 'D1', 'M'
+    UNION ALL SELECT 'Liga Portugal 2', 'Championnat', 14, 'D2', 'M'
+    UNION ALL SELECT 'Süper Lig', 'Championnat', 15, 'D1', 'M'
+    UNION ALL SELECT '1. Lig', 'Championnat', 15, 'D2', 'M'
+    UNION ALL SELECT 'J1 League', 'Championnat', 7, 'D1', 'M'
+    UNION ALL SELECT 'J2 League', 'Championnat', 7, 'D2', 'M'
+    UNION ALL SELECT 'WE League', 'Championnat', 7, 'D1', 'F'
+    UNION ALL SELECT 'Major League Soccer', 'Championnat', 6, 'D1', 'M'
+    UNION ALL SELECT 'National Women''s Soccer League', 'Championnat', 6, 'D1', 'F'
+    UNION ALL SELECT 'Allsvenskan', 'Championnat', 9, 'D1', 'M'
+    UNION ALL SELECT 'Damallsvenskan', 'Championnat', 9, 'D1', 'F'
+    UNION ALL SELECT 'Elitettan', 'Championnat', 9, 'D2', 'F'
+    UNION ALL SELECT 'National 2', 'Championnat', 5, 'D4', 'M'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.division = nouvelles.d AND c.genre = nouvelles.g
+);
 
 -- =============================================================
 -- migration_add_countries_denmark_scotland_ireland_ni_australia.sql
@@ -138,12 +147,16 @@ INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `divis
 -- Nouveaux pays (codes synthetiques pour Ecosse/Irlande du Nord, comme
 -- Wales -> WL/WAL/0, faute de code ISO 3166-1 propre a ces nations
 -- constitutives du Royaume-Uni)
-INSERT INTO `pays` (`nomPays`, `paysA2C`, `paysA3C`, `paysNum`) VALUES
-('Denmark', 'DK', 'DNK', 208),
-('Scotland', 'SC', 'SCT', 0),
-('Northern Ireland', 'NI', 'NIR', 0),
-('Ireland', 'IE', 'IRL', 372),
-('Australia', 'AU', 'AUS', 36);
+-- Rejouable sans doublon (WHERE NOT EXISTS par paysA2C).
+INSERT INTO `pays` (`nomPays`, `paysA2C`, `paysA3C`, `paysNum`)
+SELECT * FROM (
+    SELECT 'Denmark' AS n, 'DK' AS a2, 'DNK' AS a3, 208 AS num
+    UNION ALL SELECT 'Scotland', 'SC', 'SCT', 0
+    UNION ALL SELECT 'Northern Ireland', 'NI', 'NIR', 0
+    UNION ALL SELECT 'Ireland', 'IE', 'IRL', 372
+    UNION ALL SELECT 'Australia', 'AU', 'AUS', 36
+) AS nouveaux
+WHERE NOT EXISTS (SELECT 1 FROM `pays` p WHERE p.paysA2C = nouveaux.a2);
 
 -- Recupere les nouveaux idPays (a adapter si AUTO_INCREMENT differe en prod)
 SET @idDenmark = (SELECT idPays FROM pays WHERE paysA2C = 'DK');
@@ -153,20 +166,30 @@ SET @idIreland = (SELECT idPays FROM pays WHERE paysA2C = 'IE');
 SET @idAustralia = (SELECT idPays FROM pays WHERE paysA2C = 'AU');
 SET @idSweden = (SELECT idPays FROM pays WHERE paysA2C = 'SE');
 
--- Championnats (noms reels, sans sponsor)
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('Superliga', 'Championnat', @idDenmark, 'D1', 'M'),
-('1. Division', 'Championnat', @idDenmark, 'D2', 'M'),
-('Scottish Premiership', 'Championnat', @idScotland, 'D1', 'M'),
-('League of Ireland Premier Division', 'Championnat', @idIreland, 'D1', 'M'),
-('League of Ireland First Division', 'Championnat', @idIreland, 'D2', 'M'),
-('NIFL Premiership', 'Championnat', @idNorthernIreland, 'D1', 'M'),
-('A-League Men', 'Championnat', @idAustralia, 'D1', 'M'),
-('Superettan', 'Championnat', @idSweden, 'D2', 'M');
+-- Championnats (noms reels, sans sponsor). Rejouable sans doublon
+-- (WHERE NOT EXISTS par nomCompetition/idPays/division/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT * FROM (
+    SELECT 'Superliga' AS n, 'Championnat' AS t, @idDenmark AS p, 'D1' AS d, 'M' AS g
+    UNION ALL SELECT '1. Division', 'Championnat', @idDenmark, 'D2', 'M'
+    UNION ALL SELECT 'Scottish Premiership', 'Championnat', @idScotland, 'D1', 'M'
+    UNION ALL SELECT 'League of Ireland Premier Division', 'Championnat', @idIreland, 'D1', 'M'
+    UNION ALL SELECT 'League of Ireland First Division', 'Championnat', @idIreland, 'D2', 'M'
+    UNION ALL SELECT 'NIFL Premiership', 'Championnat', @idNorthernIreland, 'D1', 'M'
+    UNION ALL SELECT 'A-League Men', 'Championnat', @idAustralia, 'D1', 'M'
+    UNION ALL SELECT 'Superettan', 'Championnat', @idSweden, 'D2', 'M'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.division = nouvelles.d AND c.genre = nouvelles.g
+);
 
--- Clubs (saison 2025-26 / 2026, selon le pays)
+-- Clubs (saison 2025-26 / 2026, selon le pays). Rejouable sans doublon :
+-- DELETE-puis-INSERT par (idPays, genre, division), meme pattern que
+-- equipe_insert_sportmonks.sql.
 
 -- Danemark D1 - Superliga (12)
+DELETE FROM `equipe` WHERE idPays = @idDenmark AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('AGF Aarhus', @idDenmark, 'M', 'D1'),
 ('Brøndby IF', @idDenmark, 'M', 'D1'),
@@ -182,6 +205,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Viborg FF', @idDenmark, 'M', 'D1');
 
 -- Danemark D2 - 1. Division (12)
+DELETE FROM `equipe` WHERE idPays = @idDenmark AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Lyngby BK', @idDenmark, 'M', 'D2'),
 ('Hvidovre IF', @idDenmark, 'M', 'D2'),
@@ -197,6 +221,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Middelfart BK', @idDenmark, 'M', 'D2');
 
 -- Ecosse D1 - Premiership (12)
+DELETE FROM `equipe` WHERE idPays = @idScotland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Aberdeen FC', @idScotland, 'M', 'D1'),
 ('Celtic FC', @idScotland, 'M', 'D1'),
@@ -212,6 +237,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('St Mirren FC', @idScotland, 'M', 'D1');
 
 -- Irlande D1 - Premier Division (10)
+DELETE FROM `equipe` WHERE idPays = @idIreland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Shamrock Rovers', @idIreland, 'M', 'D1'),
 ('Bohemian FC', @idIreland, 'M', 'D1'),
@@ -225,6 +251,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Waterford FC', @idIreland, 'M', 'D1');
 
 -- Irlande D2 - First Division (10)
+DELETE FROM `equipe` WHERE idPays = @idIreland AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Athlone Town', @idIreland, 'M', 'D2'),
 ('Bray Wanderers', @idIreland, 'M', 'D2'),
@@ -241,6 +268,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 -- pour 2025-26 est Bangor FC (champion de D2 2024-25) et non Limavady
 -- United comme suppose dans une premiere recherche -- Limavady est bien
 -- en D2 2025-26, confirme par Guillaume via Wikipedia.
+DELETE FROM `equipe` WHERE idPays = @idNorthernIreland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Larne FC', @idNorthernIreland, 'M', 'D1'),
 ('Linfield FC', @idNorthernIreland, 'M', 'D1'),
@@ -256,6 +284,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Bangor FC', @idNorthernIreland, 'M', 'D1');
 
 -- Australie D1 - A-League Men (12)
+DELETE FROM `equipe` WHERE idPays = @idAustralia AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Adelaide United', @idAustralia, 'M', 'D1'),
 ('Auckland FC', @idAustralia, 'M', 'D1'),
@@ -271,6 +300,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Western Sydney Wanderers', @idAustralia, 'M', 'D1');
 
 -- Suede D2 - Superettan (16)
+DELETE FROM `equipe` WHERE idPays = @idSweden AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Falkenbergs FF', @idSweden, 'M', 'D2'),
 ('GIF Sundsvall', @idSweden, 'M', 'D2'),
@@ -298,10 +328,18 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
+-- Rejouable sans doublon : competition via WHERE NOT EXISTS, equipe via
+-- DELETE-puis-INSERT (meme pattern que equipe_insert_sportmonks.sql).
 SET @idScotland = (SELECT idPays FROM pays WHERE paysA2C = 'SC');
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('Scottish Championship', 'Championnat', @idScotland, 'D2', 'M');
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT 'Scottish Championship', 'Championnat', @idScotland, 'D2', 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition`
+    WHERE nomCompetition = 'Scottish Championship' AND idPays = @idScotland AND division = 'D2' AND genre = 'M'
+);
+
+DELETE FROM `equipe` WHERE idPays = @idScotland AND genre = 'M' AND division = 'D2';
 
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('St Johnstone FC', @idScotland, 'M', 'D2'),
@@ -326,10 +364,18 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
+-- Rejouable sans doublon : competition via WHERE NOT EXISTS, equipe via
+-- DELETE-puis-INSERT (meme pattern que equipe_insert_sportmonks.sql).
 SET @idNorthernIreland = (SELECT idPays FROM pays WHERE paysA2C = 'NI');
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('NIFL Championship', 'Championnat', @idNorthernIreland, 'D2', 'M');
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT 'NIFL Championship', 'Championnat', @idNorthernIreland, 'D2', 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition`
+    WHERE nomCompetition = 'NIFL Championship' AND idPays = @idNorthernIreland AND division = 'D2' AND genre = 'M'
+);
+
+DELETE FROM `equipe` WHERE idPays = @idNorthernIreland AND genre = 'M' AND division = 'D2';
 
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Limavady United', @idNorthernIreland, 'M', 'D2'),
@@ -354,8 +400,16 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('2. Liga', 'Championnat', 10, 'D2', 'M');
+-- Rejouable sans doublon : competition via WHERE NOT EXISTS, equipe via
+-- DELETE-puis-INSERT (meme pattern que equipe_insert_sportmonks.sql).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT '2. Liga', 'Championnat', 10, 'D2', 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition`
+    WHERE nomCompetition = '2. Liga' AND idPays = 10 AND division = 'D2' AND genre = 'M'
+);
+
+DELETE FROM `equipe` WHERE idPays = 10 AND genre = 'M' AND division = 'D2';
 
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Admira Wacker', 10, 'M', 'D2'),
@@ -399,12 +453,19 @@ UPDATE `competition` SET `nomCompetition` = 'National' WHERE `idCompetition` = 6
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('Cymru Premier', 'Championnat', 8, 'D1', 'M'),
-('Cymru North/South', 'Championnat', 8, 'D2', 'M'),
-('Adran Premier', 'Championnat', 8, 'D1', 'F'),
-('Elitedivisionen', 'Championnat', 16, 'D1', 'F'),
-('A-League Women', 'Championnat', 20, 'D1', 'F');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/idPays/division/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT * FROM (
+    SELECT 'Cymru Premier' AS n, 'Championnat' AS t, 8 AS p, 'D1' AS d, 'M' AS g
+    UNION ALL SELECT 'Cymru North/South', 'Championnat', 8, 'D2', 'M'
+    UNION ALL SELECT 'Adran Premier', 'Championnat', 8, 'D1', 'F'
+    UNION ALL SELECT 'Elitedivisionen', 'Championnat', 16, 'D1', 'F'
+    UNION ALL SELECT 'A-League Women', 'Championnat', 20, 'D1', 'F'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.division = nouvelles.d AND c.genre = nouvelles.g
+);
 
 -- =============================================================
 -- equipe_insert_sportmonks.sql
@@ -1519,26 +1580,74 @@ INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Newcastle Jets'
 -- Nord n'ont pas de championnat feminin en base, donc pas de regle.
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
+--
+-- Reecrit le 2026-08-30 pour etre portable et rejouable sans doublon :
+-- resolution des idCompetition par nom/pays/genre (les ids fixes
+-- 49/50/69/... sont ceux de la base locale, pas garantis identiques en
+-- prod) + WHERE NOT EXISTS sur chaque regle.
 
 -- --- Hommes : 1er -> UCL, 2e-3e -> UEL, 4e-5e -> UECL ---
-INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`) VALUES
-(1, 49, 1, 1), (2, 49, 2, 3), (3, 49, 4, 5),  -- Autriche (Bundesliga)
-(1, 50, 1, 1), (2, 50, 2, 3), (3, 50, 4, 5),  -- Belgique (Pro League)
-(1, 69, 1, 1), (2, 69, 2, 3), (3, 69, 4, 5),  -- Danemark (Superliga)
-(1, 72, 1, 1), (2, 72, 2, 3), (3, 72, 4, 5),  -- Irlande (Premier Division)
-(1, 54, 1, 1), (2, 54, 2, 3), (3, 54, 4, 5),  -- Pays-Bas (Eredivisie)
-(1, 74, 1, 1), (2, 74, 2, 3), (3, 74, 4, 5),  -- Irlande du Nord (NIFL Premiership)
-(1, 56, 1, 1), (2, 56, 2, 3), (3, 56, 4, 5),  -- Portugal (Primeira Liga)
-(1, 71, 1, 1), (2, 71, 2, 3), (3, 71, 4, 5),  -- Ecosse (Scottish Premiership)
-(1, 65, 1, 1), (2, 65, 2, 3), (3, 65, 4, 5),  -- Suede (Allsvenskan)
-(1, 58, 1, 1), (2, 58, 2, 3), (3, 58, 4, 5),  -- Turquie (Super Lig)
-(1, 80, 1, 1), (2, 80, 2, 3), (3, 80, 4, 5);  -- Pays de Galles (Cymru Premier)
+INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
+SELECT cible.idCompetition, src.idCompetition, m.rmin, m.rmax
+FROM (
+    SELECT 1 AS cible_nom_ordre, 'Bundesliga' AS src_nom, 10 AS src_pays, 1 AS rmin, 1 AS rmax
+    UNION ALL SELECT 2, 'Bundesliga', 10, 2, 3
+    UNION ALL SELECT 3, 'Bundesliga', 10, 4, 5
+    UNION ALL SELECT 1, 'Pro League', 11, 1, 1
+    UNION ALL SELECT 2, 'Pro League', 11, 2, 3
+    UNION ALL SELECT 3, 'Pro League', 11, 4, 5
+    UNION ALL SELECT 1, 'Superliga', 16, 1, 1
+    UNION ALL SELECT 2, 'Superliga', 16, 2, 3
+    UNION ALL SELECT 3, 'Superliga', 16, 4, 5
+    UNION ALL SELECT 1, 'Premier Division', 19, 1, 1
+    UNION ALL SELECT 2, 'Premier Division', 19, 2, 3
+    UNION ALL SELECT 3, 'Premier Division', 19, 4, 5
+    UNION ALL SELECT 1, 'Eredivisie', 13, 1, 1
+    UNION ALL SELECT 2, 'Eredivisie', 13, 2, 3
+    UNION ALL SELECT 3, 'Eredivisie', 13, 4, 5
+    UNION ALL SELECT 1, 'NIFL Premiership', 18, 1, 1
+    UNION ALL SELECT 2, 'NIFL Premiership', 18, 2, 3
+    UNION ALL SELECT 3, 'NIFL Premiership', 18, 4, 5
+    UNION ALL SELECT 1, 'Primeira Liga', 14, 1, 1
+    UNION ALL SELECT 2, 'Primeira Liga', 14, 2, 3
+    UNION ALL SELECT 3, 'Primeira Liga', 14, 4, 5
+    UNION ALL SELECT 1, 'Scottish Premiership', 17, 1, 1
+    UNION ALL SELECT 2, 'Scottish Premiership', 17, 2, 3
+    UNION ALL SELECT 3, 'Scottish Premiership', 17, 4, 5
+    UNION ALL SELECT 1, 'Allsvenskan', 9, 1, 1
+    UNION ALL SELECT 2, 'Allsvenskan', 9, 2, 3
+    UNION ALL SELECT 3, 'Allsvenskan', 9, 4, 5
+    UNION ALL SELECT 1, 'Süper Lig', 15, 1, 1
+    UNION ALL SELECT 2, 'Süper Lig', 15, 2, 3
+    UNION ALL SELECT 3, 'Süper Lig', 15, 4, 5
+    UNION ALL SELECT 1, 'Cymru Premier', 8, 1, 1
+    UNION ALL SELECT 2, 'Cymru Premier', 8, 2, 3
+    UNION ALL SELECT 3, 'Cymru Premier', 8, 4, 5
+) AS m
+JOIN `competition` cible ON cible.idCompetition = m.cible_nom_ordre AND cible.typeCompetition = 'Continentale'
+JOIN `competition` src ON src.nomCompetition = m.src_nom AND src.idPays = m.src_pays AND src.genre = 'M' AND src.typeCompetition = 'Championnat'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = cible.idCompetition AND r.idCompetitionSource = src.idCompetition AND r.rang_min = m.rmin
+);
 
 -- --- Femmes : 1re -> UWCL, 2e-20e -> Women's Europa Cup ---
-INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`) VALUES
-(30, 83, 1, 1), (46, 83, 2, 20),  -- Danemark (Elitedivisionen)
-(30, 66, 1, 1), (46, 66, 2, 20),  -- Suede (Damallsvenskan)
-(30, 82, 1, 1), (46, 82, 2, 20);  -- Pays de Galles (Adran Premier)
+INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
+SELECT cible.idCompetition, src.idCompetition, m.rmin, m.rmax
+FROM (
+    SELECT 30 AS cible_id, 'Superliga' AS src_nom, 16 AS src_pays, 1 AS rmin, 1 AS rmax
+    UNION ALL SELECT 46, 'Superliga', 16, 2, 20
+    UNION ALL SELECT 30, 'Damallsvenskan', 9, 1, 1
+    UNION ALL SELECT 46, 'Damallsvenskan', 9, 2, 20
+    UNION ALL SELECT 30, 'Adran Premier', 8, 1, 1
+    UNION ALL SELECT 46, 'Adran Premier', 8, 2, 20
+) AS m
+JOIN `competition` cible ON cible.idCompetition = m.cible_id AND cible.typeCompetition = 'Continentale'
+JOIN `competition` src ON src.nomCompetition = m.src_nom AND src.idPays = m.src_pays AND src.genre = 'F' AND src.typeCompetition = 'Championnat'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = cible.idCompetition AND r.idCompetitionSource = src.idCompetition AND r.rang_min = m.rmin
+);
 
 -- =============================================================
 -- migration_national_cups_new_countries.sql
@@ -1557,29 +1666,35 @@ INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
--- Hommes
-('ÖFB-Cup', 'Nationale', 10, 'M'),           -- Autriche
-('Belgian Cup', 'Nationale', 11, 'M'),        -- Belgique
-('Copa do Brasil', 'Nationale', 12, 'M'),     -- Bresil
-('KNVB Cup', 'Nationale', 13, 'M'),           -- Pays-Bas
-('Taça de Portugal', 'Nationale', 14, 'M'),   -- Portugal
-('Türkiye Kupası', 'Nationale', 15, 'M'),     -- Turquie
-('Emperor''s Cup', 'Nationale', 7, 'M'),      -- Japon
-('U.S. Open Cup', 'Nationale', 6, 'M'),       -- Etats-Unis
-('Svenska Cupen', 'Nationale', 9, 'M'),       -- Suede
-('DBU Pokalen', 'Nationale', 16, 'M'),        -- Danemark
-('Scottish Cup', 'Nationale', 17, 'M'),       -- Ecosse
-('FAI Cup', 'Nationale', 19, 'M'),            -- Irlande
-('Irish Cup', 'Nationale', 18, 'M'),          -- Irlande du Nord
-('Australia Cup', 'Nationale', 20, 'M'),      -- Australie
-('Welsh Cup', 'Nationale', 8, 'M'),           -- Pays de Galles
-
--- Femmes (uniquement ou une coupe feminine nationale confirmee existe)
-('DBU KvindePokalen', 'Nationale', 16, 'F'),  -- Danemark
-('Svenska Cupen Damer', 'Nationale', 9, 'F'), -- Suede
-('FAW Women''s Cup', 'Nationale', 8, 'F'),    -- Pays de Galles
-('Empress''s Cup', 'Nationale', 7, 'F');      -- Japon
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/idPays/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT * FROM (
+    -- Hommes
+    SELECT 'ÖFB-Cup' AS n, 'Nationale' AS t, 10 AS p, 'M' AS g           -- Autriche
+    UNION ALL SELECT 'Belgian Cup', 'Nationale', 11, 'M'                 -- Belgique
+    UNION ALL SELECT 'Copa do Brasil', 'Nationale', 12, 'M'              -- Bresil
+    UNION ALL SELECT 'KNVB Cup', 'Nationale', 13, 'M'                    -- Pays-Bas
+    UNION ALL SELECT 'Taça de Portugal', 'Nationale', 14, 'M'            -- Portugal
+    UNION ALL SELECT 'Türkiye Kupası', 'Nationale', 15, 'M'              -- Turquie
+    UNION ALL SELECT 'Emperor''s Cup', 'Nationale', 7, 'M'               -- Japon
+    UNION ALL SELECT 'U.S. Open Cup', 'Nationale', 6, 'M'                -- Etats-Unis
+    UNION ALL SELECT 'Svenska Cupen', 'Nationale', 9, 'M'                -- Suede
+    UNION ALL SELECT 'DBU Pokalen', 'Nationale', 16, 'M'                 -- Danemark
+    UNION ALL SELECT 'Scottish Cup', 'Nationale', 17, 'M'                -- Ecosse
+    UNION ALL SELECT 'FAI Cup', 'Nationale', 19, 'M'                     -- Irlande
+    UNION ALL SELECT 'Irish Cup', 'Nationale', 18, 'M'                   -- Irlande du Nord
+    UNION ALL SELECT 'Australia Cup', 'Nationale', 20, 'M'               -- Australie
+    UNION ALL SELECT 'Welsh Cup', 'Nationale', 8, 'M'                    -- Pays de Galles
+    -- Femmes (uniquement ou une coupe feminine nationale confirmee existe)
+    UNION ALL SELECT 'DBU KvindePokalen', 'Nationale', 16, 'F'           -- Danemark
+    UNION ALL SELECT 'Svenska Cupen Damer', 'Nationale', 9, 'F'          -- Suede
+    UNION ALL SELECT 'FAW Women''s Cup', 'Nationale', 8, 'F'             -- Pays de Galles
+    UNION ALL SELECT 'Empress''s Cup', 'Nationale', 7, 'F'               -- Japon
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.genre = nouvelles.g
+);
 
 -- =============================================================
 -- migration_non_uefa_continentales.sql
@@ -1600,14 +1715,22 @@ INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
-('Copa Libertadores', 'Continentale', NULL, 'M'),
-('Copa Sudamericana', 'Continentale', NULL, 'M'),
-('Concacaf Champions Cup', 'Continentale', NULL, 'M'),
-('AFC Champions League Elite', 'Continentale', NULL, 'M'),
-('AFC Champions League Two', 'Continentale', NULL, 'M'),
-('AFC Women''s Champions League', 'Continentale', NULL, 'F'),
-('Concacaf W Champions Cup', 'Continentale', NULL, 'F');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/genre ;
+-- idPays est NULL pour toutes, donc pas discriminant ici).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT nouvelles.n, nouvelles.t, NULL, nouvelles.g FROM (
+    SELECT 'Copa Libertadores' AS n, 'Continentale' AS t, 'M' AS g
+    UNION ALL SELECT 'Copa Sudamericana', 'Continentale', 'M'
+    UNION ALL SELECT 'Concacaf Champions Cup', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Champions League Elite', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Champions League Two', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Women''s Champions League', 'Continentale', 'F'
+    UNION ALL SELECT 'Concacaf W Champions Cup', 'Continentale', 'F'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.genre = nouvelles.g
+);
 
 -- =============================================================
 -- migration_fifa_club_world_cup.sql
@@ -1622,8 +1745,12 @@ INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
-('FIFA Club World Cup', 'Continentale', NULL, 'M');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT 'FIFA Club World Cup', 'Continentale', NULL, 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` WHERE nomCompetition = 'FIFA Club World Cup' AND genre = 'M'
+);
 
 -- =============================================================
 -- migration_super_cups.sql
@@ -1643,88 +1770,108 @@ INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre
 -- precedente. Applique aussi retroactivement aux 2 super coupes
 -- espagnoles deja en base (jusqu'ici affichees sans condition).
 --
+-- Reecrit le 2026-08-30 : la premiere version utilisait la syntaxe
+-- "VALUES ROW(...)" (constructeur de lignes), qui necessite MySQL
+-- 8.0.19+ et a echoue en prod (hebergeur sur une version plus ancienne
+-- ou MariaDB). Remplace par du UNION ALL SELECT, portable partout.
+-- Les INSERT INTO competition sont aussi rendus rejouables sans
+-- doublon (WHERE NOT EXISTS) au cas ou la version precedente aurait
+-- deja partiellement reussi.
+--
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
 -- ---------------------------------------------------------------------
--- Nouvelles competitions
+-- Nouvelles competitions (rejouable sans creer de doublon)
 -- ---------------------------------------------------------------------
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
--- Hommes
-('Trophée des Champions', 'Ligue', 5, 'M'),      -- France
-('DFL-Supercup', 'Ligue', 3, 'M'),                -- Allemagne
-('Supercoppa Italiana', 'Ligue', 4, 'M'),         -- Italie
-('Community Shield', 'Ligue', 1, 'M'),            -- Angleterre
-('Belgian Super Cup', 'Ligue', 11, 'M'),          -- Belgique
-('Johan Cruyff Shield', 'Ligue', 13, 'M'),        -- Pays-Bas
-('Supertaça de Portugal', 'Ligue', 14, 'M'),      -- Portugal
-('Supercopa do Brasil', 'Ligue', 12, 'M'),        -- Bresil
-('Turkish Super Cup', 'Ligue', 15, 'M'),          -- Turquie
-('Japanese Super Cup', 'Ligue', 7, 'M'),          -- Japon
-('Svenska Supercupen', 'Ligue', 9, 'M'),          -- Suede
-('President of Ireland''s Cup', 'Ligue', 19, 'M'),-- Irlande
-('NIFL Charity Shield', 'Ligue', 18, 'M'),        -- Irlande du Nord
-
--- Femmes
-('Trophée des Championnes', 'Ligue', 5, 'F'),     -- France
-('DFB-Supercup Frauen', 'Ligue', 3, 'F'),         -- Allemagne
-('Supercoppa Italiana Femminile', 'Ligue', 4, 'F'),-- Italie
-('Svenska Supercupen Damer', 'Ligue', 9, 'F');    -- Suede
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT * FROM (
+    SELECT 'Trophée des Champions' AS n, 'Ligue' AS t, 5 AS p, 'M' AS g
+    UNION ALL SELECT 'DFL-Supercup', 'Ligue', 3, 'M'
+    UNION ALL SELECT 'Supercoppa Italiana', 'Ligue', 4, 'M'
+    UNION ALL SELECT 'Community Shield', 'Ligue', 1, 'M'
+    UNION ALL SELECT 'Belgian Super Cup', 'Ligue', 11, 'M'
+    UNION ALL SELECT 'Johan Cruyff Shield', 'Ligue', 13, 'M'
+    UNION ALL SELECT 'Supertaça de Portugal', 'Ligue', 14, 'M'
+    UNION ALL SELECT 'Supercopa do Brasil', 'Ligue', 12, 'M'
+    UNION ALL SELECT 'Turkish Super Cup', 'Ligue', 15, 'M'
+    UNION ALL SELECT 'Japanese Super Cup', 'Ligue', 7, 'M'
+    UNION ALL SELECT 'Svenska Supercupen', 'Ligue', 9, 'M'
+    UNION ALL SELECT 'President of Ireland''s Cup', 'Ligue', 19, 'M'
+    UNION ALL SELECT 'NIFL Charity Shield', 'Ligue', 18, 'M'
+    UNION ALL SELECT 'Trophée des Championnes', 'Ligue', 5, 'F'
+    UNION ALL SELECT 'DFB-Supercup Frauen', 'Ligue', 3, 'F'
+    UNION ALL SELECT 'Supercoppa Italiana Femminile', 'Ligue', 4, 'F'
+    UNION ALL SELECT 'Svenska Supercupen Damer', 'Ligue', 9, 'F'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.genre = nouvelles.g
+);
 
 -- ---------------------------------------------------------------------
 -- Regles de qualification (OR : champion du championnat, ou vainqueur
 -- de la coupe nationale). Resolution par sous-requete nomCompetition +
 -- idPays + genre pour rester valable quels que soient les
--- AUTO_INCREMENT reels en prod.
+-- AUTO_INCREMENT reels en prod. Chaque INSERT...SELECT est rejouable
+-- sans doublon (WHERE NOT EXISTS).
 -- ---------------------------------------------------------------------
 INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
 SELECT sc.idCompetition, champ.idCompetition, 1, 1
-FROM (VALUES
-    ROW('Trophée des Champions', 5, 'M', 'Ligue 1', 5, 'M', 'Championnat'),
-    ROW('DFL-Supercup', 3, 'M', 'Bundesliga', 3, 'M', 'Championnat'),
-    ROW('Supercoppa Italiana', 4, 'M', 'Serie A', 4, 'M', 'Championnat'),
-    ROW('Community Shield', 1, 'M', 'Premier League', 1, 'M', 'Championnat'),
-    ROW('Belgian Super Cup', 11, 'M', 'Pro League', 11, 'M', 'Championnat'),
-    ROW('Johan Cruyff Shield', 13, 'M', 'Eredivisie', 13, 'M', 'Championnat'),
-    ROW('Supertaça de Portugal', 14, 'M', 'Primeira Liga', 14, 'M', 'Championnat'),
-    ROW('Supercopa do Brasil', 12, 'M', 'Campeonato Brasileiro Série A', 12, 'M', 'Championnat'),
-    ROW('Turkish Super Cup', 15, 'M', 'Süper Lig', 15, 'M', 'Championnat'),
-    ROW('Japanese Super Cup', 7, 'M', 'J1 League', 7, 'M', 'Championnat'),
-    ROW('Svenska Supercupen', 9, 'M', 'Allsvenskan', 9, 'M', 'Championnat'),
-    ROW('President of Ireland''s Cup', 19, 'M', 'League of Ireland Premier Division', 19, 'M', 'Championnat'),
-    ROW('NIFL Charity Shield', 18, 'M', 'NIFL Premiership', 18, 'M', 'Championnat'),
-    ROW('Trophée des Championnes', 5, 'F', 'Première Ligue', 5, 'F', 'Championnat'),
-    ROW('DFB-Supercup Frauen', 3, 'F', 'Frauen-Bundesliga', 3, 'F', 'Championnat'),
-    ROW('Supercoppa Italiana Femminile', 4, 'F', 'Serie A Femminile', 4, 'F', 'Championnat'),
-    ROW('Svenska Supercupen Damer', 9, 'F', 'Damallsvenskan', 9, 'F', 'Championnat'),
-    ROW('Supercoupe d Espagne', 2, 'M', 'LaLiga', 2, 'M', 'Championnat'),
-    ROW('Supercoupe d Espagne Feminine', 2, 'F', 'Liga F', 2, 'F', 'Championnat')
-) AS m(sc_nom, sc_pays, sc_genre, champ_nom, champ_pays, champ_genre, champ_type)
+FROM (
+    SELECT 'Trophée des Champions' AS sc_nom, 5 AS sc_pays, 'M' AS sc_genre, 'Ligue 1' AS champ_nom, 5 AS champ_pays, 'M' AS champ_genre
+    UNION ALL SELECT 'DFL-Supercup', 3, 'M', 'Bundesliga', 3, 'M'
+    UNION ALL SELECT 'Supercoppa Italiana', 4, 'M', 'Serie A', 4, 'M'
+    UNION ALL SELECT 'Community Shield', 1, 'M', 'Premier League', 1, 'M'
+    UNION ALL SELECT 'Belgian Super Cup', 11, 'M', 'Pro League', 11, 'M'
+    UNION ALL SELECT 'Johan Cruyff Shield', 13, 'M', 'Eredivisie', 13, 'M'
+    UNION ALL SELECT 'Supertaça de Portugal', 14, 'M', 'Primeira Liga', 14, 'M'
+    UNION ALL SELECT 'Supercopa do Brasil', 12, 'M', 'Campeonato Brasileiro Série A', 12, 'M'
+    UNION ALL SELECT 'Turkish Super Cup', 15, 'M', 'Süper Lig', 15, 'M'
+    UNION ALL SELECT 'Japanese Super Cup', 7, 'M', 'J1 League', 7, 'M'
+    UNION ALL SELECT 'Svenska Supercupen', 9, 'M', 'Allsvenskan', 9, 'M'
+    UNION ALL SELECT 'President of Ireland''s Cup', 19, 'M', 'League of Ireland Premier Division', 19, 'M'
+    UNION ALL SELECT 'NIFL Charity Shield', 18, 'M', 'NIFL Premiership', 18, 'M'
+    UNION ALL SELECT 'Trophée des Championnes', 5, 'F', 'Première Ligue', 5, 'F'
+    UNION ALL SELECT 'DFB-Supercup Frauen', 3, 'F', 'Frauen-Bundesliga', 3, 'F'
+    UNION ALL SELECT 'Supercoppa Italiana Femminile', 4, 'F', 'Serie A Femminile', 4, 'F'
+    UNION ALL SELECT 'Svenska Supercupen Damer', 9, 'F', 'Damallsvenskan', 9, 'F'
+    UNION ALL SELECT 'Supercoupe d Espagne', 2, 'M', 'LaLiga', 2, 'M'
+    UNION ALL SELECT 'Supercoupe d Espagne Feminine', 2, 'F', 'Liga F', 2, 'F'
+) AS m
 JOIN `competition` sc ON sc.nomCompetition = m.sc_nom AND sc.idPays = m.sc_pays AND sc.genre = m.sc_genre
-JOIN `competition` champ ON champ.nomCompetition = m.champ_nom AND champ.idPays = m.champ_pays AND champ.genre = m.champ_genre AND champ.typeCompetition = m.champ_type;
+JOIN `competition` champ ON champ.nomCompetition = m.champ_nom AND champ.idPays = m.champ_pays AND champ.genre = m.champ_genre AND champ.typeCompetition = 'Championnat'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = sc.idCompetition AND r.idCompetitionSource = champ.idCompetition AND r.rang_min = 1
+);
 
 INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `resultat_exact`)
 SELECT sc.idCompetition, cup.idCompetition, 'Gagner'
-FROM (VALUES
-    ROW('Trophée des Champions', 5, 'M', 'Coupe de France', 5, 'M'),
-    ROW('DFL-Supercup', 3, 'M', 'DFB-Pokal', 3, 'M'),
-    ROW('Supercoppa Italiana', 4, 'M', 'Coppa Italia', 4, 'M'),
-    ROW('Community Shield', 1, 'M', 'FA Cup', 1, 'M'),
-    ROW('Belgian Super Cup', 11, 'M', 'Belgian Cup', 11, 'M'),
-    ROW('Johan Cruyff Shield', 13, 'M', 'KNVB Cup', 13, 'M'),
-    ROW('Supertaça de Portugal', 14, 'M', 'Taça de Portugal', 14, 'M'),
-    ROW('Supercopa do Brasil', 12, 'M', 'Copa do Brasil', 12, 'M'),
-    ROW('Turkish Super Cup', 15, 'M', 'Türkiye Kupası', 15, 'M'),
-    ROW('Japanese Super Cup', 7, 'M', 'Emperor''s Cup', 7, 'M'),
-    ROW('Svenska Supercupen', 9, 'M', 'Svenska Cupen', 9, 'M'),
-    ROW('President of Ireland''s Cup', 19, 'M', 'FAI Cup', 19, 'M'),
-    ROW('NIFL Charity Shield', 18, 'M', 'Irish Cup', 18, 'M'),
-    ROW('Trophée des Championnes', 5, 'F', 'Coupe de France Féminine', 5, 'F'),
-    ROW('DFB-Supercup Frauen', 3, 'F', 'DFB-Pokal Frauen', 3, 'F'),
-    ROW('Supercoppa Italiana Femminile', 4, 'F', 'Coppa Italia Femminile', 4, 'F'),
-    ROW('Svenska Supercupen Damer', 9, 'F', 'Svenska Cupen Damer', 9, 'F'),
-    ROW('Supercoupe d Espagne', 2, 'M', 'Copa del Rey', 2, 'M'),
-    ROW('Supercoupe d Espagne Feminine', 2, 'F', 'Copa de la Reina', 2, 'F')
-) AS m(sc_nom, sc_pays, sc_genre, cup_nom, cup_pays, cup_genre)
+FROM (
+    SELECT 'Trophée des Champions' AS sc_nom, 5 AS sc_pays, 'M' AS sc_genre, 'Coupe de France' AS cup_nom, 5 AS cup_pays, 'M' AS cup_genre
+    UNION ALL SELECT 'DFL-Supercup', 3, 'M', 'DFB-Pokal', 3, 'M'
+    UNION ALL SELECT 'Supercoppa Italiana', 4, 'M', 'Coppa Italia', 4, 'M'
+    UNION ALL SELECT 'Community Shield', 1, 'M', 'FA Cup', 1, 'M'
+    UNION ALL SELECT 'Belgian Super Cup', 11, 'M', 'Belgian Cup', 11, 'M'
+    UNION ALL SELECT 'Johan Cruyff Shield', 13, 'M', 'KNVB Cup', 13, 'M'
+    UNION ALL SELECT 'Supertaça de Portugal', 14, 'M', 'Taça de Portugal', 14, 'M'
+    UNION ALL SELECT 'Supercopa do Brasil', 12, 'M', 'Copa do Brasil', 12, 'M'
+    UNION ALL SELECT 'Turkish Super Cup', 15, 'M', 'Türkiye Kupası', 15, 'M'
+    UNION ALL SELECT 'Japanese Super Cup', 7, 'M', 'Emperor''s Cup', 7, 'M'
+    UNION ALL SELECT 'Svenska Supercupen', 9, 'M', 'Svenska Cupen', 9, 'M'
+    UNION ALL SELECT 'President of Ireland''s Cup', 19, 'M', 'FAI Cup', 19, 'M'
+    UNION ALL SELECT 'NIFL Charity Shield', 18, 'M', 'Irish Cup', 18, 'M'
+    UNION ALL SELECT 'Trophée des Championnes', 5, 'F', 'Coupe de France Féminine', 5, 'F'
+    UNION ALL SELECT 'DFB-Supercup Frauen', 3, 'F', 'DFB-Pokal Frauen', 3, 'F'
+    UNION ALL SELECT 'Supercoppa Italiana Femminile', 4, 'F', 'Coppa Italia Femminile', 4, 'F'
+    UNION ALL SELECT 'Svenska Supercupen Damer', 9, 'F', 'Svenska Cupen Damer', 9, 'F'
+    UNION ALL SELECT 'Supercoupe d Espagne', 2, 'M', 'Copa del Rey', 2, 'M'
+    UNION ALL SELECT 'Supercoupe d Espagne Feminine', 2, 'F', 'Copa de la Reina', 2, 'F'
+) AS m
 JOIN `competition` sc ON sc.nomCompetition = m.sc_nom AND sc.idPays = m.sc_pays AND sc.genre = m.sc_genre
-JOIN `competition` cup ON cup.nomCompetition = m.cup_nom AND cup.idPays = m.cup_pays AND cup.genre = m.cup_genre AND cup.typeCompetition = 'Nationale';
+JOIN `competition` cup ON cup.nomCompetition = m.cup_nom AND cup.idPays = m.cup_pays AND cup.genre = m.cup_genre AND cup.typeCompetition = 'Nationale'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = sc.idCompetition AND r.idCompetitionSource = cup.idCompetition AND r.resultat_exact = 'Gagner'
+);
 

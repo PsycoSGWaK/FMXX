@@ -12,26 +12,32 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
--- Hommes
-('ÖFB-Cup', 'Nationale', 10, 'M'),           -- Autriche
-('Belgian Cup', 'Nationale', 11, 'M'),        -- Belgique
-('Copa do Brasil', 'Nationale', 12, 'M'),     -- Bresil
-('KNVB Cup', 'Nationale', 13, 'M'),           -- Pays-Bas
-('Taça de Portugal', 'Nationale', 14, 'M'),   -- Portugal
-('Türkiye Kupası', 'Nationale', 15, 'M'),     -- Turquie
-('Emperor''s Cup', 'Nationale', 7, 'M'),      -- Japon
-('U.S. Open Cup', 'Nationale', 6, 'M'),       -- Etats-Unis
-('Svenska Cupen', 'Nationale', 9, 'M'),       -- Suede
-('DBU Pokalen', 'Nationale', 16, 'M'),        -- Danemark
-('Scottish Cup', 'Nationale', 17, 'M'),       -- Ecosse
-('FAI Cup', 'Nationale', 19, 'M'),            -- Irlande
-('Irish Cup', 'Nationale', 18, 'M'),          -- Irlande du Nord
-('Australia Cup', 'Nationale', 20, 'M'),      -- Australie
-('Welsh Cup', 'Nationale', 8, 'M'),           -- Pays de Galles
-
--- Femmes (uniquement ou une coupe feminine nationale confirmee existe)
-('DBU KvindePokalen', 'Nationale', 16, 'F'),  -- Danemark
-('Svenska Cupen Damer', 'Nationale', 9, 'F'), -- Suede
-('FAW Women''s Cup', 'Nationale', 8, 'F'),    -- Pays de Galles
-('Empress''s Cup', 'Nationale', 7, 'F');      -- Japon
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/idPays/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT * FROM (
+    -- Hommes
+    SELECT 'ÖFB-Cup' AS n, 'Nationale' AS t, 10 AS p, 'M' AS g           -- Autriche
+    UNION ALL SELECT 'Belgian Cup', 'Nationale', 11, 'M'                 -- Belgique
+    UNION ALL SELECT 'Copa do Brasil', 'Nationale', 12, 'M'              -- Bresil
+    UNION ALL SELECT 'KNVB Cup', 'Nationale', 13, 'M'                    -- Pays-Bas
+    UNION ALL SELECT 'Taça de Portugal', 'Nationale', 14, 'M'            -- Portugal
+    UNION ALL SELECT 'Türkiye Kupası', 'Nationale', 15, 'M'              -- Turquie
+    UNION ALL SELECT 'Emperor''s Cup', 'Nationale', 7, 'M'               -- Japon
+    UNION ALL SELECT 'U.S. Open Cup', 'Nationale', 6, 'M'                -- Etats-Unis
+    UNION ALL SELECT 'Svenska Cupen', 'Nationale', 9, 'M'                -- Suede
+    UNION ALL SELECT 'DBU Pokalen', 'Nationale', 16, 'M'                 -- Danemark
+    UNION ALL SELECT 'Scottish Cup', 'Nationale', 17, 'M'                -- Ecosse
+    UNION ALL SELECT 'FAI Cup', 'Nationale', 19, 'M'                     -- Irlande
+    UNION ALL SELECT 'Irish Cup', 'Nationale', 18, 'M'                   -- Irlande du Nord
+    UNION ALL SELECT 'Australia Cup', 'Nationale', 20, 'M'               -- Australie
+    UNION ALL SELECT 'Welsh Cup', 'Nationale', 8, 'M'                    -- Pays de Galles
+    -- Femmes (uniquement ou une coupe feminine nationale confirmee existe)
+    UNION ALL SELECT 'DBU KvindePokalen', 'Nationale', 16, 'F'           -- Danemark
+    UNION ALL SELECT 'Svenska Cupen Damer', 'Nationale', 9, 'F'          -- Suede
+    UNION ALL SELECT 'FAW Women''s Cup', 'Nationale', 8, 'F'             -- Pays de Galles
+    UNION ALL SELECT 'Empress''s Cup', 'Nationale', 7, 'F'               -- Japon
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.genre = nouvelles.g
+);

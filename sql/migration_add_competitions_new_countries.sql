@@ -11,35 +11,31 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
--- Autriche (idPays 10)
-('Bundesliga', 'Championnat', 10, 'D1', 'M'),
--- Belgique (idPays 11)
-('Pro League', 'Championnat', 11, 'D1', 'M'),
-('Challenger Pro League', 'Championnat', 11, 'D2', 'M'),
--- Bresil (idPays 12)
-('Campeonato Brasileiro Série A', 'Championnat', 12, 'D1', 'M'),
-('Campeonato Brasileiro Série B', 'Championnat', 12, 'D2', 'M'),
--- Pays-Bas (idPays 13)
-('Eredivisie', 'Championnat', 13, 'D1', 'M'),
-('Eerste Divisie', 'Championnat', 13, 'D2', 'M'),
--- Portugal (idPays 14)
-('Primeira Liga', 'Championnat', 14, 'D1', 'M'),
-('Liga Portugal 2', 'Championnat', 14, 'D2', 'M'),
--- Turquie (idPays 15)
-('Süper Lig', 'Championnat', 15, 'D1', 'M'),
-('1. Lig', 'Championnat', 15, 'D2', 'M'),
--- Japon (idPays 7)
-('J1 League', 'Championnat', 7, 'D1', 'M'),
-('J2 League', 'Championnat', 7, 'D2', 'M'),
-('WE League', 'Championnat', 7, 'D1', 'F'),
--- Etats-Unis (idPays 6)
-('Major League Soccer', 'Championnat', 6, 'D1', 'M'),
-('National Women''s Soccer League', 'Championnat', 6, 'D1', 'F'),
--- Suede (idPays 9)
-('Allsvenskan', 'Championnat', 9, 'D1', 'M'),
-('Damallsvenskan', 'Championnat', 9, 'D1', 'F'),
-('Elitettan', 'Championnat', 9, 'D2', 'F'),
--- France (idPays 5) : National 2 (D4) manquait alors que les 48 clubs
--- sont deja importes
-('National 2', 'Championnat', 5, 'D4', 'M');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/idPays/division/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT * FROM (
+    SELECT 'Bundesliga' AS n, 'Championnat' AS t, 10 AS p, 'D1' AS d, 'M' AS g
+    UNION ALL SELECT 'Pro League', 'Championnat', 11, 'D1', 'M'
+    UNION ALL SELECT 'Challenger Pro League', 'Championnat', 11, 'D2', 'M'
+    UNION ALL SELECT 'Campeonato Brasileiro Série A', 'Championnat', 12, 'D1', 'M'
+    UNION ALL SELECT 'Campeonato Brasileiro Série B', 'Championnat', 12, 'D2', 'M'
+    UNION ALL SELECT 'Eredivisie', 'Championnat', 13, 'D1', 'M'
+    UNION ALL SELECT 'Eerste Divisie', 'Championnat', 13, 'D2', 'M'
+    UNION ALL SELECT 'Primeira Liga', 'Championnat', 14, 'D1', 'M'
+    UNION ALL SELECT 'Liga Portugal 2', 'Championnat', 14, 'D2', 'M'
+    UNION ALL SELECT 'Süper Lig', 'Championnat', 15, 'D1', 'M'
+    UNION ALL SELECT '1. Lig', 'Championnat', 15, 'D2', 'M'
+    UNION ALL SELECT 'J1 League', 'Championnat', 7, 'D1', 'M'
+    UNION ALL SELECT 'J2 League', 'Championnat', 7, 'D2', 'M'
+    UNION ALL SELECT 'WE League', 'Championnat', 7, 'D1', 'F'
+    UNION ALL SELECT 'Major League Soccer', 'Championnat', 6, 'D1', 'M'
+    UNION ALL SELECT 'National Women''s Soccer League', 'Championnat', 6, 'D1', 'F'
+    UNION ALL SELECT 'Allsvenskan', 'Championnat', 9, 'D1', 'M'
+    UNION ALL SELECT 'Damallsvenskan', 'Championnat', 9, 'D1', 'F'
+    UNION ALL SELECT 'Elitettan', 'Championnat', 9, 'D2', 'F'
+    UNION ALL SELECT 'National 2', 'Championnat', 5, 'D4', 'M'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.division = nouvelles.d AND c.genre = nouvelles.g
+);

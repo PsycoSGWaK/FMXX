@@ -8,5 +8,9 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
-('FIFA Club World Cup', 'Continentale', NULL, 'M');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT 'FIFA Club World Cup', 'Continentale', NULL, 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` WHERE nomCompetition = 'FIFA Club World Cup' AND genre = 'M'
+);
