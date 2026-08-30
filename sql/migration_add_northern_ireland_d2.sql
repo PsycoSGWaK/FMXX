@@ -6,10 +6,18 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
+-- Rejouable sans doublon : competition via WHERE NOT EXISTS, equipe via
+-- DELETE-puis-INSERT (meme pattern que equipe_insert_sportmonks.sql).
 SET @idNorthernIreland = (SELECT idPays FROM pays WHERE paysA2C = 'NI');
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('NIFL Championship', 'Championnat', @idNorthernIreland, 'D2', 'M');
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT 'NIFL Championship', 'Championnat', @idNorthernIreland, 'D2', 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition`
+    WHERE nomCompetition = 'NIFL Championship' AND idPays = @idNorthernIreland AND division = 'D2' AND genre = 'M'
+);
+
+DELETE FROM `equipe` WHERE idPays = @idNorthernIreland AND genre = 'M' AND division = 'D2';
 
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Limavady United', @idNorthernIreland, 'M', 'D2'),

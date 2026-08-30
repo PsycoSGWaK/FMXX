@@ -11,23 +11,71 @@
 -- Nord n'ont pas de championnat feminin en base, donc pas de regle.
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
+--
+-- Reecrit le 2026-08-30 pour etre portable et rejouable sans doublon :
+-- resolution des idCompetition par nom/pays/genre (les ids fixes
+-- 49/50/69/... sont ceux de la base locale, pas garantis identiques en
+-- prod) + WHERE NOT EXISTS sur chaque regle.
 
 -- --- Hommes : 1er -> UCL, 2e-3e -> UEL, 4e-5e -> UECL ---
-INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`) VALUES
-(1, 49, 1, 1), (2, 49, 2, 3), (3, 49, 4, 5),  -- Autriche (Bundesliga)
-(1, 50, 1, 1), (2, 50, 2, 3), (3, 50, 4, 5),  -- Belgique (Pro League)
-(1, 69, 1, 1), (2, 69, 2, 3), (3, 69, 4, 5),  -- Danemark (Superliga)
-(1, 72, 1, 1), (2, 72, 2, 3), (3, 72, 4, 5),  -- Irlande (Premier Division)
-(1, 54, 1, 1), (2, 54, 2, 3), (3, 54, 4, 5),  -- Pays-Bas (Eredivisie)
-(1, 74, 1, 1), (2, 74, 2, 3), (3, 74, 4, 5),  -- Irlande du Nord (NIFL Premiership)
-(1, 56, 1, 1), (2, 56, 2, 3), (3, 56, 4, 5),  -- Portugal (Primeira Liga)
-(1, 71, 1, 1), (2, 71, 2, 3), (3, 71, 4, 5),  -- Ecosse (Scottish Premiership)
-(1, 65, 1, 1), (2, 65, 2, 3), (3, 65, 4, 5),  -- Suede (Allsvenskan)
-(1, 58, 1, 1), (2, 58, 2, 3), (3, 58, 4, 5),  -- Turquie (Super Lig)
-(1, 80, 1, 1), (2, 80, 2, 3), (3, 80, 4, 5);  -- Pays de Galles (Cymru Premier)
+INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
+SELECT cible.idCompetition, src.idCompetition, m.rmin, m.rmax
+FROM (
+    SELECT 1 AS cible_nom_ordre, 'Bundesliga' AS src_nom, 10 AS src_pays, 1 AS rmin, 1 AS rmax
+    UNION ALL SELECT 2, 'Bundesliga', 10, 2, 3
+    UNION ALL SELECT 3, 'Bundesliga', 10, 4, 5
+    UNION ALL SELECT 1, 'Pro League', 11, 1, 1
+    UNION ALL SELECT 2, 'Pro League', 11, 2, 3
+    UNION ALL SELECT 3, 'Pro League', 11, 4, 5
+    UNION ALL SELECT 1, 'Superliga', 16, 1, 1
+    UNION ALL SELECT 2, 'Superliga', 16, 2, 3
+    UNION ALL SELECT 3, 'Superliga', 16, 4, 5
+    UNION ALL SELECT 1, 'Premier Division', 19, 1, 1
+    UNION ALL SELECT 2, 'Premier Division', 19, 2, 3
+    UNION ALL SELECT 3, 'Premier Division', 19, 4, 5
+    UNION ALL SELECT 1, 'Eredivisie', 13, 1, 1
+    UNION ALL SELECT 2, 'Eredivisie', 13, 2, 3
+    UNION ALL SELECT 3, 'Eredivisie', 13, 4, 5
+    UNION ALL SELECT 1, 'NIFL Premiership', 18, 1, 1
+    UNION ALL SELECT 2, 'NIFL Premiership', 18, 2, 3
+    UNION ALL SELECT 3, 'NIFL Premiership', 18, 4, 5
+    UNION ALL SELECT 1, 'Primeira Liga', 14, 1, 1
+    UNION ALL SELECT 2, 'Primeira Liga', 14, 2, 3
+    UNION ALL SELECT 3, 'Primeira Liga', 14, 4, 5
+    UNION ALL SELECT 1, 'Scottish Premiership', 17, 1, 1
+    UNION ALL SELECT 2, 'Scottish Premiership', 17, 2, 3
+    UNION ALL SELECT 3, 'Scottish Premiership', 17, 4, 5
+    UNION ALL SELECT 1, 'Allsvenskan', 9, 1, 1
+    UNION ALL SELECT 2, 'Allsvenskan', 9, 2, 3
+    UNION ALL SELECT 3, 'Allsvenskan', 9, 4, 5
+    UNION ALL SELECT 1, 'Süper Lig', 15, 1, 1
+    UNION ALL SELECT 2, 'Süper Lig', 15, 2, 3
+    UNION ALL SELECT 3, 'Süper Lig', 15, 4, 5
+    UNION ALL SELECT 1, 'Cymru Premier', 8, 1, 1
+    UNION ALL SELECT 2, 'Cymru Premier', 8, 2, 3
+    UNION ALL SELECT 3, 'Cymru Premier', 8, 4, 5
+) AS m
+JOIN `competition` cible ON cible.idCompetition = m.cible_nom_ordre AND cible.typeCompetition = 'Continentale'
+JOIN `competition` src ON src.nomCompetition = m.src_nom AND src.idPays = m.src_pays AND src.genre = 'M' AND src.typeCompetition = 'Championnat'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = cible.idCompetition AND r.idCompetitionSource = src.idCompetition AND r.rang_min = m.rmin
+);
 
 -- --- Femmes : 1re -> UWCL, 2e-20e -> Women's Europa Cup ---
-INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`) VALUES
-(30, 83, 1, 1), (46, 83, 2, 20),  -- Danemark (Elitedivisionen)
-(30, 66, 1, 1), (46, 66, 2, 20),  -- Suede (Damallsvenskan)
-(30, 82, 1, 1), (46, 82, 2, 20);  -- Pays de Galles (Adran Premier)
+INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
+SELECT cible.idCompetition, src.idCompetition, m.rmin, m.rmax
+FROM (
+    SELECT 30 AS cible_id, 'Superliga' AS src_nom, 16 AS src_pays, 1 AS rmin, 1 AS rmax
+    UNION ALL SELECT 46, 'Superliga', 16, 2, 20
+    UNION ALL SELECT 30, 'Damallsvenskan', 9, 1, 1
+    UNION ALL SELECT 46, 'Damallsvenskan', 9, 2, 20
+    UNION ALL SELECT 30, 'Adran Premier', 8, 1, 1
+    UNION ALL SELECT 46, 'Adran Premier', 8, 2, 20
+) AS m
+JOIN `competition` cible ON cible.idCompetition = m.cible_id AND cible.typeCompetition = 'Continentale'
+JOIN `competition` src ON src.nomCompetition = m.src_nom AND src.idPays = m.src_pays AND src.genre = 'F' AND src.typeCompetition = 'Championnat'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition_qualif_rule` r
+    WHERE r.idCompetition = cible.idCompetition AND r.idCompetitionSource = src.idCompetition AND r.rang_min = m.rmin
+);
