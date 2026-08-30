@@ -131,6 +131,15 @@ $t = [
     'obj_status_success'     => 'Réussi',
     'obj_status_failed'      => 'Échoué',
     'obj_status_pending'     => 'En attente',
+    // Libellés d'objectif/résultat (valeurs stockées telles quelles en base)
+    'obj_rank_1er'   => '1er',
+    'obj_rank_gagner'=> 'Gagner',
+    'obj_rank_finale'=> 'Finale',
+    'obj_rank_demi'  => 'Demi-finale',
+    'obj_rank_quarts'=> 'Quarts',
+    'obj_rank_8eme'  => '8ème de finale',
+    'obj_rank_16eme' => '16ème de finale',
+    'obj_rank_poules'=> 'Phase de groupes',
 
     // Budget
     'card_budget'      => 'BUDGET',
