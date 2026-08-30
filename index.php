@@ -347,13 +347,12 @@ if ($genre) {
         FROM competition
         WHERE genre = :genre AND idCompetition NOT IN ($inClause)
           AND (
-            typeCompetition != 'Continentale'
-            OR continent = 'FIFA'
-            OR continent = :continent
+            (typeCompetition != 'Continentale' AND idPays = :idPays)
+            OR (typeCompetition = 'Continentale' AND (continent = 'FIFA' OR continent = :continent))
           )
         ORDER BY typeCompetition, nomCompetition
     ");
-    $addableCompetitions->execute(['genre' => $genre, 'continent' => $paysContinent]);
+    $addableCompetitions->execute(['genre' => $genre, 'idPays' => $idPays, 'continent' => $paysContinent]);
     $addableCompetitions = $addableCompetitions->fetchAll();
 }
 
