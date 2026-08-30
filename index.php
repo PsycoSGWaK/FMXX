@@ -159,10 +159,13 @@ $genre    = $_SESSION['genre']    ?? 'M';
 $division = $_SESSION['division'] ?? null;
 
 $paysNom = null;
+$paysContinent = null;
 if ($idPays) {
-    $pNomStmt = $pdo->prepare("SELECT nomPays FROM pays WHERE idPays = :id");
+    $pNomStmt = $pdo->prepare("SELECT nomPays, continent FROM pays WHERE idPays = :id");
     $pNomStmt->execute(['id' => $idPays]);
-    $paysNom = $pNomStmt->fetchColumn() ?: null;
+    $pNomRow = $pNomStmt->fetch();
+    $paysNom = $pNomRow['nomPays'] ?? null;
+    $paysContinent = $pNomRow['continent'] ?? null;
 }
 
 // Budgets
@@ -343,9 +346,14 @@ if ($genre) {
         SELECT idCompetition, nomCompetition, typeCompetition, idPays
         FROM competition
         WHERE genre = :genre AND idCompetition NOT IN ($inClause)
+          AND (
+            typeCompetition != 'Continentale'
+            OR continent = 'FIFA'
+            OR continent = :continent
+          )
         ORDER BY typeCompetition, nomCompetition
     ");
-    $addableCompetitions->execute(['genre' => $genre]);
+    $addableCompetitions->execute(['genre' => $genre, 'continent' => $paysContinent]);
     $addableCompetitions = $addableCompetitions->fetchAll();
 }
 

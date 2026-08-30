@@ -9,7 +9,8 @@ $currentIdPays   = $_SESSION['idPays']   ?? null;
 $currentDivision = $_SESSION['division'] ?? null;
 $currentClub     = $_SESSION['club']     ?? '';
 
-$compsEurope = $pdo->query("SELECT idCompetition, nomCompetition, genre FROM competition WHERE typeCompetition = 'Continentale' ORDER BY genre, nomCompetition")->fetchAll();
+$compsEurope = $pdo->query("SELECT idCompetition, nomCompetition, genre, continent FROM competition WHERE typeCompetition = 'Continentale' ORDER BY genre, nomCompetition")->fetchAll();
+$paysContinentMap = array_column($pays, 'continent', 'idPays');
 
 $currentOverride = $pdo->prepare("SELECT comp_europe_override FROM user WHERE idUser = :id");
 $currentOverride->execute(['id' => $_SESSION['idUser']]);
@@ -97,7 +98,7 @@ $currentOverride = $currentOverride->fetchColumn();
                     <select class="form-select" name="comp_europe_override" id="settingEuropeComp">
                         <option value=""><?= $t['setting_europe_auto'] ?></option>
                         <?php foreach ($compsEurope as $ce): ?>
-                            <option value="<?= $ce['idCompetition'] ?>" data-genre="<?= $ce['genre'] ?>"
+                            <option value="<?= $ce['idCompetition'] ?>" data-genre="<?= $ce['genre'] ?>" data-continent="<?= htmlspecialchars($ce['continent'] ?? '') ?>"
                                     <?= (int)$currentOverride === (int)$ce['idCompetition'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($ce['nomCompetition']) ?>
                             </option>
@@ -125,11 +126,14 @@ $currentOverride = $currentOverride->fetchColumn();
     const divisionSelect = document.querySelector('select[name="division"]');
     const noCountryText = <?= json_encode($t['setting_club_no_country']) ?>;
     const selectText    = <?= json_encode($t['setting_club_select']) ?>;
+    const paysContinent = <?= json_encode($paysContinentMap) ?>;
 
     function filterEuropeComp() {
-        const genre = document.querySelector('input[name="genre"]:checked')?.value || 'M';
+        const genre     = document.querySelector('input[name="genre"]:checked')?.value || 'M';
+        const continent = paysContinent[paysSelect.value] ?? null;
         europeOptions.forEach(opt => {
-            const match = opt.dataset.genre === genre;
+            const match = opt.dataset.genre === genre
+                       && (!continent || opt.dataset.continent === 'FIFA' || opt.dataset.continent === continent);
             opt.style.display = match ? '' : 'none';
             if (!match && opt.selected) europeSelect.value = '';
         });
@@ -153,6 +157,7 @@ $currentOverride = $currentOverride->fetchColumn();
     }
 
     paysSelect.addEventListener('change', filterClubs);
+    paysSelect.addEventListener('change', filterEuropeComp);
     divisionSelect.addEventListener('change', filterClubs);
     genreRadios.forEach(r => r.addEventListener('change', filterClubs));
     genreRadios.forEach(r => r.addEventListener('change', filterEuropeComp));
