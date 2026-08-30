@@ -1,4 +1,4 @@
--- Genere par sportmonks_import_teams.php le 2026-08-30 10:18:51
+-- Genere par sportmonks_import_teams.php le 2026-08-30 10:25:54
 -- Verifier ce fichier avant de l'injecter en base.
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
@@ -211,6 +211,27 @@ INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Dunkerque', (SE
 INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Boulogne', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D2');
 INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Dijon', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D2');
 INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Grenoble Foot 38', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D2');
+
+-- fr_MD3.json (Ligue 3 (= ex-National)) - 18 equipes
+DELETE FROM equipe WHERE idPays = (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1) AND genre = 'M' AND division = 'D3';
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Villefranche', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Concarneau', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('SC Aubagne Air Bel', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Amiens SC', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Cannes', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Orléans', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Bastia', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Fleury 91', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Quevilly Rouen', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Paris 13 Atletico', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Caen', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('La Roche', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Le Puy-en-Velay', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Rouen', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Bourg-en-Bresse', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Versailles', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Thionville Lusitanos', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
+INSERT INTO equipe (nomEquipe, idPays, genre, division) VALUES ('Valenciennes', (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1), 'M', 'D3');
 
 -- fr_MD4.json (CFA Group A/B/C = National 2 (3 groupes)) - 49 equipes
 DELETE FROM equipe WHERE idPays = (SELECT idPays FROM pays WHERE paysA2C = 'FR' LIMIT 1) AND genre = 'M' AND division = 'D4';

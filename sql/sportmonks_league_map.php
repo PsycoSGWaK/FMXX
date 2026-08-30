@@ -13,8 +13,12 @@
  * Volontairement absents de ce mapping (laisses inchanges, donnees deja
  * presentes via l'import API-Football d'origine, pas de correspondance
  * fiable trouvee cote SportMonks dans la selection actuelle) :
- * France M D3 (National), Allemagne D3 (3. Liga) + F D2, Italie D3 (Serie C)
- * + F D2 (Serie B Femminile), Espagne D3 (Primera Federacion).
+ * Allemagne D3 (3. Liga) + F D2, Italie D3 (Serie C) + F D2 (Serie B
+ * Femminile), Espagne D3 (Primera Federacion).
+ *
+ * France M D3 : confirme par Guillaume (2026-08-30) que "Ligue 3" (313)
+ * est bien le nouveau nom 2026-27 de l'ancienne "National" (D3) -- cf
+ * migration_fix_france_d3_d4_names.sql.
  */
 
 return [
@@ -30,6 +34,7 @@ return [
     ['DK', 'M', 'D2', [274],  'First Division'],
     ['FR', 'M', 'D1', [301],  'Ligue 1'],
     ['FR', 'M', 'D2', [304],  'Ligue 2'],
+    ['FR', 'M', 'D3', [313],  'Ligue 3 (= ex-National)'],
     ['FR', 'M', 'D4', [1177, 1178, 1179], 'CFA Group A/B/C = National 2 (3 groupes)'],
     ['FR', 'F', 'D1', [1575], 'Premiere Ligue Women'],
     ['DE', 'M', 'D1', [82],   'Bundesliga'],
