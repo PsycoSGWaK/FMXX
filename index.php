@@ -159,10 +159,13 @@ $genre    = $_SESSION['genre']    ?? 'M';
 $division = $_SESSION['division'] ?? null;
 
 $paysNom = null;
+$paysContinent = null;
 if ($idPays) {
-    $pNomStmt = $pdo->prepare("SELECT nomPays FROM pays WHERE idPays = :id");
+    $pNomStmt = $pdo->prepare("SELECT nomPays, continent FROM pays WHERE idPays = :id");
     $pNomStmt->execute(['id' => $idPays]);
-    $paysNom = $pNomStmt->fetchColumn() ?: null;
+    $pNomRow = $pNomStmt->fetch();
+    $paysNom = $pNomRow['nomPays'] ?? null;
+    $paysContinent = $pNomRow['continent'] ?? null;
 }
 
 // Budgets
@@ -275,6 +278,37 @@ foreach ($optionsParType as $opts) {
     }
 }
 
+// Traduction à l'affichage des libellés d'objectif/résultat : la valeur stockée
+// en base (et utilisée comme value de <select> / clé de $ranking) reste toujours
+// en français, seul le texte affiché change selon la langue active.
+function objLabel(string $label, array $t, string $lang): string {
+    if ($label === '') return '';
+    static $fixed = [
+        'Gagner'           => 'obj_rank_gagner',
+        'Finale'           => 'obj_rank_finale',
+        'Demi-finale'      => 'obj_rank_demi',
+        'Quarts'           => 'obj_rank_quarts',
+        '8ème de finale'   => 'obj_rank_8eme',
+        '16ème de finale'  => 'obj_rank_16eme',
+        'Phase de groupes' => 'obj_rank_poules',
+    ];
+    if (isset($fixed[$label])) return $t[$fixed[$label]] ?? $label;
+    if ($label === '1er') return $t['obj_rank_1er'] ?? $label;
+    if (preg_match('/^(\d+)ème$/u', $label, $m)) {
+        $n = (int)$m[1];
+        if ($lang === 'en') {
+            $suffix = 'th';
+            if (!in_array($n % 100, [11, 12, 13], true)) {
+                $suffix = match ($n % 10) { 1 => 'st', 2 => 'nd', 3 => 'rd', default => 'th' };
+            }
+            return $n . $suffix;
+        }
+        if ($lang === 'es') return $n . 'º';
+        return $label;
+    }
+    return $label;
+}
+
 // Compétition européenne forcée (paramètres) ou déduite des règles de qualification
 // (la qualification européenne d'une saison se décide sur des résultats déjà joués
 // la saison d'avant, jamais sur l'objectif de la saison en cours)
@@ -343,9 +377,13 @@ if ($genre) {
         SELECT idCompetition, nomCompetition, typeCompetition, idPays
         FROM competition
         WHERE genre = :genre AND idCompetition NOT IN ($inClause)
+          AND (
+            (typeCompetition != 'Continentale' AND idPays = :idPays)
+            OR (typeCompetition = 'Continentale' AND (continent = 'FIFA' OR continent = :continent))
+          )
         ORDER BY typeCompetition, nomCompetition
     ");
-    $addableCompetitions->execute(['genre' => $genre]);
+    $addableCompetitions->execute(['genre' => $genre, 'idPays' => $idPays, 'continent' => $paysContinent]);
     $addableCompetitions = $addableCompetitions->fetchAll();
 }
 
@@ -721,7 +759,7 @@ if (count($joueurs) > 0) {
                                 <select class="obj-select obj-select-objectif">
                                     <?php foreach ($opts as $optLabel => $rank): ?>
                                         <option value="<?= $optLabel ?>" <?= $c['objectif'] === $optLabel ? 'selected' : '' ?>>
-                                            <?= $optLabel ?: $t['obj_placeholder'] ?>
+                                            <?= $optLabel !== '' ? objLabel($optLabel, $t, $lang) : $t['obj_placeholder'] ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -731,7 +769,7 @@ if (count($joueurs) > 0) {
                                 <select class="obj-select obj-select-resultat">
                                     <?php foreach ($opts as $optLabel => $rank): ?>
                                         <option value="<?= $optLabel ?>" <?= ($c['resultat'] ?? '') === $optLabel ? 'selected' : '' ?>>
-                                            <?= $optLabel ?: $t['obj_result_placeholder'] ?>
+                                            <?= $optLabel !== '' ? objLabel($optLabel, $t, $lang) : $t['obj_result_placeholder'] ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -1750,7 +1788,7 @@ if (count($joueurs) > 0) {
                                         $statusLabel = $rRes <= $rObj ? ($rRes < $rObj ? $t['obj_status_exceeded'] : $t['obj_status_success']) : $t['obj_status_failed'];
                                     } elseif ($o['resultat']) {
                                         $statusClass = 'status-pending';
-                                        $statusLabel = $o['resultat'];
+                                        $statusLabel = objLabel($o['resultat'], $t, $lang);
                                     } else {
                                         $statusClass = 'status-pending';
                                         $statusLabel = $t['obj_status_pending'];
@@ -1763,11 +1801,11 @@ if (count($joueurs) > 0) {
                                     </div>
                                     <div>
                                         <div class="field-label"><?= $t['pal_obj_label'] ?></div>
-                                        <div class="field-value"><?= $o['objectif'] ?: '—' ?></div>
+                                        <div class="field-value"><?= $o['objectif'] ? objLabel($o['objectif'], $t, $lang) : '—' ?></div>
                                     </div>
                                     <div>
                                         <div class="field-label"><?= $t['obj_result'] ?></div>
-                                        <div class="field-value"><?= $o['resultat'] ?: '—' ?></div>
+                                        <div class="field-value"><?= $o['resultat'] ? objLabel($o['resultat'], $t, $lang) : '—' ?></div>
                                     </div>
                                     <span class="status-chip <?= $statusClass ?>">
                                         <?php if ($statusClass === 'status-success'): ?>
