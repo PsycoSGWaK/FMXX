@@ -16,12 +16,16 @@
 -- Nouveaux pays (codes synthetiques pour Ecosse/Irlande du Nord, comme
 -- Wales -> WL/WAL/0, faute de code ISO 3166-1 propre a ces nations
 -- constitutives du Royaume-Uni)
-INSERT INTO `pays` (`nomPays`, `paysA2C`, `paysA3C`, `paysNum`) VALUES
-('Denmark', 'DK', 'DNK', 208),
-('Scotland', 'SC', 'SCT', 0),
-('Northern Ireland', 'NI', 'NIR', 0),
-('Ireland', 'IE', 'IRL', 372),
-('Australia', 'AU', 'AUS', 36);
+-- Rejouable sans doublon (WHERE NOT EXISTS par paysA2C).
+INSERT INTO `pays` (`nomPays`, `paysA2C`, `paysA3C`, `paysNum`)
+SELECT * FROM (
+    SELECT 'Denmark' AS n, 'DK' AS a2, 'DNK' AS a3, 208 AS num
+    UNION ALL SELECT 'Scotland', 'SC', 'SCT', 0
+    UNION ALL SELECT 'Northern Ireland', 'NI', 'NIR', 0
+    UNION ALL SELECT 'Ireland', 'IE', 'IRL', 372
+    UNION ALL SELECT 'Australia', 'AU', 'AUS', 36
+) AS nouveaux
+WHERE NOT EXISTS (SELECT 1 FROM `pays` p WHERE p.paysA2C = nouveaux.a2);
 
 -- Recupere les nouveaux idPays (a adapter si AUTO_INCREMENT differe en prod)
 SET @idDenmark = (SELECT idPays FROM pays WHERE paysA2C = 'DK');
@@ -31,20 +35,30 @@ SET @idIreland = (SELECT idPays FROM pays WHERE paysA2C = 'IE');
 SET @idAustralia = (SELECT idPays FROM pays WHERE paysA2C = 'AU');
 SET @idSweden = (SELECT idPays FROM pays WHERE paysA2C = 'SE');
 
--- Championnats (noms reels, sans sponsor)
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('Superliga', 'Championnat', @idDenmark, 'D1', 'M'),
-('1. Division', 'Championnat', @idDenmark, 'D2', 'M'),
-('Scottish Premiership', 'Championnat', @idScotland, 'D1', 'M'),
-('League of Ireland Premier Division', 'Championnat', @idIreland, 'D1', 'M'),
-('League of Ireland First Division', 'Championnat', @idIreland, 'D2', 'M'),
-('NIFL Premiership', 'Championnat', @idNorthernIreland, 'D1', 'M'),
-('A-League Men', 'Championnat', @idAustralia, 'D1', 'M'),
-('Superettan', 'Championnat', @idSweden, 'D2', 'M');
+-- Championnats (noms reels, sans sponsor). Rejouable sans doublon
+-- (WHERE NOT EXISTS par nomCompetition/idPays/division/genre).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT * FROM (
+    SELECT 'Superliga' AS n, 'Championnat' AS t, @idDenmark AS p, 'D1' AS d, 'M' AS g
+    UNION ALL SELECT '1. Division', 'Championnat', @idDenmark, 'D2', 'M'
+    UNION ALL SELECT 'Scottish Premiership', 'Championnat', @idScotland, 'D1', 'M'
+    UNION ALL SELECT 'League of Ireland Premier Division', 'Championnat', @idIreland, 'D1', 'M'
+    UNION ALL SELECT 'League of Ireland First Division', 'Championnat', @idIreland, 'D2', 'M'
+    UNION ALL SELECT 'NIFL Premiership', 'Championnat', @idNorthernIreland, 'D1', 'M'
+    UNION ALL SELECT 'A-League Men', 'Championnat', @idAustralia, 'D1', 'M'
+    UNION ALL SELECT 'Superettan', 'Championnat', @idSweden, 'D2', 'M'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.idPays = nouvelles.p AND c.division = nouvelles.d AND c.genre = nouvelles.g
+);
 
--- Clubs (saison 2025-26 / 2026, selon le pays)
+-- Clubs (saison 2025-26 / 2026, selon le pays). Rejouable sans doublon :
+-- DELETE-puis-INSERT par (idPays, genre, division), meme pattern que
+-- equipe_insert_sportmonks.sql.
 
 -- Danemark D1 - Superliga (12)
+DELETE FROM `equipe` WHERE idPays = @idDenmark AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('AGF Aarhus', @idDenmark, 'M', 'D1'),
 ('Brøndby IF', @idDenmark, 'M', 'D1'),
@@ -60,6 +74,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Viborg FF', @idDenmark, 'M', 'D1');
 
 -- Danemark D2 - 1. Division (12)
+DELETE FROM `equipe` WHERE idPays = @idDenmark AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Lyngby BK', @idDenmark, 'M', 'D2'),
 ('Hvidovre IF', @idDenmark, 'M', 'D2'),
@@ -75,6 +90,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Middelfart BK', @idDenmark, 'M', 'D2');
 
 -- Ecosse D1 - Premiership (12)
+DELETE FROM `equipe` WHERE idPays = @idScotland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Aberdeen FC', @idScotland, 'M', 'D1'),
 ('Celtic FC', @idScotland, 'M', 'D1'),
@@ -90,6 +106,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('St Mirren FC', @idScotland, 'M', 'D1');
 
 -- Irlande D1 - Premier Division (10)
+DELETE FROM `equipe` WHERE idPays = @idIreland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Shamrock Rovers', @idIreland, 'M', 'D1'),
 ('Bohemian FC', @idIreland, 'M', 'D1'),
@@ -103,6 +120,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Waterford FC', @idIreland, 'M', 'D1');
 
 -- Irlande D2 - First Division (10)
+DELETE FROM `equipe` WHERE idPays = @idIreland AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Athlone Town', @idIreland, 'M', 'D2'),
 ('Bray Wanderers', @idIreland, 'M', 'D2'),
@@ -119,6 +137,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 -- pour 2025-26 est Bangor FC (champion de D2 2024-25) et non Limavady
 -- United comme suppose dans une premiere recherche -- Limavady est bien
 -- en D2 2025-26, confirme par Guillaume via Wikipedia.
+DELETE FROM `equipe` WHERE idPays = @idNorthernIreland AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Larne FC', @idNorthernIreland, 'M', 'D1'),
 ('Linfield FC', @idNorthernIreland, 'M', 'D1'),
@@ -134,6 +153,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Bangor FC', @idNorthernIreland, 'M', 'D1');
 
 -- Australie D1 - A-League Men (12)
+DELETE FROM `equipe` WHERE idPays = @idAustralia AND genre = 'M' AND division = 'D1';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Adelaide United', @idAustralia, 'M', 'D1'),
 ('Auckland FC', @idAustralia, 'M', 'D1'),
@@ -149,6 +169,7 @@ INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Western Sydney Wanderers', @idAustralia, 'M', 'D1');
 
 -- Suede D2 - Superettan (16)
+DELETE FROM `equipe` WHERE idPays = @idSweden AND genre = 'M' AND division = 'D2';
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('Falkenbergs FF', @idSweden, 'M', 'D2'),
 ('GIF Sundsvall', @idSweden, 'M', 'D2'),

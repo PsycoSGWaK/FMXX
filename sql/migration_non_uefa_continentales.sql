@@ -14,11 +14,19 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`) VALUES
-('Copa Libertadores', 'Continentale', NULL, 'M'),
-('Copa Sudamericana', 'Continentale', NULL, 'M'),
-('Concacaf Champions Cup', 'Continentale', NULL, 'M'),
-('AFC Champions League Elite', 'Continentale', NULL, 'M'),
-('AFC Champions League Two', 'Continentale', NULL, 'M'),
-('AFC Women''s Champions League', 'Continentale', NULL, 'F'),
-('Concacaf W Champions Cup', 'Continentale', NULL, 'F');
+-- Rejouable sans doublon (WHERE NOT EXISTS par nomCompetition/genre ;
+-- idPays est NULL pour toutes, donc pas discriminant ici).
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `genre`)
+SELECT nouvelles.n, nouvelles.t, NULL, nouvelles.g FROM (
+    SELECT 'Copa Libertadores' AS n, 'Continentale' AS t, 'M' AS g
+    UNION ALL SELECT 'Copa Sudamericana', 'Continentale', 'M'
+    UNION ALL SELECT 'Concacaf Champions Cup', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Champions League Elite', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Champions League Two', 'Continentale', 'M'
+    UNION ALL SELECT 'AFC Women''s Champions League', 'Continentale', 'F'
+    UNION ALL SELECT 'Concacaf W Champions Cup', 'Continentale', 'F'
+) AS nouvelles
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition` c
+    WHERE c.nomCompetition = nouvelles.n AND c.genre = nouvelles.g
+);

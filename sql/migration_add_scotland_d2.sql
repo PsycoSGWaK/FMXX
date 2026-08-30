@@ -4,10 +4,18 @@
 --
 -- A executer en production (phpMyAdmin o2switch) en plus du local.
 
+-- Rejouable sans doublon : competition via WHERE NOT EXISTS, equipe via
+-- DELETE-puis-INSERT (meme pattern que equipe_insert_sportmonks.sql).
 SET @idScotland = (SELECT idPays FROM pays WHERE paysA2C = 'SC');
 
-INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`) VALUES
-('Scottish Championship', 'Championnat', @idScotland, 'D2', 'M');
+INSERT INTO `competition` (`nomCompetition`, `typeCompetition`, `idPays`, `division`, `genre`)
+SELECT 'Scottish Championship', 'Championnat', @idScotland, 'D2', 'M'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `competition`
+    WHERE nomCompetition = 'Scottish Championship' AND idPays = @idScotland AND division = 'D2' AND genre = 'M'
+);
+
+DELETE FROM `equipe` WHERE idPays = @idScotland AND genre = 'M' AND division = 'D2';
 
 INSERT INTO `equipe` (`nomEquipe`, `idPays`, `genre`, `division`) VALUES
 ('St Johnstone FC', @idScotland, 'M', 'D2'),
