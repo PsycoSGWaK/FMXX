@@ -66,8 +66,8 @@ WHERE NOT EXISTS (
 INSERT INTO `competition_qualif_rule` (`idCompetition`, `idCompetitionSource`, `rang_min`, `rang_max`)
 SELECT cible.idCompetition, src.idCompetition, m.rmin, m.rmax
 FROM (
-    SELECT 30 AS cible_id, 'Superliga' AS src_nom, 16 AS src_pays, 1 AS rmin, 1 AS rmax
-    UNION ALL SELECT 46, 'Superliga', 16, 2, 20
+    SELECT 30 AS cible_id, 'Elitedivisionen' AS src_nom, 16 AS src_pays, 1 AS rmin, 1 AS rmax
+    UNION ALL SELECT 46, 'Elitedivisionen', 16, 2, 20
     UNION ALL SELECT 30, 'Damallsvenskan', 9, 1, 1
     UNION ALL SELECT 46, 'Damallsvenskan', 9, 2, 20
     UNION ALL SELECT 30, 'Adran Premier', 8, 1, 1
