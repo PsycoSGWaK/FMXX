@@ -1507,6 +1507,11 @@ select.btn-ghost {
     top: .3rem;
     right: .3rem;
 }
+.tactic-card-rename {
+    position: absolute;
+    top: .3rem;
+    left: .3rem;
+}
 .tactic-card-add {
     font-size: 2rem;
     font-weight: 300;
@@ -1515,3 +1520,62 @@ select.btn-ghost {
     border-style: dashed;
 }
 .tactic-card-add:hover { color: var(--brand); }
+
+/* Vue detail Tactic Sub : postes regroupes par ligne (Attaque en haut,
+   Gardien en bas) sur un fond terrain, sans coordonnees x/y stockees. */
+.tactic-pitch {
+    position: relative;
+    background: linear-gradient(180deg, #1c6e38, #1e7a3e);
+    border: 1px solid var(--border);
+    border-radius: .6rem;
+    padding: 1.5rem 1rem;
+    overflow: hidden;
+}
+.tactic-pitch::before {
+    content: "";
+    position: absolute;
+    left: 5%; right: 5%; top: 50%;
+    height: 1px;
+    background: rgba(255,255,255,.25);
+}
+.tactic-pitch::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 110px; height: 110px;
+    margin: -55px 0 0 -55px;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 50%;
+}
+.tactic-pitch-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.tactic-pitch-row:last-child { margin-bottom: 0; }
+.tactic-pos-card {
+    width: 190px;
+    background: rgba(10, 14, 22, .72);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: .5rem;
+    padding: .6rem;
+}
+.tactic-pos-card-head {
+    display: flex;
+    justify-content: center;
+    margin-bottom: .5rem;
+}
+.tactic-pos-field { margin-bottom: .4rem; }
+.tactic-pos-field:last-child { margin-bottom: 0; }
+.tactic-pos-field label {
+    display: block;
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: rgba(255,255,255,.65);
+    margin-bottom: .15rem;
+}
