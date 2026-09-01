@@ -26,7 +26,12 @@ $signupErrCode = $_GET['error'] ?? '';
                 <div class="alert alert-danger alert-dismissible fade show py-2"><?= $t['signup_err_missing'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <?php if (($_GET['signup'] ?? '') === 'ok'): ?>
-                <div class="alert alert-success alert-dismissible fade show py-2"><?= $t['signup_ok'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <div class="alert alert-success py-2">
+                    <?= $t['signup_ok'] ?>
+                    <hr class="my-2">
+                    <p class="mb-2 small"><?= $t['signup_ok_fmsetup'] ?></p>
+                    <a href="fm-setup.php" class="btn btn-primary btn-sm"><?= $t['signup_ok_fmsetup_cta'] ?></a>
+                </div>
             <?php endif; ?>
             <form class="form-login" action="signup_post.php" method="post">
                 <?= csrf_field() ?>

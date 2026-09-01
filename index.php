@@ -555,7 +555,11 @@ if (count($joueurs) > 0) {
     <?php endif; ?>
     <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <?= $t['alert_squad_imported'] ?>
+            <?php if (isset($_GET['imported'])): ?>
+                <?= htmlspecialchars(sprintf($t['alert_squad_imported_detail'], (int)$_GET['imported'], (int)($_GET['skipped'] ?? 0))) ?>
+            <?php else: ?>
+                <?= $t['alert_squad_imported'] ?>
+            <?php endif; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -1001,8 +1005,13 @@ if (count($joueurs) > 0) {
                         </div>
                         <?php endif; ?>
                         <?php
-                        $postes = array_unique(array_filter(array_column($joueurs, 'poste')));
-                        sort($postes);
+                        // Liste canonique (memes 16 roles que le select du tableau, dans
+                        // l'ordre Gardien -> Defense -> Milieu -> Attaque de $roleOptions),
+                        // restreinte aux roles reellement presents dans l'effectif. Remplace
+                        // l'ancienne liste basee sur la chaine "poste" brute importee de FM,
+                        // qui ne correspondait plus a ce qu'affiche/propose le select.
+                        $postesPresents = array_unique(array_map($effectiveRole, $joueurs));
+                        $postes = array_values(array_filter($roleOptions, fn($r) => in_array($r, $postesPresents, true)));
                         $annees = array_unique(array_filter(array_map(function($j) {
                             if (!$j['expireContrat']) return null;
                             $parts = explode('/', $j['expireContrat']);
@@ -1018,7 +1027,7 @@ if (count($joueurs) > 0) {
                             <select id="filterPoste" class="btn-ghost">
                                 <option value=""><?= $t['squad_filter_position'] ?></option>
                                 <?php foreach ($postes as $p): ?>
-                                    <option><?= htmlspecialchars($p) ?></option>
+                                    <option value="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($t['role_' . $p] ?? $p) ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <select id="filterExpire" class="btn-ghost">
@@ -1043,13 +1052,14 @@ if (count($joueurs) > 0) {
                                         <th>#</th>
                                         <th data-sort="text" data-col="1" style="cursor:pointer"><?= $t['squad_col_name'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="2" style="cursor:pointer"><?= $t['squad_col_age'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="text" data-col="3" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="text" data-role="1" data-col="3" style="cursor:pointer"><?= $t['squad_col_position'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="4"  style="cursor:pointer"><?= $t['squad_col_apps'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="5"  style="cursor:pointer"><?= $t['squad_col_assists'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="6"  style="cursor:pointer"><?= $t['squad_col_goals'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="7" style="cursor:pointer"><?= $t['squad_col_rating'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th class="text-end" data-sort="num"  data-col="8" style="cursor:pointer"><?= $t['squad_col_value'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
-                                        <th data-sort="num"  data-col="9" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th class="text-end" data-sort="num"  data-col="9" style="cursor:pointer"><?= $t['squad_col_wage'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
+                                        <th data-sort="num" data-date="1" data-col="10" style="cursor:pointer"><?= $t['squad_col_expiry'] ?> <ion-icon name="swap-vertical-outline" class="sort-icon text-muted"></ion-icon></th>
                                         <th><?= $t['squad_col_status'] ?></th>
                                     </tr>
                                 </thead>
@@ -1070,7 +1080,7 @@ if (count($joueurs) > 0) {
                                         $status = $j['mercato_status'];
                                         ?>
                                         <tr data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
-                                            data-poste="<?= htmlspecialchars($j['poste'] ?? '') ?>"
+                                            data-poste="<?= htmlspecialchars($effectiveRole($j)) ?>"
                                             data-expire="<?= $expireYear ?>"
                                             data-statut="<?= $j['mercato_status'] ?? '' ?>"
                                             data-prix="<?= (int)($j['prixDemande'] ?? 0) ?>">
@@ -1098,6 +1108,7 @@ if (count($joueurs) > 0) {
                                             <td class="text-end"><?= $j['buts'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['noteMoy'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['prixDemande'] !== null ? number_format((int)$j['prixDemande'], 0, ',', ' ') . ' €' : '' ?></td>
+                                            <td class="text-end"><?= $j['salaire'] !== null ? number_format((int)$j['salaire'], 0, ',', ' ') . ' €' : '' ?></td>
                                             <td>
                                                 <span class="<?= $expireClass ?>"><?= htmlspecialchars($j['expireContrat'] ?? '') ?></span>
                                             </td>
@@ -1114,7 +1125,7 @@ if (count($joueurs) > 0) {
                                 </tbody>
                                 <tfoot class="table-secondary">
                                     <tr>
-                                        <td colspan="11">
+                                        <td colspan="12">
                                             <div class="role-legend">
                                                 <?php foreach ($roleOptions as $code): ?>
                                                     <span class="role-legend-item"><strong><?= htmlspecialchars($t['role_abbr_' . $code] ?? $code) ?></strong> = <?= htmlspecialchars($t['role_' . $code] ?? $code) ?></span>
@@ -1181,20 +1192,49 @@ if (count($joueurs) > 0) {
 
                         document.querySelectorAll('#effectifTable thead th[data-sort]').forEach(th => {
                             th.addEventListener('click', () => {
-                                const col  = parseInt(th.dataset.col);
-                                const type = th.dataset.sort;
+                                const col     = parseInt(th.dataset.col);
+                                const type    = th.dataset.sort;
+                                const isDate  = th.dataset.date === '1';
+                                const isRole  = th.dataset.role === '1';
                                 if (sortCol === col) sortAsc = !sortAsc;
                                 else { sortCol = col; sortAsc = true; }
                                 document.querySelectorAll('#effectifTable .sort-icon').forEach(s => s.setAttribute('name', 'swap-vertical-outline'));
                                 th.querySelector('.sort-icon').setAttribute('name', sortAsc ? 'arrow-up-outline' : 'arrow-down-outline');
+                                // Le texte d'un <select> (colonne Poste) inclut par defaut le
+                                // libelle de TOUTES ses options concatenees, pas seulement celle
+                                // choisie : on lit explicitement l'option selectionnee si la
+                                // cellule contient un select.
+                                const cellText = (cell) => {
+                                    const sel = cell?.querySelector('select');
+                                    if (sel) return sel.selectedOptions[0]?.textContent.trim() ?? '';
+                                    return cell?.textContent.trim() ?? '';
+                                };
                                 const allRows = Array.from(tbody.querySelectorAll('tr'));
                                 allRows.sort((a, b) => {
-                                    let va = a.cells[col]?.textContent.trim() ?? '';
-                                    let vb = b.cells[col]?.textContent.trim() ?? '';
+                                    if (isRole) {
+                                        // Ordre logique (Gardien -> Defense -> Milieu -> Attaque,
+                                        // meme categorisation que le graphique "Repartition par
+                                        // poste") plutot qu'alphabetique sur l'abreviation
+                                        // affichee : on se base sur la valeur du select (code
+                                        // canonique), pas son texte.
+                                        const roleOrder = <?= json_encode($roleOptions) ?>;
+                                        const selA = a.cells[col]?.querySelector('select');
+                                        const selB = b.cells[col]?.querySelector('select');
+                                        const ra = roleOrder.indexOf(selA?.value ?? '');
+                                        const rb = roleOrder.indexOf(selB?.value ?? '');
+                                        return sortAsc ? ra - rb : rb - ra;
+                                    }
+                                    let va = cellText(a.cells[col]);
+                                    let vb = cellText(b.cells[col]);
                                     if (type === 'num') {
-                                        if (col === 12) {
-                                            const ya = parseInt(va.split('/').pop()) || 0;
-                                            const yb = parseInt(vb.split('/').pop()) || 0;
+                                        if (isDate) {
+                                            // Format "D/M/YYYY" -> valeur comparable YYYYMMDD, pour trier
+                                            // par date complete (annee, puis mois, puis jour).
+                                            const parseDate = (s) => {
+                                                const [d, m, y] = s.split('/').map(n => parseInt(n, 10) || 0);
+                                                return y * 10000 + m * 100 + d;
+                                            };
+                                            const ya = parseDate(va), yb = parseDate(vb);
                                             return sortAsc ? ya - yb : yb - ya;
                                         }
                                         const na = parseFloat(va.replace(/[^\d.]/g, '')) || 0;
@@ -1312,6 +1352,11 @@ if (count($joueurs) > 0) {
                                     })
                                 }).then(r => r.json()).then(function (data) {
                                     if (!data.ok) return;
+                                    // Garde le data-poste de la ligne synchro avec le nouveau
+                                    // role choisi, sinon le filtre "Tous les postes" reste sur
+                                    // l'ancienne valeur jusqu'au prochain rechargement.
+                                    const row = sel.closest('tr');
+                                    if (row) row.dataset.poste = sel.value;
                                     refreshPosteStats();
                                 });
                             });

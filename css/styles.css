@@ -310,12 +310,12 @@ html {
     font-size: .82rem;
 }
 
-/* Âge -> Poste et Valeur transfert -> Expire le : une colonne alignée à
-   droite suivie d'une colonne alignée à gauche colle sinon les deux
-   valeurs l'une contre l'autre. On ajoute l'air manquant pour retrouver
-   le même écart visuel que Buts -> Note (référence). */
+/* Âge -> Poste et Salaire -> Expire le : une colonne alignée à droite
+   suivie d'une colonne alignée à gauche colle sinon les deux valeurs
+   l'une contre l'autre. On ajoute l'air manquant pour retrouver le même
+   écart visuel que Buts -> Note (référence). */
 #effectifTable th:nth-child(3), #effectifTable td:nth-child(3),
-#effectifTable th:nth-child(9), #effectifTable td:nth-child(9) {
+#effectifTable th:nth-child(10), #effectifTable td:nth-child(10) {
     padding-right: 2.5rem;
 }
 
