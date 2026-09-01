@@ -19,6 +19,8 @@ $t = [
     'nav_home'         => 'Inicio',
     'nav_palmares'     => 'Palmarés',
     'nav_about'        => 'Acerca de',
+    'nav_fmsetup'      => 'Configurar FM',
+    'nav_switch_game'  => 'Cambiar de juego',
     'nav_admin'        => 'Admin',
     'nav_back_index'   => '← Volver',
     'nav_logout'       => 'Cerrar sesión',
@@ -49,6 +51,8 @@ $t = [
     'signup_err_mail'       => 'Esta dirección de correo ya está en uso.',
     'signup_err_missing'    => 'Por favor, rellena todos los campos.',
     'signup_ok'             => '¡Cuenta creada! Revisa tu correo para confirmar tu dirección antes de iniciar sesión.',
+    'signup_ok_fmsetup'     => 'Mientras tanto, prepara tu juego: instala el mod de exportación y la vista de plantilla para poder importar tu equipo en cuanto inicies sesión.',
+    'signup_ok_fmsetup_cta' => 'Configurar Football Manager',
 
     // Validación (contraseña / correo)
     'val_pwd_policy'   => 'Mínimo %d caracteres, con al menos una mayúscula, una minúscula, un número y un carácter especial.',
@@ -91,6 +95,7 @@ $t = [
 
     // Alertas
     'alert_squad_imported'  => '¡Plantilla importada con éxito!',
+    'alert_squad_imported_detail' => '%d jugador(es) importado(s). %d ya presente(s), omitido(s).',
     'alert_objectives_saved'=> 'Objetivos guardados.',
     'alert_tactic_saved'    => 'Táctica guardada.',
     'alert_budget_saved'    => 'Presupuesto guardado.',
@@ -168,6 +173,7 @@ $t = [
     'squad_col_goals'        => 'Goles',
     'squad_col_rating'       => 'Nota med',
     'squad_col_value'        => 'Valor de mercado',
+    'squad_col_wage'         => 'Salario',
     'squad_col_expiry'       => 'Expira el',
     'squad_col_status'       => 'Estado',
     'squad_stat_count'       => 'Plantilla',
@@ -276,6 +282,7 @@ $t = [
     'player_rating'       => 'Nota media',
     'player_asking'       => 'Precio pedido',
     'player_value'        => 'Valor de mercado',
+    'player_wage'         => 'Salario',
     'player_name'         => 'Nombre',
     'player_age'          => 'Edad',
     'player_number'       => 'N°',
@@ -371,4 +378,22 @@ $t = [
     'hub_fs_desc'         => 'TBD.',
     'hub_open'            => 'Abrir',
     'hub_soon'            => 'Próximamente',
+
+    // Configuración de Football Manager (BepInEx + mod export + vista + import)
+    'fmsetup_title' => 'Configurar Football Manager',
+    'fmsetup_intro' => 'Antes de poder importar tu plantilla, tu juego necesita el mod de exportación y la vista personalizada de iDev Compagnon. Sigue estos 5 pasos una sola vez.',
+    'fmsetup_step1_title' => '1. Instalar BepInEx',
+    'fmsetup_step1_text' => 'BepInEx es el framework que permite cargar mods en Football Manager. En la página de descarga, selecciona el último artefacto y elige la versión <strong>BepInEx-Unity.IL2CPP</strong> (no Mono ni las otras variantes). Luego descomprime el archivo directamente en la carpeta de instalación del juego (donde está FM26.exe).',
+    'fmsetup_step1_cta' => 'Descargar BepInEx',
+    'fmsetup_step2_title' => '2. Instalar el mod FMScout CSV Export',
+    'fmsetup_step2_text' => 'Este mod añade la exportación CSV/HTML de tu plantilla. Descárgalo y coloca el archivo .dll resultante en la carpeta BepInEx/plugins (creada en el paso 1, dentro de la carpeta del juego).',
+    'fmsetup_step2_cta' => 'Descargar el mod FMScout',
+    'fmsetup_step3_title' => '3. Importar la vista de plantilla iDev Compagnon',
+    'fmsetup_step3_text' => 'Esta vista personalizada muestra exactamente las columnas que reconoce el importador (salario, precio pedido, expiración de contrato...). Descarga el archivo de vista y en FM: pantalla Plantilla → icono Vistas (arriba a la derecha) → Importar vista, y selecciona el archivo descargado.',
+    'fmsetup_step3_cta' => 'Descargar la vista FMXX',
+    'fmsetup_step4_title' => '4. Exportar tu plantilla',
+    'fmsetup_step4_text' => 'En la pantalla Plantilla, con la vista FMXX activa, selecciona los jugadores a exportar y pulsa <strong>Ctrl+P</strong> o <strong>F9</strong> (atajo del mod): la exportación se hace automáticamente. El archivo aparece en <code>Documents\Sports Interactive\Football Manager 26\FM26PlayerExport by vinteset</code>, dentro de la subcarpeta <code>CSV</code> o <code>HTML</code> según el formato.',
+    'fmsetup_step5_title' => '5. Importar en iDev Compagnon',
+    'fmsetup_step5_text' => 'Vuelve a la pestaña Plantilla de la aplicación y usa el botón Importar para cargar el archivo exportado.',
+    'fmsetup_step5_cta' => 'Ir a la Plantilla',
 ];

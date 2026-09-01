@@ -48,6 +48,11 @@ if (!in_array($ext, ALLOWED_EXT, true)) {
 
 // Correspondance entêtes FM → colonnes BDD (FM24 + FM26)
 const COL_MAP = [
+    // ID unique FM (stable d'une saison à l'autre, sert à détecter les
+    // joueurs déjà importés pour permettre un import additif)
+    'unique id'            => 'fmUid',
+    'uid'                  => 'fmUid',
+    'id unique'            => 'fmUid',
     // Nom
     'nom'                  => 'nom',
     'joueuse'              => 'nom',  // équipe féminine
@@ -196,12 +201,22 @@ foreach ($headers as $i => $h) {
 }
 
 // --- Insertion en BDD ---
-$pdo->prepare("DELETE FROM tactic WHERE idUser = :idUser")->execute(['idUser' => $idUser]);
-$pdo->prepare("DELETE FROM joueur WHERE idUser = :idUser")->execute(['idUser' => $idUser]);
+// Import additif : n'ajoute que les joueurs pas encore presents pour ce
+// compte, ne touche jamais aux joueurs/tactiques deja enregistres. La
+// detection de doublon se fait par l'ID unique FM (colonne "Unique ID" de
+// l'export, stable d'une saison a l'autre) quand le fichier la fournit ;
+// a defaut (ancien format d'export), on retombe sur une comparaison de nom.
+$existingUids = $pdo->prepare("SELECT fm_uid FROM joueur WHERE idUser = :idUser AND fm_uid IS NOT NULL");
+$existingUids->execute(['idUser' => $idUser]);
+$knownUids = array_flip($existingUids->fetchAll(PDO::FETCH_COLUMN));
+
+$existingNoms = $pdo->prepare("SELECT nom FROM joueur WHERE idUser = :idUser");
+$existingNoms->execute(['idUser' => $idUser]);
+$knownNoms = array_flip(array_map('mb_strtolower', $existingNoms->fetchAll(PDO::FETCH_COLUMN)));
 
 $stmt = $pdo->prepare(
-    'INSERT INTO joueur (nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy, montantTransfert, prixDemande, salaire, expireContrat, idUser)
-     VALUES (:nom, :age, :numero, :nat, :pdn, :poste, :app, :pDec, :buts, :noteMoy, :montantTransfert, :prixDemande, :salaire, :expireContrat, :idUser)'
+    'INSERT INTO joueur (fm_uid, nom, age, numero, nat, pdn, poste, app, pDec, buts, noteMoy, montantTransfert, prixDemande, salaire, expireContrat, idUser)
+     VALUES (:fm_uid, :nom, :age, :numero, :nat, :pdn, :poste, :app, :pDec, :buts, :noteMoy, :montantTransfert, :prixDemande, :salaire, :expireContrat, :idUser)'
 );
 
 function colVal(array $row, array $colIndex, string $field): ?string {
@@ -211,11 +226,27 @@ function colVal(array $row, array $colIndex, string $field): ?string {
     return trim($v);
 }
 
+$imported = 0;
+$skipped  = 0;
+
 foreach ($rows as $row) {
+    $nom = colVal($row, $colIndex, 'nom');
+    if ($nom === null) continue; // ligne invalide, sans nom
+
+    $fmUid = colVal($row, $colIndex, 'fmUid');
+
+    // Doublon si l'UID correspond a un joueur deja connu, OU si le nom
+    // correspond : les joueurs importes avant cette fonctionnalite n'ont pas
+    // d'UID enregistre, donc seul le nom permet de les reconnaitre meme si
+    // le nouveau fichier fournit un UID pour cette ligne.
+    $isDuplicate = ($fmUid !== null && isset($knownUids[$fmUid])) || isset($knownNoms[mb_strtolower($nom)]);
+    if ($isDuplicate) { $skipped++; continue; }
+
     $prixRaw    = colVal($row, $colIndex, 'prixDemande');
     $salaireRaw = colVal($row, $colIndex, 'salaire');
     $stmt->execute([
-        'nom'              => colVal($row, $colIndex, 'nom'),
+        'fm_uid'           => $fmUid,
+        'nom'              => $nom,
         'age'              => colVal($row, $colIndex, 'age'),
         'numero'           => colVal($row, $colIndex, 'numero'),
         'nat'              => colVal($row, $colIndex, 'nat'),
@@ -231,6 +262,9 @@ foreach ($rows as $row) {
         'expireContrat'    => colVal($row, $colIndex, 'expireContrat'),
         'idUser'           => $idUser,
     ]);
+    $imported++;
+    if ($fmUid !== null) $knownUids[$fmUid] = true;
+    $knownNoms[mb_strtolower($nom)] = true;
 }
 
-header("Location: index.php?success=true");
+header("Location: index.php?success=true&imported=$imported&skipped=$skipped");
