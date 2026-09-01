@@ -6,7 +6,8 @@
  * réinjectées sous le idUser de la session courante (jamais sous un idUser fourni par
  * le fichier), les identifiants de connexion (username/mail/password) ne sont jamais
  * touchés, et les idJoueur sont remappés vers les nouveaux ID générés pour préserver
- * les liaisons de la table tactic.
+ * les liaisons de la table tactic. Les cards tactiques référencent une tactique de la
+ * bibliothèque partagée par son nom, retrouvée ou ignorée si absente de cette base.
  */
 session_start();
 require_once("db.php");
@@ -43,14 +44,14 @@ if (!is_array($data) || ($data['format'] ?? '') !== 'fmxx_backup') {
     backupFail('format');
 }
 
-$userData     = is_array($data['user'] ?? null) ? $data['user'] : null;
-$saisonData   = is_array($data['saison_meta'] ?? null) ? $data['saison_meta'] : [];
-$objectifData = is_array($data['objectif'] ?? null) ? $data['objectif'] : [];
-$joueurData   = is_array($data['joueur'] ?? null) ? $data['joueur'] : [];
-$tacticData   = is_array($data['tactic'] ?? null) ? $data['tactic'] : [];
-$arriveeData  = is_array($data['mercato_arrivee'] ?? null) ? $data['mercato_arrivee'] : [];
+$userData        = is_array($data['user'] ?? null) ? $data['user'] : null;
+$saisonData      = is_array($data['saison_meta'] ?? null) ? $data['saison_meta'] : [];
+$objectifData    = is_array($data['objectif'] ?? null) ? $data['objectif'] : [];
+$joueurData      = is_array($data['joueur'] ?? null) ? $data['joueur'] : [];
+$tacticCardsData = is_array($data['tactic_cards'] ?? null) ? $data['tactic_cards'] : [];
+$arriveeData     = is_array($data['mercato_arrivee'] ?? null) ? $data['mercato_arrivee'] : [];
 
-foreach ([$saisonData, $objectifData, $joueurData, $tacticData, $arriveeData] as $set) {
+foreach ([$saisonData, $objectifData, $joueurData, $tacticCardsData, $arriveeData] as $set) {
     if (count($set) > MAX_ROWS) {
         backupFail('too_large');
     }
@@ -58,7 +59,9 @@ foreach ([$saisonData, $objectifData, $joueurData, $tacticData, $arriveeData] as
 
 try {
     // Purge des données de jeu actuelles du compte avant réinjection (jamais la ligne user elle-même)
-    foreach (['mercato_arrivee', 'tactic', 'objectif', 'saison_meta', 'joueur'] as $table) {
+    $pdo->prepare("DELETE t FROM tactic t JOIN tactic_card c ON c.idTacticCard = t.idTacticCard WHERE c.idUser = :idUser")
+        ->execute(['idUser' => $idUser]);
+    foreach (['tactic_card', 'mercato_arrivee', 'objectif', 'saison_meta', 'joueur'] as $table) {
         $pdo->prepare("DELETE FROM $table WHERE idUser = :idUser")->execute(['idUser' => $idUser]);
     }
 
@@ -152,21 +155,40 @@ try {
         ]);
     }
 
-    // Tactique : remap des idJoueur vers les nouveaux ID
+    // Cards tactiques : chaque card reference une tactique de la bibliotheque
+    // partagee par son nom (portable), retrouvee ou recreee si absente de
+    // cette base, puis ses lignes tactic sont reinserees avec les idJoueur
+    // remappes vers les nouveaux ID.
+    $findPreset = $pdo->prepare("SELECT idTacticPreset FROM tactic_preset WHERE nom = :nom");
+    $insCard = $pdo->prepare("INSERT INTO tactic_card (idUser, idTacticPreset) VALUES (:idUser, :idTacticPreset)");
     $insTactic = $pdo->prepare("
-        INSERT INTO tactic (position, titulaire, remplacant, supersub, idUser)
-        VALUES (:position, :titulaire, :remplacant, :supersub, :idUser)
+        INSERT INTO tactic (position, titulaire, remplacant, supersub, idUser, idTacticCard)
+        VALUES (:position, :titulaire, :remplacant, :supersub, :idUser, :idTacticCard)
     ");
     $remap = fn($oldId) => $oldId !== null && isset($joueurMap[(int)$oldId]) ? $joueurMap[(int)$oldId] : null;
-    foreach ($tacticData as $tac) {
-        if (!isset($tac['position'])) continue;
-        $insTactic->execute([
-            'position'   => (int)$tac['position'],
-            'titulaire'  => $remap($tac['titulaire'] ?? null),
-            'remplacant' => $remap($tac['remplacant'] ?? null),
-            'supersub'   => $remap($tac['supersub'] ?? null),
-            'idUser'     => $idUser,
-        ]);
+    foreach ($tacticCardsData as $cardData) {
+        $presetNom = trim((string)($cardData['presetNom'] ?? ''));
+        if ($presetNom === '') continue;
+
+        $findPreset->execute(['nom' => $presetNom]);
+        $idTacticPreset = $findPreset->fetchColumn();
+        if (!$idTacticPreset) continue; // tactique introuvable dans cette base, card ignoree
+
+        $insCard->execute(['idUser' => $idUser, 'idTacticPreset' => $idTacticPreset]);
+        $idTacticCard = (int)$pdo->lastInsertId();
+
+        $tacticRows = is_array($cardData['tactic'] ?? null) ? $cardData['tactic'] : [];
+        foreach ($tacticRows as $tac) {
+            if (!isset($tac['position'])) continue;
+            $insTactic->execute([
+                'position'     => (int)$tac['position'],
+                'titulaire'    => $remap($tac['titulaire'] ?? null),
+                'remplacant'   => $remap($tac['remplacant'] ?? null),
+                'supersub'     => $remap($tac['supersub'] ?? null),
+                'idUser'       => $idUser,
+                'idTacticCard' => $idTacticCard,
+            ]);
+        }
     }
 
     // Arrivées mercato
