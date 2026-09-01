@@ -287,10 +287,13 @@ html {
     white-space: nowrap;
 }
 
-/* Effectif : colonnes moins collées, plus d'air pour la lecture. */
+/* Effectif : colonnes moins collées, plus d'air pour la lecture. Même
+   padding partout des deux côtés -> même écart visuel entre chaque
+   colonne, quel que soit son alignement (au lieu de correctifs
+   nth-child au cas par cas). */
 #effectifTable th, #effectifTable td {
-    padding-left: .85rem;
-    padding-right: .85rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
 }
 
 #effectifTable td {
@@ -308,15 +311,6 @@ html {
     min-width: 6rem;
     padding: .2rem 1.6rem .2rem .5rem;
     font-size: .82rem;
-}
-
-/* Âge -> Poste et Salaire -> Expire le : une colonne alignée à droite
-   suivie d'une colonne alignée à gauche colle sinon les deux valeurs
-   l'une contre l'autre. On ajoute l'air manquant pour retrouver le même
-   écart visuel que Buts -> Note (référence). */
-#effectifTable th:nth-child(3), #effectifTable td:nth-child(3),
-#effectifTable th:nth-child(10), #effectifTable td:nth-child(10) {
-    padding-right: 2.5rem;
 }
 
 .data-table th[data-sort]:hover,
@@ -1157,12 +1151,31 @@ body.visitor-page footer {
 
 /* ---------- Statut mercato (boutons segmentés, colonne Effectif) ---------- */
 
+.mercato-status-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+/* Sans ça, la colonne Statut (dernière du tableau) absorbe tout l'espace
+   restant de la table sur les grands écrans, laissant un vide énorme à
+   droite des boutons/du champ de vente. */
+#effectifTable th:last-child,
+#effectifTable td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
 .mercato-status-toggle {
     display: inline-flex;
     background: var(--panel-2);
     border-radius: .5rem;
     padding: .15rem;
     gap: .15rem;
+}
+
+.mercato-vente-input {
+    width: 8rem;
 }
 
 .mercato-status-toggle .ms-opt {

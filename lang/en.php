@@ -165,6 +165,7 @@ $t = [
     'squad_status_sell'      => 'For sale',
     'squad_status_loan'      => 'On loan',
     'squad_status_free'      => 'Free transfer',
+    'squad_sale_value_placeholder' => 'Sale value',
     'squad_col_name'         => 'Name',
     'squad_col_age'          => 'Age',
     'squad_col_position'     => 'Position',

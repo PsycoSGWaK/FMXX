@@ -165,6 +165,7 @@ $t = [
     'squad_status_sell'      => 'À vendre',
     'squad_status_loan'      => 'En prêt',
     'squad_status_free'      => 'Libérer',
+    'squad_sale_value_placeholder' => 'Valeur de vente',
     'squad_col_name'         => 'Nom',
     'squad_col_age'          => 'Âge',
     'squad_col_position'     => 'Poste',
