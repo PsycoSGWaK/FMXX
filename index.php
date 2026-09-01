@@ -96,24 +96,49 @@ if (!isset($_SESSION['mail'])) {
 require_once("auth_check.php");
 $idUser = $_SESSION['idUser'];
 
-// Formations disponibles → positions pour la Tactic Sub
-const FORMATIONS = [
-    '4-3-3'     => ['GK','DC','DC','DL','DR','MC','MC','MC','AL','AR','BU'],
-    '4-4-2'     => ['GK','DC','DC','DL','DR','MG','MC','MC','MD','BU','BU'],
-    '4-2-3-1'   => ['GK','DC','DC','DL','DR','MC','MC','MO','AL','AR','BU'],
-    '3-5-2'     => ['GK','DC','DC','DC','MG','MC','MC','MC','MD','BU','BU'],
-    '5-3-2'     => ['GK','DC','DC','DC','DL','DR','MC','MC','MC','BU','BU'],
-    '4-1-2-1-2' => ['GK','DC','DC','DL','DR','MC','MG','MD','MO','BU','BU'],
-];
+// Bibliothèque de tactiques partagées (table tactic_preset, globale à tous
+// les users) : remplace l'ancienne constante FORMATIONS figée à 6 valeurs.
+$tacticPresets = $pdo->query("SELECT * FROM tactic_preset ORDER BY idUserCreateur IS NULL DESC, nom")->fetchAll();
 
-// Charger la formation depuis la session ou la BDD
-if (empty($_SESSION['formation'])) {
-    $r = $pdo->prepare("SELECT formation FROM user WHERE idUser = :id");
-    $r->execute(['id' => $idUser]);
-    $_SESSION['formation'] = $r->fetchColumn() ?: '4-3-3';
+// "Cards" personnelles : les tactiques que CET user a ajoutées à son propre
+// espace (onglet Tactic Sub). Jusqu'à TACTIC_MAX_CARDS, doit rester
+// synchronisé avec tactic_card_add_post.php.
+const TACTIC_MAX_CARDS = 5;
+
+$tacticCardsStmt = $pdo->prepare("
+    SELECT tc.*, tp.nom AS presetNom
+    FROM tactic_card tc JOIN tactic_preset tp ON tp.idTacticPreset = tc.idTacticPreset
+    WHERE tc.idUser = :idUser ORDER BY tc.idTacticCard
+");
+$tacticCardsStmt->execute(['idUser' => $idUser]);
+$tacticCards = $tacticCardsStmt->fetchAll();
+
+// Libellé d'une card : son nom personnalisé (bouton "renommer") si défini,
+// sinon un libellé par défaut basé sur son rang d'affichage.
+$tacticCardLabel = function (array $c, int $idx) use ($t): string {
+    return $c['nom'] !== null && $c['nom'] !== '' ? $c['nom'] : sprintf($t['tactic_card_label'], $idx + 1);
+};
+
+// Card ouverte (vue détail) : déterminée par ?card=, jamais fait confiance
+// sans vérifier qu'elle appartient bien à l'utilisateur courant.
+$activeTacticCard = null;
+$activeTacticCardIdx = null;
+if (!empty($_GET['card'])) {
+    foreach ($tacticCards as $idx => $c) {
+        if ((int)$c['idTacticCard'] === (int)$_GET['card']) {
+            $activeTacticCard = $c;
+            $activeTacticCardIdx = $idx;
+            break;
+        }
+    }
 }
-$formation = $_SESSION['formation'];
-$positions = FORMATIONS[$formation] ?? FORMATIONS['4-3-3'];
+
+$tacticSlots = [];
+if ($activeTacticCard) {
+    $slotStmt = $pdo->prepare("SELECT * FROM tactic_preset_slot WHERE idTacticPreset = :id ORDER BY position");
+    $slotStmt->execute(['id' => $activeTacticCard['idTacticPreset']]);
+    $tacticSlots = $slotStmt->fetchAll();
+}
 
 // Chargement effectif
 $stmt = $pdo->prepare("SELECT * FROM joueur WHERE idUser = :idUser ORDER BY poste, nom");
@@ -644,7 +669,7 @@ if (count($joueurs) > 0) {
         </a>
         <a class="<?= $activeTab === 'tactic' ? 'active' : '' ?>" href="?tab=tactic">
             <?= $t['tab_tactic'] ?>
-            <span class="count"><?= htmlspecialchars($formation) ?></span>
+            <?php if (count($tacticCards) > 0): ?><span class="count"><?= count($tacticCards) ?></span><?php endif; ?>
         </a>
         <a class="<?= $activeTab === 'palmares' ? 'active' : '' ?>" href="?tab=palmares">
             <?= $t['nav_palmares'] ?>
@@ -1488,109 +1513,320 @@ if (count($joueurs) > 0) {
         <div class="tab-pane <?= $activeTab === 'tactic' ? 'show active' : '' ?>" id="pane-tactic">
             <div class="table-panel">
                 <div class="table-panel-head">
-                    <span class="section-title"><span style="color:var(--heading)"><?= $t['card_tactic'] ?></span></span>
-                    <div class="segmented" style="align-self:auto;">
-                        <?php foreach (['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-2-1-2'] as $f): ?>
-                            <form action="formation_post.php" method="post" style="display:contents">
-                                <input type="hidden" name="formation" value="<?= $f ?>">
-                                <input type="hidden" name="redirect" value="index.php?tab=tactic">
-                                <button type="submit" class="<?= $formation === $f ? 'active' : '' ?>" style="text-transform:none; font-size:.8rem; padding:.35rem .7rem;">
-                                    <?= $f ?>
-                                </button>
+                    <?php if ($activeTacticCard): ?>
+                        <span class="section-title" style="display:flex; align-items:center; gap:.4rem;">
+                            <span style="color:var(--heading)"><?= htmlspecialchars($tacticCardLabel($activeTacticCard, $activeTacticCardIdx)) ?></span>
+                            <button type="button" class="objective-remove-btn" data-bs-toggle="modal" data-bs-target="#renameTacticCardModal"
+                                    data-id="<?= $activeTacticCard['idTacticCard'] ?>" data-nom="<?= htmlspecialchars($activeTacticCard['nom'] ?? '') ?>" data-placeholder="<?= htmlspecialchars($tacticCardLabel($activeTacticCard, $activeTacticCardIdx)) ?>"
+                                    title="<?= htmlspecialchars($t['tactic_card_rename']) ?>">
+                                <ion-icon name="pencil-outline"></ion-icon>
+                            </button>
+                        </span>
+                        <div style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; align-self:auto;">
+                            <a href="?tab=tactic" class="btn-ghost" style="font-size:.8rem; padding:.35rem .7rem;">&larr; <?= $t['tactic_back'] ?></a>
+                            <form action="tactic_card_preset_post.php" method="post" style="display:contents">
+                                <input type="hidden" name="idTacticCard" value="<?= $activeTacticCard['idTacticCard'] ?>">
+                                <?= csrf_field() ?>
+                                <select name="idTacticPreset" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+                                    <?php foreach ($tacticPresets as $tp): ?>
+                                        <option value="<?= $tp['idTacticPreset'] ?>" <?= (int)$tp['idTacticPreset'] === (int)$activeTacticCard['idTacticPreset'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($tp['nom']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </form>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                    <?php if (count($joueurs) === 0): ?>
-                        <p class="text-muted p-3 mb-0"><?= $t['tactic_no_squad'] ?></p>
+                            <button type="button" class="btn-ghost" data-bs-toggle="modal" data-bs-target="#createTacticModal" style="font-size:.8rem; padding:.35rem .7rem;">
+                                <?= $t['tactic_create'] ?>
+                            </button>
+                        </div>
                     <?php else: ?>
-                        <?php
-                        $tacticsStmt = $pdo->prepare("SELECT * FROM tactic WHERE idUser = :idUser ORDER BY position");
-                        $tacticsStmt->execute(['idUser' => $idUser]);
-                        $tactics = [];
-                        foreach ($tacticsStmt->fetchAll() as $tacticRow) {
-                            $tactics[$tacticRow['position']] = $tacticRow;
-                        }
-                        // Codes de poste Tactic Sub -> role canonique de l'Effectif (meme
-                        // dictionnaire/abreviations que $roleOptions), pour l'affichage
-                        // traduit et pour filtrer la liste des joueurs par poste.
-                        $tacticRoleMap = [
-                            'GK' => 'GK', 'DC' => 'CB', 'DL' => 'LB', 'DR' => 'RB',
-                            'MC' => 'CM', 'MG' => 'LM', 'MD' => 'RM', 'MO' => 'CAM',
-                            'AL' => 'LW', 'AR' => 'RW', 'BU' => 'ST',
-                        ];
-                        ?>
-                        <div id="tacticWrap" class="pb-3">
+                        <span class="section-title"><span style="color:var(--heading)"><?= $t['card_tactic'] ?></span></span>
+                        <?php if (count($tacticCards) < TACTIC_MAX_CARDS): ?>
+                            <button type="button" class="btn-ghost" data-bs-toggle="modal" data-bs-target="#createTacticModal" style="font-size:.8rem; padding:.35rem .7rem; align-self:auto;">
+                                <?= $t['tactic_create_and_use'] ?>
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+
+                <?php if (!$activeTacticCard): ?>
+                    <!-- Grille "mes tactiques" -->
+                    <?php if (empty($tacticCards)): ?>
+                        <div class="d-flex justify-content-center align-items-center" style="min-height:220px;">
+                            <form action="tactic_card_add_post.php" method="post">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="tactic-card tactic-card-add" style="width:120px; height:120px;" title="<?= htmlspecialchars($t['tactic_card_add']) ?>">+</button>
+                            </form>
+                        </div>
+                    <?php else: ?>
+                        <div class="tactic-card-grid p-3">
+                            <?php foreach ($tacticCards as $idx => $c): ?>
+                                <div class="tactic-card-wrap">
+                                    <a href="?tab=tactic&card=<?= $c['idTacticCard'] ?>" class="tactic-card">
+                                        <span class="tactic-card-title"><?= htmlspecialchars($tacticCardLabel($c, $idx)) ?></span>
+                                        <span class="tactic-card-sub"><?= htmlspecialchars($c['presetNom']) ?></span>
+                                    </a>
+                                    <button type="button" class="objective-remove-btn tactic-card-rename" data-bs-toggle="modal" data-bs-target="#renameTacticCardModal"
+                                            data-id="<?= $c['idTacticCard'] ?>" data-nom="<?= htmlspecialchars($c['nom'] ?? '') ?>" data-placeholder="<?= htmlspecialchars($tacticCardLabel($c, $idx)) ?>"
+                                            title="<?= htmlspecialchars($t['tactic_card_rename']) ?>">
+                                        <ion-icon name="pencil-outline"></ion-icon>
+                                    </button>
+                                    <form action="tactic_card_delete_post.php" method="post"
+                                          data-confirm="<?= htmlspecialchars($t['tactic_card_delete_confirm'], ENT_QUOTES) ?>" data-confirm-variant="danger">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="idTacticCard" value="<?= $c['idTacticCard'] ?>">
+                                        <button type="submit" class="objective-remove-btn tactic-card-delete" title="<?= htmlspecialchars($t['tactic_card_delete']) ?>">&times;</button>
+                                    </form>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php if (count($tacticCards) < TACTIC_MAX_CARDS): ?>
+                                <form action="tactic_card_add_post.php" method="post" class="tactic-card-wrap">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="tactic-card tactic-card-add" title="<?= htmlspecialchars($t['tactic_card_add']) ?>">+</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php elseif (empty($tacticSlots)): ?>
+                    <p class="text-muted p-3 mb-0"><?= $t['tactic_no_preset'] ?></p>
+                <?php elseif (count($joueurs) === 0): ?>
+                    <p class="text-muted p-3 mb-0"><?= $t['tactic_no_squad'] ?></p>
+                <?php else: ?>
+                    <?php
+                    $tacticsStmt = $pdo->prepare("SELECT * FROM tactic WHERE idTacticCard = :idTacticCard ORDER BY position");
+                    $tacticsStmt->execute(['idTacticCard' => $activeTacticCard['idTacticCard']]);
+                    $tactics = [];
+                    foreach ($tacticsStmt->fetchAll() as $tacticRow) {
+                        $tactics[$tacticRow['position']] = $tacticRow;
+                    }
+
+                    // Regroupe les 11 postes par ligne (comme sur un terrain, l'attaque
+                    // en haut et le gardien en bas), sans dependre de coordonnees x/y
+                    // (retirees du modele) : l'ordre gauche-droite au sein d'une ligne
+                    // est deduit du code de poste (L.../R... vs central).
+                    $pitchRows = [
+                        'Attaque' => ['label' => $t['squad_pos_attack'],     'slots' => []],
+                        'Milieu'  => ['label' => $t['squad_pos_midfield'],   'slots' => []],
+                        'Défense' => ['label' => $t['squad_pos_defense'],    'slots' => []],
+                        'Gardien' => ['label' => $t['squad_pos_goalkeeper'], 'slots' => []],
+                    ];
+                    $sideOrder = [
+                        'GK' => 50,
+                        'LB' => 10, 'LWB' => 15, 'CB' => 40, 'SW' => 45, 'RWB' => 85, 'RB' => 90,
+                        'LM' => 10, 'CDM' => 40, 'CM' => 45, 'CAM' => 50, 'RM' => 90,
+                        'LW' => 10, 'ST' => 45, 'FW' => 50, 'RW' => 90,
+                    ];
+                    foreach ($tacticSlots as $slot) {
+                        $cat = $roleCategory[$slot['poste']] ?? 'Milieu';
+                        $pitchRows[$cat]['slots'][] = $slot;
+                    }
+                    foreach ($pitchRows as &$row) {
+                        usort($row['slots'], fn($a, $b) => ($sideOrder[$a['poste']] ?? 50) <=> ($sideOrder[$b['poste']] ?? 50));
+                    }
+                    unset($row);
+                    ?>
+                    <div id="tacticWrap">
+                        <div class="tactic-pitch">
+                            <?php foreach ($pitchRows as $row): if (empty($row['slots'])) continue; ?>
+                                <div class="tactic-pitch-row">
+                                    <?php foreach ($row['slots'] as $slot):
+                                        $i = (int)$slot['position'];
+                                        $roleCode = $slot['poste'];
+                                        $currentIds = array_filter([
+                                            $tactics[$i]['titulaire']  ?? null,
+                                            $tactics[$i]['remplacant'] ?? null,
+                                            $tactics[$i]['supersub']   ?? null,
+                                        ]);
+                                        $rowPlayers = array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRole) {
+                                            return $effectiveRole($j) === $roleCode || in_array($j['idJoueur'], $currentIds);
+                                        });
+                                    ?>
+                                        <div class="tactic-pos-card" data-position="<?= $i ?>">
+                                            <div class="tactic-pos-card-head"><span class="pos-tag"><?= htmlspecialchars($t['role_abbr_' . $roleCode] ?? $roleCode) ?></span></div>
+                                            <?php foreach (['titulaire' => $t['tactic_starter'], 'remplacant' => $t['tactic_sub'], 'supersub' => $t['tactic_supersub']] as $role => $roleLabel): ?>
+                                                <div class="tactic-pos-field">
+                                                    <label><?= htmlspecialchars($roleLabel) ?></label>
+                                                    <select class="form-select form-select-sm tactic-select" data-role="<?= $role ?>">
+                                                        <option value="">—</option>
+                                                        <?php foreach ($rowPlayers as $j): ?>
+                                                            <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
+                                                            <option value="<?= $j['idJoueur'] ?>" <?= $selected ?>>
+                                                                <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $effectiveRole($j)] ?? $effectiveRole($j)) ?>)
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <script>
+                    document.querySelectorAll('#tacticWrap .tactic-select').forEach(function (sel) {
+                        sel.dataset.prevValue = sel.value;
+                        sel.addEventListener('change', function () {
+                            const posCard = sel.closest('.tactic-pos-card');
+                            const previousValue = sel.dataset.prevValue ?? '';
+                            fetch('tactic_field_post.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: new URLSearchParams({
+                                    idTacticCard: <?= (int)$activeTacticCard['idTacticCard'] ?>,
+                                    position: posCard.dataset.position,
+                                    role: sel.dataset.role,
+                                    value: sel.value,
+                                    csrf_token: <?= json_encode(csrf_token()) ?>
+                                })
+                            }).then(r => r.json()).then(function (data) {
+                                if (!data.ok) {
+                                    sel.value = previousValue;
+                                    return;
+                                }
+                                sel.dataset.prevValue = sel.value;
+                                // Retire le focus avant le flash : le contour rouge du
+                                // focus (.form-select:focus) masquait sinon l'anneau vert
+                                // de confirmation d'enregistrement.
+                                sel.blur();
+                                sel.classList.add('mercato-status-saved');
+                                setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
+                            });
+                        });
+                    });
+                    </script>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ($activeTacticCard || !empty($tacticCards)): ?>
+        <!-- Modal : renommer une card. Partage entre la grille (bouton crayon sur
+             chaque card) et la vue detail (bouton crayon a cote du titre) : les
+             champs sont peuples via JS depuis les data-* du bouton qui l'ouvre. -->
+        <div class="modal fade" id="renameTacticCardModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><?= $t['tactic_card_rename_title'] ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="tactic_card_rename_post.php" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" name="idTacticCard" id="renameTacticCardId" value="">
+                            <?= csrf_field() ?>
+                            <label class="form-label"><?= $t['tactic_name'] ?></label>
+                            <input type="text" name="nom" id="renameTacticCardName" class="form-control" maxlength="60">
+                            <p class="text-muted small mt-2 mb-0"><?= $t['tactic_card_rename_placeholder'] ?></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-ghost" data-bs-dismiss="modal"><?= $t['confirm_cancel'] ?></button>
+                            <button type="submit" class="btn-brand"><?= $t['btn_save'] ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+        document.getElementById('renameTacticCardModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('renameTacticCardId').value = btn.dataset.id;
+            document.getElementById('renameTacticCardName').value = btn.dataset.nom || '';
+            document.getElementById('renameTacticCardName').placeholder = btn.dataset.placeholder || '';
+        });
+        </script>
+        <?php endif; ?>
+
+        <!-- Modal : creation d'une nouvelle tactique (bibliotheque partagee). Disponible
+             depuis la grille (cree une nouvelle card) et depuis une card (change sa
+             tactique) : idTacticCard vaut 0 dans le premier cas. -->
+        <div class="modal fade" id="createTacticModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><?= $t['tactic_create'] ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="createTacticForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label"><?= $t['tactic_name'] ?></label>
+                                <input type="text" id="createTacticName" class="form-control" maxlength="60" required>
+                            </div>
+                            <p class="text-muted small"><?= $t['tactic_create_help'] ?></p>
+                            <?php
+                            // Disposition de depart (identique au preset 4-3-3), l'utilisateur
+                            // choisit ensuite librement le poste de chaque emplacement.
+                            $defaultPostes = ['GK','CB','CB','LB','RB','CM','CM','CM','LW','RW','ST'];
+                            ?>
                             <div class="table-scroll">
-                                <table class="table table-sm align-middle mb-0 data-table">
+                                <table class="table table-sm align-middle mb-0 data-table" id="createTacticSlots">
                                     <thead>
                                         <tr>
                                             <th style="width:60px"><?= $t['tactic_position'] ?></th>
-                                            <th><?= $t['tactic_starter'] ?></th>
-                                            <th><?= $t['tactic_sub'] ?></th>
-                                            <th><?= $t['tactic_supersub'] ?></th>
+                                            <th><?= $t['tactic_name_poste'] ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php for ($i = 1; $i <= 11; $i++):
-                                            $posCode  = $positions[$i-1];
-                                            $roleCode = $tacticRoleMap[$posCode] ?? null;
-                                            $currentIds = array_filter([
-                                                $tactics[$i]['titulaire']  ?? null,
-                                                $tactics[$i]['remplacant'] ?? null,
-                                                $tactics[$i]['supersub']   ?? null,
-                                            ]);
-                                            $rowPlayers = $roleCode
-                                                ? array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRole) {
-                                                    return $effectiveRole($j) === $roleCode || in_array($j['idJoueur'], $currentIds);
-                                                })
-                                                : $joueursDispo;
-                                        ?>
-                                            <tr data-position="<?= $i ?>">
-                                                <td><span class="pos-tag"><?= htmlspecialchars($roleCode ? ($t['role_abbr_' . $roleCode] ?? $posCode) : $posCode) ?></span></td>
-                                                <?php foreach (['titulaire','remplacant','supersub'] as $role): ?>
-                                                    <td>
-                                                        <select class="form-select form-select-sm tactic-select" data-role="<?= $role ?>">
-                                                            <option value="">—</option>
-                                                            <?php foreach ($rowPlayers as $j): ?>
-                                                                <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
-                                                                <option value="<?= $j['idJoueur'] ?>" <?= $selected ?>>
-                                                                    <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $effectiveRole($j)] ?? $effectiveRole($j)) ?>)
-                                                                </option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </td>
-                                                <?php endforeach; ?>
+                                        <?php foreach ($defaultPostes as $idx => $defPoste): ?>
+                                            <tr data-position="<?= $idx + 1 ?>">
+                                                <td><?= $idx + 1 ?></td>
+                                                <td>
+                                                    <select class="form-select form-select-sm">
+                                                        <?php foreach ($roleOptions as $ro): ?>
+                                                            <option value="<?= $ro ?>" <?= $ro === $defPoste ? 'selected' : '' ?>><?= htmlspecialchars($t['role_' . $ro] ?? $ro) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
                                             </tr>
-                                        <?php endfor; ?>
+                                        <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
+                            <p id="createTacticError" class="text-danger small mb-0 mt-2" style="display:none;"></p>
                         </div>
-                        <script>
-                        document.querySelectorAll('#tacticWrap .tactic-select').forEach(function (sel) {
-                            sel.addEventListener('change', function () {
-                                const row = sel.closest('tr');
-                                fetch('tactic_field_post.php', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                    body: new URLSearchParams({
-                                        position: row.dataset.position,
-                                        role: sel.dataset.role,
-                                        value: sel.value,
-                                        csrf_token: <?= json_encode(csrf_token()) ?>
-                                    })
-                                }).then(r => r.json()).then(function (data) {
-                                    if (!data.ok) return;
-                                    sel.classList.add('mercato-status-saved');
-                                    setTimeout(() => sel.classList.remove('mercato-status-saved'), 900);
-                                });
-                            });
-                        });
-                        </script>
-                    <?php endif; ?>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-ghost" data-bs-dismiss="modal"><?= $t['confirm_cancel'] ?></button>
+                            <button type="submit" class="btn-brand"><?= $t['tactic_create_submit'] ?></button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+        <script>
+        document.getElementById('createTacticForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('createTacticError');
+            errorBox.style.display = 'none';
+            const slots = [];
+            document.querySelectorAll('#createTacticSlots tr[data-position]').forEach(function (row) {
+                slots.push({
+                    position: parseInt(row.dataset.position, 10),
+                    poste: row.querySelector('select').value,
+                });
+            });
+            fetch('tactic_preset_post.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    idTacticCard: <?= $activeTacticCard ? (int)$activeTacticCard['idTacticCard'] : 0 ?>,
+                    nom: document.getElementById('createTacticName').value,
+                    slots: JSON.stringify(slots),
+                    csrf_token: <?= json_encode(csrf_token()) ?>
+                })
+            }).then(r => r.json()).then(function (data) {
+                if (!data.ok) {
+                    errorBox.textContent = data.error === 'duplicate_name'
+                        ? <?= json_encode($t['tactic_name_taken']) ?>
+                        : (data.error === 'card_limit'
+                            ? <?= json_encode($t['tactic_card_limit']) ?>
+                            : <?= json_encode($t['tactic_create_error']) ?>);
+                    errorBox.style.display = 'block';
+                    return;
+                }
+                window.location = 'index.php?tab=tactic&card=' + data.idTacticCard;
+            });
+        });
+        </script>
 
         <!-- ===================== ONGLET PALMARES ===================== -->
         <div class="tab-pane <?= $activeTab === 'palmares' ? 'show active' : '' ?>" id="pane-palmares">
