@@ -1,11 +1,12 @@
 <?php
 /**
  * Cree une nouvelle tactique partagee (tactic_preset + ses 11
- * tactic_preset_slot) depuis le modal "Creer une tactique" de la vue detail
- * Tactic Sub. La tactique est visible et utilisable par tous les users des
- * sa creation ; la card depuis laquelle elle a ete creee bascule dessus
- * automatiquement (composition reinitialisee, meme comportement qu'un
- * changement de tactique via tactic_card_preset_post.php).
+ * tactic_preset_slot) depuis le modal "Creer une tactique", accessible a la
+ * fois depuis la grille (idTacticCard = 0, une nouvelle card est creee pour
+ * l'utiliser) et depuis une card existante (idTacticCard > 0, cette card
+ * bascule dessus, composition reinitialisee - meme comportement qu'un
+ * changement de tactique via tactic_card_preset_post.php). La tactique
+ * elle-meme est visible et utilisable par tous les users des sa creation.
  */
 session_start();
 require_once("db.php");
@@ -40,14 +41,30 @@ if ($nom === '' || mb_strlen($nom) > 60 || !is_array($slots) || count($slots) !=
     exit;
 }
 
-// La card doit appartenir a l'utilisateur courant (evite qu'un idTacticCard
-// arbitraire d'un autre compte soit modifie).
-$cardCheck = $pdo->prepare("SELECT COUNT(*) FROM tactic_card WHERE idTacticCard = :id AND idUser = :idUser");
-$cardCheck->execute(['id' => $idTacticCard, 'idUser' => $idUser]);
-if (!$cardCheck->fetchColumn()) {
-    http_response_code(403);
-    echo json_encode(['ok' => false]);
-    exit;
+// Doit rester synchronisee avec TACTIC_MAX_CARDS dans index.php /
+// tactic_card_add_post.php.
+const TACTIC_MAX_CARDS = 5;
+
+if ($idTacticCard > 0) {
+    // La card doit appartenir a l'utilisateur courant (evite qu'un
+    // idTacticCard arbitraire d'un autre compte soit modifie).
+    $cardCheck = $pdo->prepare("SELECT COUNT(*) FROM tactic_card WHERE idTacticCard = :id AND idUser = :idUser");
+    $cardCheck->execute(['id' => $idTacticCard, 'idUser' => $idUser]);
+    if (!$cardCheck->fetchColumn()) {
+        http_response_code(403);
+        echo json_encode(['ok' => false]);
+        exit;
+    }
+} else {
+    // Creation depuis la grille (pas de card existante) : une nouvelle card
+    // sera ajoutee, soumise a la meme limite que le bouton "+".
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM tactic_card WHERE idUser = :idUser");
+    $countStmt->execute(['idUser' => $idUser]);
+    if ((int)$countStmt->fetchColumn() >= TACTIC_MAX_CARDS) {
+        http_response_code(409);
+        echo json_encode(['ok' => false, 'error' => 'card_limit']);
+        exit;
+    }
 }
 
 // Bibliotheque partagee entre tous les users : le nom doit etre unique tous
@@ -94,9 +111,15 @@ try {
         ]);
     }
 
-    $pdo->prepare("UPDATE tactic_card SET idTacticPreset = :p WHERE idTacticCard = :id")
-        ->execute(['p' => $idTacticPreset, 'id' => $idTacticCard]);
-    $pdo->prepare("DELETE FROM tactic WHERE idTacticCard = :id")->execute(['id' => $idTacticCard]);
+    if ($idTacticCard > 0) {
+        $pdo->prepare("UPDATE tactic_card SET idTacticPreset = :p WHERE idTacticCard = :id")
+            ->execute(['p' => $idTacticPreset, 'id' => $idTacticCard]);
+        $pdo->prepare("DELETE FROM tactic WHERE idTacticCard = :id")->execute(['id' => $idTacticCard]);
+    } else {
+        $pdo->prepare("INSERT INTO tactic_card (idUser, idTacticPreset) VALUES (:idUser, :p)")
+            ->execute(['idUser' => $idUser, 'p' => $idTacticPreset]);
+        $idTacticCard = (int)$pdo->lastInsertId();
+    }
 } catch (\PDOException $e) {
     if ((int)$e->getCode() === 23000) {
         http_response_code(409);
@@ -108,4 +131,4 @@ try {
     exit;
 }
 
-echo json_encode(['ok' => true, 'idTacticPreset' => $idTacticPreset]);
+echo json_encode(['ok' => true, 'idTacticPreset' => $idTacticPreset, 'idTacticCard' => $idTacticCard]);
