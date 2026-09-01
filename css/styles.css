@@ -1465,3 +1465,53 @@ select.btn-ghost {
     background: var(--panel-2);
     color: var(--muted);
 }
+
+/* Grille de cards "mes tactiques" (onglet Tactic Sub) */
+.tactic-card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.tactic-card-wrap {
+    position: relative;
+    width: 160px;
+}
+.tactic-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: .3rem;
+    width: 100%;
+    height: 110px;
+    padding: .5rem;
+    border-radius: .6rem;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    text-decoration: none;
+    text-align: center;
+    transition: border-color .15s ease;
+}
+.tactic-card:hover { border-color: var(--brand); }
+.tactic-card-title {
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--heading);
+}
+.tactic-card-sub {
+    font-size: .78rem;
+    color: var(--muted);
+}
+.tactic-card-delete {
+    position: absolute;
+    top: .3rem;
+    right: .3rem;
+}
+.tactic-card-add {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--muted);
+    background: transparent;
+    border-style: dashed;
+}
+.tactic-card-add:hover { color: var(--brand); }

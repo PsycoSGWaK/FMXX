@@ -40,9 +40,25 @@ $joueurStmt = $pdo->prepare("
 $joueurStmt->execute(['id' => $idUser]);
 $joueurData = $joueurStmt->fetchAll();
 
-$tacticStmt = $pdo->prepare("SELECT position, titulaire, remplacant, supersub FROM tactic WHERE idUser = :id");
-$tacticStmt->execute(['id' => $idUser]);
-$tacticData = $tacticStmt->fetchAll();
+// Les cards tactiques (idTacticCard) referencent une tactique de la
+// bibliotheque partagee (tactic_preset) : on exporte son nom (portable
+// d'une base a l'autre) plutot que son id, qui n'a pas de sens hors de
+// cette base.
+$cardsStmt = $pdo->prepare("
+    SELECT tc.idTacticCard, tp.nom AS presetNom
+    FROM tactic_card tc JOIN tactic_preset tp ON tp.idTacticPreset = tc.idTacticPreset
+    WHERE tc.idUser = :id ORDER BY tc.idTacticCard
+");
+$cardsStmt->execute(['id' => $idUser]);
+$tacticCardsData = [];
+foreach ($cardsStmt->fetchAll() as $card) {
+    $tacticStmt = $pdo->prepare("SELECT position, titulaire, remplacant, supersub FROM tactic WHERE idTacticCard = :id");
+    $tacticStmt->execute(['id' => $card['idTacticCard']]);
+    $tacticCardsData[] = [
+        'presetNom' => $card['presetNom'],
+        'tactic'    => $tacticStmt->fetchAll(),
+    ];
+}
 
 $arriveeStmt = $pdo->prepare("SELECT nom, poste, prix, statut FROM mercato_arrivee WHERE idUser = :id");
 $arriveeStmt->execute(['id' => $idUser]);
@@ -50,13 +66,13 @@ $arriveeData = $arriveeStmt->fetchAll();
 
 $backup = [
     'format'      => 'fmxx_backup',
-    'version'     => 1,
+    'version'     => 2,
     'exported_at' => date('c'),
     'user'        => $userData ?: null,
     'saison_meta' => $saisonData,
     'objectif'    => $objectifData,
     'joueur'      => $joueurData,
-    'tactic'      => $tacticData,
+    'tactic_cards' => $tacticCardsData,
     'mercato_arrivee' => $arriveeData,
 ];
 

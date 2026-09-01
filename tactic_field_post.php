@@ -1,11 +1,12 @@
 <?php
 /**
  * Met à jour UN SEUL joueur (titulaire/remplaçant/super sub) d'UNE SEULE
- * position, appelé en arrière-plan (fetch) depuis les select de l'onglet
- * Tactic Sub — pas de bouton "Sauvegarder", pas de rechargement de page.
- * Remplace tactic_post.php qui supprimait puis réinsérait les 11 positions
- * à chaque sauvegarde (même piège déjà corrigé ailleurs pour mercato et
- * objectifs). UPSERT sur la clé unique (idUser, position).
+ * position d'UNE card tactique, appelé en arrière-plan (fetch) depuis les
+ * select de la vue détail Tactic Sub — pas de bouton "Sauvegarder", pas de
+ * rechargement de page. Remplace tactic_post.php qui supprimait puis
+ * réinsérait les 11 positions à chaque sauvegarde (même piège déjà corrigé
+ * ailleurs pour mercato et objectifs). UPSERT sur la clé unique
+ * (idTacticCard, position).
  */
 session_start();
 require_once("db.php");
@@ -27,13 +28,24 @@ if (!hash_equals(csrf_token(), $token)) {
 }
 
 $validRoles = ['titulaire', 'remplacant', 'supersub'];
-$idUser   = $_SESSION['idUser'];
-$position = (int)($_POST['position'] ?? 0);
-$role     = $_POST['role'] ?? '';
-$value    = $_POST['value'] ?? '';
+$idUser       = $_SESSION['idUser'];
+$idTacticCard = (int)($_POST['idTacticCard'] ?? 0);
+$position     = (int)($_POST['position'] ?? 0);
+$role         = $_POST['role'] ?? '';
+$value        = $_POST['value'] ?? '';
 
-if ($position < 1 || $position > 11 || !in_array($role, $validRoles, true)) {
+if ($position < 1 || $position > 11 || !in_array($role, $validRoles, true) || $idTacticCard < 1) {
     http_response_code(400);
+    echo json_encode(['ok' => false]);
+    exit;
+}
+
+// La card doit appartenir a l'utilisateur courant (evite qu'un idTacticCard
+// arbitraire d'un autre compte soit modifie).
+$cardCheck = $pdo->prepare("SELECT COUNT(*) FROM tactic_card WHERE idTacticCard = :id AND idUser = :idUser");
+$cardCheck->execute(['id' => $idTacticCard, 'idUser' => $idUser]);
+if (!$cardCheck->fetchColumn()) {
+    http_response_code(403);
     echo json_encode(['ok' => false]);
     exit;
 }
@@ -55,15 +67,16 @@ if ($playerId !== null) {
 $cols = ['titulaire' => null, 'remplacant' => null, 'supersub' => null];
 $cols[$role] = $playerId;
 
-$stmt = $pdo->prepare("INSERT INTO tactic (idUser, position, titulaire, remplacant, supersub)
-    VALUES (:idUser, :position, :titulaire, :remplacant, :supersub)
+$stmt = $pdo->prepare("INSERT INTO tactic (idUser, idTacticCard, position, titulaire, remplacant, supersub)
+    VALUES (:idUser, :idTacticCard, :position, :titulaire, :remplacant, :supersub)
     ON DUPLICATE KEY UPDATE `$role` = VALUES(`$role`)");
 $stmt->execute([
-    'idUser'     => $idUser,
-    'position'   => $position,
-    'titulaire'  => $cols['titulaire'],
-    'remplacant' => $cols['remplacant'],
-    'supersub'   => $cols['supersub'],
+    'idUser'       => $idUser,
+    'idTacticCard' => $idTacticCard,
+    'position'     => $position,
+    'titulaire'    => $cols['titulaire'],
+    'remplacant'   => $cols['remplacant'],
+    'supersub'     => $cols['supersub'],
 ]);
 
 echo json_encode(['ok' => true]);
