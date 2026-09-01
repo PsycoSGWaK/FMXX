@@ -31,6 +31,14 @@ $idJoueur  = (int)($_POST['idJoueur'] ?? 0);
 $status    = $_POST['status'] ?? '';
 $statusVal = in_array($status, ['sell', 'loan', 'free'], true) ? $status : null;
 
+if (array_key_exists('prixVente', $_POST)) {
+    $prixVente = $_POST['prixVente'] !== '' ? (int)$_POST['prixVente'] : null;
+    $stmt = $pdo->prepare("UPDATE joueur SET prixVente = :prixVente WHERE idJoueur = :id AND idUser = :idUser");
+    $stmt->execute(['prixVente' => $prixVente, 'id' => $idJoueur, 'idUser' => $idUser]);
+    echo json_encode(['ok' => true, 'prixVente' => $prixVente]);
+    exit;
+}
+
 $stmt = $pdo->prepare("UPDATE joueur SET mercato_status = :status WHERE idJoueur = :id AND idUser = :idUser");
 $stmt->execute(['status' => $statusVal, 'id' => $idJoueur, 'idUser' => $idUser]);
 

@@ -1114,7 +1114,8 @@ if (count($joueurs) > 0) {
                                             data-poste="<?= htmlspecialchars($effectiveRole($j)) ?>"
                                             data-expire="<?= $expireYear ?>"
                                             data-statut="<?= $j['mercato_status'] ?? '' ?>"
-                                            data-prix="<?= (int)($j['prixDemande'] ?? 0) ?>">
+                                            data-prix="<?= (int)($j['prixDemande'] ?? 0) ?>"
+                                            data-prix-vente="<?= (int)($j['prixVente'] ?? 0) ?>">
                                             <td><?= $i + 1 ?></td>
                                             <td>
                                                 <div class="player-cell">
@@ -1144,11 +1145,17 @@ if (count($joueurs) > 0) {
                                                 <span class="<?= $expireClass ?>"><?= htmlspecialchars($j['expireContrat'] ?? '') ?></span>
                                             </td>
                                             <td>
-                                                <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
-                                                    <button type="button" class="ms-opt ms-none <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
-                                                    <button type="button" class="ms-opt ms-sell <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
-                                                    <button type="button" class="ms-opt ms-loan <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
-                                                    <button type="button" class="ms-opt ms-free <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
+                                                <div class="mercato-status-cell">
+                                                    <div class="mercato-status-toggle" data-id="<?= $j['idJoueur'] ?>">
+                                                        <button type="button" class="ms-opt ms-none <?= $status === null   ? 'active' : '' ?>" data-status="">—</button>
+                                                        <button type="button" class="ms-opt ms-sell <?= $status === 'sell' ? 'active' : '' ?>" data-status="sell"><?= $t['squad_status_sell'] ?></button>
+                                                        <button type="button" class="ms-opt ms-loan <?= $status === 'loan' ? 'active' : '' ?>" data-status="loan"><?= $t['squad_status_loan'] ?></button>
+                                                        <button type="button" class="ms-opt ms-free <?= $status === 'free' ? 'active' : '' ?>" data-status="free"><?= $t['squad_status_free'] ?></button>
+                                                    </div>
+                                                    <input type="number" min="0" step="1" class="form-control form-control-sm mercato-vente-input <?= $status === 'sell' ? '' : 'd-none' ?>"
+                                                           data-id="<?= $j['idJoueur'] ?>"
+                                                           placeholder="<?= htmlspecialchars($t['squad_sale_value_placeholder']) ?>"
+                                                           value="<?= $j['prixVente'] !== null ? (int)$j['prixVente'] : '' ?>">
                                                 </div>
                                             </td>
                                         </tr>
@@ -1286,7 +1293,8 @@ if (count($joueurs) > 0) {
                             const rows = document.querySelectorAll('#effectifTable tbody tr');
                             let enVente = 0, enPret = 0, recettes = 0;
                             rows.forEach(function (row) {
-                                const prix = parseInt(row.dataset.prix, 10) || 0;
+                                const prixVente = parseInt(row.dataset.prixVente, 10) || 0;
+                                const prix = prixVente > 0 ? prixVente : (parseInt(row.dataset.prix, 10) || 0);
                                 if (row.dataset.statut === 'sell') { enVente++; recettes += prix; }
                                 if (row.dataset.statut === 'loan') { enPret++; }
                             });
@@ -1329,8 +1337,32 @@ if (count($joueurs) > 0) {
                                         btn.classList.add('active');
                                         btn.classList.add('mercato-status-saved');
                                         setTimeout(() => btn.classList.remove('mercato-status-saved'), 900);
+                                        const venteInput = toggle.closest('.mercato-status-cell')?.querySelector('.mercato-vente-input');
+                                        if (venteInput) venteInput.classList.toggle('d-none', status !== 'sell');
                                         refreshMercatoStats();
                                     });
+                                });
+                            });
+                        });
+                        document.querySelectorAll('.mercato-vente-input').forEach(function (input) {
+                            input.addEventListener('change', function () {
+                                const tr = input.closest('tr');
+                                const value = input.value ? parseInt(input.value, 10) : null;
+                                fetch('mercato_status_post.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: new URLSearchParams({
+                                        idJoueur: input.dataset.id,
+                                        status: tr.dataset.statut,
+                                        prixVente: value ?? '',
+                                        csrf_token: <?= json_encode(csrf_token()) ?>
+                                    })
+                                }).then(r => r.json()).then(function (data) {
+                                    if (!data.ok) return;
+                                    tr.dataset.prixVente = value ?? 0;
+                                    input.classList.add('mercato-status-saved');
+                                    setTimeout(() => input.classList.remove('mercato-status-saved'), 900);
+                                    refreshMercatoStats();
                                 });
                             });
                         });
@@ -1667,6 +1699,28 @@ if (count($joueurs) > 0) {
                     }
                     foreach ($pitchRows as &$row) {
                         usort($row['slots'], fn($a, $b) => ($sideOrder[$a['poste']] ?? 50) <=> ($sideOrder[$b['poste']] ?? 50));
+
+                        // Si la ligne melange un poste unique (ex: MOC) avec des
+                        // doublons d'un autre poste (ex: 2x MDC), le tri par sideOrder
+                        // place le poste unique a droite au lieu du centre : on le
+                        // repositionne au milieu de la ligne.
+                        $counts = array_count_values(array_column($row['slots'], 'poste'));
+                        if (count($counts) === 2) {
+                            $uniques = array_keys(array_filter($counts, fn($c) => $c === 1));
+                            if (count($uniques) === 1) {
+                                $uniquePoste = $uniques[0];
+                                $idx = null;
+                                foreach ($row['slots'] as $k => $slot) {
+                                    if ($slot['poste'] === $uniquePoste) { $idx = $k; break; }
+                                }
+                                $mid = intdiv(count($row['slots']) - 1, 2);
+                                if ($idx !== null && $idx !== $mid) {
+                                    $moved = $row['slots'][$idx];
+                                    array_splice($row['slots'], $idx, 1);
+                                    array_splice($row['slots'], $mid, 0, [$moved]);
+                                }
+                            }
+                        }
                     }
                     unset($row);
                     ?>
