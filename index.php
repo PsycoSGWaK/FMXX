@@ -904,31 +904,31 @@ if (count($joueurs) > 0) {
             <div class="table-panel mb-3">
                 <div class="stat-bar">
                     <div class="stat-item">
-                        <div class="stat-value"><?= count($joueurs) ?></div>
+                        <div class="stat-value text-brand"><?= count($joueurs) ?></div>
                         <div class="stat-label"><?= $t['squad_stat_count'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value"><?= $ageMoyen ?? '—' ?></div>
+                        <div class="stat-value text-brand"><?= $ageMoyen ?? '—' ?></div>
                         <div class="stat-label"><?= $t['squad_stat_avg_age'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value <?= count($expiresUrgent) > 0 ? 'text-warning' : '' ?>"><?= count($expiresUrgent) ?></div>
+                        <div class="stat-value <?= count($expiresUrgent) > 0 ? 'text-chart-4' : '' ?>"><?= count($expiresUrgent) ?></div>
                         <div class="stat-label"><?= $t['squad_stat_expiring'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value <?= $enVente > 0 ? 'text-danger' : '' ?>" id="stat-en-vente"><?= $enVente ?></div>
+                        <div class="stat-value <?= $enVente > 0 ? 'text-chart-1' : '' ?>" id="stat-en-vente"><?= $enVente ?></div>
                         <div class="stat-label"><?= $t['squad_stat_selling'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value text-primary" id="stat-en-pret"><?= $enPret ?></div>
+                        <div class="stat-value text-chart-2" id="stat-en-pret"><?= $enPret ?></div>
                         <div class="stat-label"><?= $t['mercato_loan'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value text-warning"><?= $nbCibles ?></div>
+                        <div class="stat-value text-chart-4"><?= $nbCibles ?></div>
                         <div class="stat-label"><?= $t['mercato_arr_targets'] ?></div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value text-success"><?= $nbSignes ?></div>
+                        <div class="stat-value text-chart-3"><?= $nbSignes ?></div>
                         <div class="stat-label"><?= $t['mercato_arr_signed'] ?></div>
                     </div>
                     <div class="stat-item" data-mercato-depenses="<?= $mercatoDepenses ?>">
@@ -1123,11 +1123,11 @@ if (count($joueurs) > 0) {
                                             <hr class="role-legend-sep">
                                             <div class="poste-legend" style="margin-top:0">
                                                 <span class="poste-legend-item">
-                                                    <span class="poste-legend-dot" style="background:var(--brand)"></span>
+                                                    <span class="poste-legend-dot" style="background:var(--chart-1)"></span>
                                                     <?= htmlspecialchars($t['squad_badge_expiry_this']) ?>
                                                 </span>
                                                 <span class="poste-legend-item">
-                                                    <span class="poste-legend-dot" style="background:#e0a030"></span>
+                                                    <span class="poste-legend-dot" style="background:var(--chart-4)"></span>
                                                     <?= htmlspecialchars($t['squad_badge_expiry_next']) ?>
                                                 </span>
                                             </div>
@@ -1222,7 +1222,7 @@ if (count($joueurs) > 0) {
                             const venteEl = document.getElementById('stat-en-vente');
                             if (venteEl) {
                                 venteEl.textContent = enVente;
-                                venteEl.classList.toggle('text-danger', enVente > 0);
+                                venteEl.classList.toggle('text-chart-1', enVente > 0);
                             }
                             const pretEl = document.getElementById('stat-en-pret');
                             if (pretEl) pretEl.textContent = enPret;
@@ -1341,7 +1341,7 @@ if (count($joueurs) > 0) {
                     <?php endif; ?>
                 </div>
                 <?php
-                $statutColors = ['cible' => 'warning', 'nego' => 'info', 'signe' => 'success'];
+                $statutColors = ['cible' => 'chart-4', 'nego' => 'chart-2', 'signe' => 'chart-3'];
                 $statutLabels = [
                     'cible' => $t['mercato_arr_opt_cible'],
                     'nego'  => $t['mercato_arr_opt_nego'],
@@ -1865,11 +1865,11 @@ if (count($joueurs) > 0) {
                 <div class="table-panel mb-4">
                     <div class="stat-bar">
                         <div class="stat-item">
-                            <div class="stat-value text-warning"><?= $palTotalTrophees ?></div>
+                            <div class="stat-value text-chart-4"><?= $palTotalTrophees ?></div>
                             <div class="stat-label"><?= $t['pal_trophies'] ?></div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value text-primary"><?= $palTotalSaisons ?></div>
+                            <div class="stat-value text-chart-2"><?= $palTotalSaisons ?></div>
                             <div class="stat-label"><?= $t['pal_seasons'] ?></div>
                         </div>
                         <div class="stat-item">
@@ -1904,6 +1904,17 @@ if (count($joueurs) > 0) {
                 const palPctData      = <?= json_encode($palChartPct) ?>;
                 const palTitresData   = <?= json_encode($palChartTitres) ?>;
 
+                // Couleurs lues depuis les variables CSS (palette accent du design
+                // system) plutot que codees en dur, pour rester coherentes avec le
+                // theme clair/sombre.
+                const palStyle = getComputedStyle(document.documentElement);
+                const palBrand  = palStyle.getPropertyValue('--brand').trim();
+                const palChart4 = palStyle.getPropertyValue('--chart-4').trim();
+                const palHexToRgba = (hex, alpha) => {
+                    const n = parseInt(hex.replace('#', ''), 16);
+                    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+                };
+
                 new Chart(document.getElementById('chartPct'), {
                     type: 'line',
                     data: {
@@ -1911,8 +1922,8 @@ if (count($joueurs) > 0) {
                         datasets: [{
                             label: <?= json_encode($t['pal_success_rate']) ?>,
                             data: palPctData,
-                            borderColor: '#0d6efd',
-                            backgroundColor: 'rgba(13,110,253,0.1)',
+                            borderColor: palBrand,
+                            backgroundColor: palHexToRgba(palBrand, 0.12),
                             fill: true,
                             tension: 0.3,
                             pointRadius: 5,
@@ -1931,7 +1942,7 @@ if (count($joueurs) > 0) {
                         datasets: [{
                             label: <?= json_encode($t['pal_trophies']) ?>,
                             data: palTitresData,
-                            backgroundColor: '#ffc107',
+                            backgroundColor: palChart4,
                             borderRadius: 4,
                         }]
                     },

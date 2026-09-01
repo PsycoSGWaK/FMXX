@@ -8,8 +8,8 @@
     --ink: #0c2043;
     --ink-soft: #16305c;
     --ink-raised: #17335f;
-    --brand: #d5222c;
-    --brand-dark: #ad1b23;
+    --brand: #8b5cf6;
+    --brand-dark: #7c3aed;
     --surface: #f6f7fb;
     --panel: #ffffff;
     --panel-2: #ebedf5;
@@ -25,21 +25,24 @@
     --warning-bg: #fbead2;
     --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
 
-    /* Palette catégorielle (graphiques) — ordre fixe validé CVD, ne jamais réordonner */
-    --chart-1: #2a78d6; /* bleu */
-    --chart-2: #eb6834; /* orange */
-    --chart-3: #1baf7a; /* aqua */
-    --chart-4: #eda100; /* jaune */
+    /* Palette catégorielle (graphiques) — ordre fixe validé CVD, ne jamais réordonner.
+       Esprit Premier League : rose/cyan/vert vifs + ambre chaud pour garder une
+       distinction sûre en daltonisme rouge-vert (pas de paire rouge/vert pur).
+       Memes teintes vives en clair et en sombre (choix valide : "ça ressort mieux"). */
+    --chart-1: #ff2d7a; /* rose */
+    --chart-2: #04c8d6; /* cyan (leg. assombri vs #04f5ff pour rester lisible sur blanc) */
+    --chart-3: #00c46b; /* vert (leg. assombri vs #00ff85 pour rester lisible sur blanc) */
+    --chart-4: #f0b429; /* ambre */
 }
 
 /* ---------- Mode sombre ---------- */
 
 [data-bs-theme="dark"] {
     --ink-raised: #1b3868;
-    --surface: #10141f;
-    --panel: #141a2b;
-    --panel-2: #1b2236;
-    --border: #2a3040;
+    --surface: #0b0e17;
+    --panel: #171d30;
+    --panel-2: #212940;
+    --border: #343d54;
     --shadow-color: 220 60% 2%;
     --text: #d8dce6;
     --muted: #99a2b8;
@@ -48,10 +51,11 @@
     --success-bg: #113224;
     --warning-bg: #3a2a0c;
 
-    --chart-1: #3987e5;
-    --chart-2: #d95926;
-    --chart-3: #199e70;
-    --chart-4: #c98500;
+    /* chart-1/chart-4 sont deja les memes teintes vives qu'en clair (voir
+       :root) ; seuls chart-2/chart-3 gardent une variante encore plus
+       lumineuse ici, illisibles tels quels sur fond blanc. */
+    --chart-2: #04f5ff;
+    --chart-3: #00ff85;
 }
 
 /* ---------- Typographie ---------- */
@@ -91,6 +95,20 @@ table, .fs-4, .fs-3, .fs-2, .fs-1, .fw-bold {
     color: var(--brand) !important;
 }
 
+/* Couleurs accent (palette catégorielle) pour du texte hors graphique,
+   ex. certains KPI sans semantique succes/echec/danger propre. */
+.text-chart-1 { color: var(--chart-1) !important; }
+.text-chart-2 { color: var(--chart-2) !important; }
+.text-chart-3 { color: var(--chart-3) !important; }
+.text-chart-4 { color: var(--chart-4) !important; }
+
+/* Badges statut (arrivées mercato) sur les couleurs accent plutôt que les
+   bg-warning/info/success par défaut de Bootstrap. */
+.badge.bg-chart-2, .badge.bg-chart-3, .badge.bg-chart-4 { color: #1c2333; }
+.badge.bg-chart-2 { background-color: var(--chart-2) !important; }
+.badge.bg-chart-3 { background-color: var(--chart-3) !important; }
+.badge.bg-chart-4 { background-color: var(--chart-4) !important; }
+
 /* ---------- Interactions globales ---------- */
 
 a, .btn, .nav-link, .card, .badge, .form-control, .form-select, .hub-card {
@@ -107,7 +125,7 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .form-control:focus, .form-select:focus {
     border-color: var(--brand);
-    box-shadow: 0 0 0 .2rem rgba(213, 34, 44, .15);
+    box-shadow: 0 0 0 .2rem rgba(61, 25, 91, .15);
 }
 
 html {
@@ -209,15 +227,15 @@ html {
 }
 
 .table thead.table-dark th[data-sort]:hover {
-    color: #ffd7d7;
+    color: #e3cdf0;
 }
 
 .table thead.table-dark th[data-sort]:hover .sort-icon {
-    color: #ffd7d7 !important;
+    color: #e3cdf0 !important;
 }
 
 .table-hover > tbody > tr:hover > * {
-    --bs-table-accent-bg: rgba(213, 34, 44, .05);
+    --bs-table-accent-bg: rgba(61, 25, 91, .05);
 }
 
 /* Bootstrap fige les couleurs de .table-danger/.table-primary/.table-secondary
@@ -502,8 +520,8 @@ footer a.text-secondary:hover {
 .game-row:last-child { margin-bottom: 0; }
 
 .game-row.is-active {
-    border-color: rgba(213, 34, 44, .5);
-    background: rgba(213, 34, 44, .1);
+    border-color: rgba(61, 25, 91, .5);
+    background: rgba(61, 25, 91, .1);
 }
 
 .game-row.is-soon { opacity: .55; }
@@ -693,7 +711,7 @@ body.visitor-page footer {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background: rgba(213, 34, 44, .08);
+    background: rgba(61, 25, 91, .08);
     color: var(--brand);
     font-size: 1.2rem;
     margin-bottom: .6rem;
@@ -1135,7 +1153,7 @@ body.visitor-page footer {
     flex-shrink: 0;
 }
 
-.player-name { display: block; }
+.player-name { display: block; color: var(--brand); }
 
 /* ---------- Statut mercato (boutons segmentés, colonne Effectif) ---------- */
 
@@ -1172,12 +1190,12 @@ body.visitor-page footer {
 
 .mercato-status-toggle .ms-opt.ms-sell.active { background: var(--success-bg); color: var(--success); }
 .mercato-status-toggle .ms-opt.ms-loan.active { background: rgba(13, 110, 253, .15); color: #0d6efd; }
-.mercato-status-toggle .ms-opt.ms-free.active { background: rgba(213, 34, 44, .12); color: var(--brand); }
+.mercato-status-toggle .ms-opt.ms-free.active { background: rgba(61, 25, 91, .12); color: var(--brand); }
 
 /* ---------- Date de fin de contrat (colonne Expire) ---------- */
 
-.expire-this { color: var(--brand); font-weight: 700; }
-.expire-next { color: #e0a030; font-weight: 700; }
+.expire-this { color: var(--chart-1); font-weight: 700; }
+.expire-next { color: var(--chart-4); font-weight: 700; }
 
 /* ---------- Répartition par poste (barre empilée) ---------- */
 
@@ -1396,12 +1414,12 @@ select.btn-ghost {
     font-size: .84rem;
     border: 1px solid transparent;
     background: transparent;
-    color: var(--brand);
+    color: #dc3545;
     cursor: pointer;
     text-decoration: none;
 }
 
-.btn-danger-ghost:hover { background: var(--panel-2); color: var(--brand); }
+.btn-danger-ghost:hover { background: var(--panel-2); color: #dc3545; }
 
 /* ---------- Panneau tableau (effectif, listes de données) ---------- */
 
