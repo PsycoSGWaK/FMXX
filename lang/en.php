@@ -19,6 +19,8 @@ $t = [
     'nav_home'         => 'Home',
     'nav_palmares'     => 'Trophy Cabinet',
     'nav_about'        => 'About',
+    'nav_fmsetup'      => 'Set up FM',
+    'nav_switch_game'  => 'Switch game',
     'nav_admin'        => 'Admin',
     'nav_back_index'   => '← Back',
     'nav_logout'       => 'Log out',
@@ -49,6 +51,8 @@ $t = [
     'signup_err_mail'       => 'This email address is already in use.',
     'signup_err_missing'    => 'Please fill in all fields.',
     'signup_ok'             => 'Account created! Check your email to confirm your address before logging in.',
+    'signup_ok_fmsetup'     => 'Meanwhile, get your game ready: install the export mod and the squad view so you can import your team as soon as you log in.',
+    'signup_ok_fmsetup_cta' => 'Set up Football Manager',
 
     // Validation (password / email)
     'val_pwd_policy'   => 'At least %d characters, including one uppercase letter, one lowercase letter, one digit and one special character.',
@@ -91,6 +95,7 @@ $t = [
 
     // Alerts
     'alert_squad_imported'  => 'Squad imported successfully!',
+    'alert_squad_imported_detail' => '%d player(s) imported. %d already present, skipped.',
     'alert_objectives_saved'=> 'Objectives saved.',
     'alert_tactic_saved'    => 'Tactic saved.',
     'alert_budget_saved'    => 'Budget saved.',
@@ -168,6 +173,7 @@ $t = [
     'squad_col_goals'        => 'Goals',
     'squad_col_rating'       => 'Avg rating',
     'squad_col_value'        => 'Transfer value',
+    'squad_col_wage'         => 'Wage',
     'squad_col_expiry'       => 'Contract expires',
     'squad_col_status'       => 'Status',
     'squad_stat_count'       => 'Squad size',
@@ -276,6 +282,7 @@ $t = [
     'player_rating'       => 'Avg rating',
     'player_asking'       => 'Asking price',
     'player_value'        => 'Transfer value',
+    'player_wage'         => 'Wage',
     'player_name'         => 'Name',
     'player_age'          => 'Age',
     'player_number'       => 'No.',
@@ -371,4 +378,22 @@ $t = [
     'hub_fs_desc'         => 'TBD.',
     'hub_open'            => 'Open',
     'hub_soon'            => 'Coming soon',
+
+    // Football Manager setup (BepInEx + export mod + view + import)
+    'fmsetup_title' => 'Set up Football Manager',
+    'fmsetup_intro' => 'Before you can import your squad, your game needs the export mod and the custom iDev Compagnon view. Follow these 5 steps once.',
+    'fmsetup_step1_title' => '1. Install BepInEx',
+    'fmsetup_step1_text' => 'BepInEx is the framework that lets Football Manager load mods. On the download page, select the latest artifact then pick the <strong>BepInEx-Unity.IL2CPP</strong> build (not Mono or the other variants). Then extract the archive directly into the game\'s install folder (where FM26.exe lives).',
+    'fmsetup_step1_cta' => 'Download BepInEx',
+    'fmsetup_step2_title' => '2. Install the FMScout CSV Export mod',
+    'fmsetup_step2_text' => 'This mod adds the CSV/HTML export feature for your squad. Download it, then place the resulting .dll file inside the BepInEx/plugins folder (created in step 1, inside the game folder).',
+    'fmsetup_step2_cta' => 'Download the FMScout mod',
+    'fmsetup_step3_title' => '3. Import the iDev Compagnon squad view',
+    'fmsetup_step3_text' => 'This custom view shows exactly the columns the importer recognises (wage, asking price, contract expiry...). Download the view file, then in FM: Squad screen → Views icon (top right) → Import view, and pick the downloaded file.',
+    'fmsetup_step3_cta' => 'Download the FMXX view',
+    'fmsetup_step4_title' => '4. Export your squad',
+    'fmsetup_step4_text' => 'On the Squad screen, with the FMXX view active, select the players to export then press <strong>Ctrl+P</strong> or <strong>F9</strong> (the mod\'s hotkey): the export happens automatically. The file lands in <code>Documents\Sports Interactive\Football Manager 26\FM26PlayerExport by vinteset</code>, inside the <code>CSV</code> or <code>HTML</code> subfolder depending on the format.',
+    'fmsetup_step5_title' => '5. Import into iDev Compagnon',
+    'fmsetup_step5_text' => 'Go back to the Squad tab in the app and use the Import button to load the exported file.',
+    'fmsetup_step5_cta' => 'Go to Squad',
 ];

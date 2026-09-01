@@ -6,6 +6,9 @@
  * $currentLang, $initials disponibles) et que l'utilisateur est connecté.
  */
 ?>
+    <a href="hub.php" class="btn-ghost" style="font-size:.8rem; padding:.35rem .7rem;" title="<?= htmlspecialchars($t['nav_switch_game']) ?>">
+        <ion-icon name="grid-outline"></ion-icon> <?= $t['nav_switch_game'] ?>
+    </a>
 <div class="lang-flags">
     <a href="lang_post.php?lang=fr" class="lang-flag <?= $currentLang === 'fr' ? 'active' : '' ?>" title="Français">🇫🇷</a>
     <a href="lang_post.php?lang=en" class="lang-flag <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">🇬🇧</a>

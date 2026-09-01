@@ -6,6 +6,7 @@
             <span class="fw-bold">iDev Normandie</span>
             <span class="text-muted ms-2 small">&copy; <?= date('Y') ?> Guillaume Hurard</span>
             <a href="about.php" class="text-muted small ms-3"><?= $t['nav_about'] ?></a>
+            <a href="fm-setup.php" class="text-muted small ms-3"><?= $t['nav_fmsetup'] ?></a>
             <a href="mentions-legales.php" class="text-muted small ms-3"><?= $t['footer_legal'] ?></a>
         </div>
 

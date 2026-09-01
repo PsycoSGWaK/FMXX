@@ -91,6 +91,12 @@ $saved = isset($_GET['saved']);
                 </div>
                 <div class="stat-label"><?= $t['player_value'] ?></div>
             </div>
+            <div class="stat-item">
+                <div class="stat-value" style="font-size:1.1rem;">
+                    <?= $j['salaire'] !== null ? number_format((int)$j['salaire'], 0, ',', ' ') . ' €' : '—' ?>
+                </div>
+                <div class="stat-label"><?= $t['player_wage'] ?></div>
+            </div>
         </div>
     </div>
 
