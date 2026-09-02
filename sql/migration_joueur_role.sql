@@ -2,13 +2,20 @@
 -- rôles, ex: latéral droit + piston droit). Remplace l'ancienne colonne
 -- unique joueur.role_match (conservée mais plus lue/écrite par le code).
 -- À exécuter en production (phpMyAdmin o2switch) en plus du local.
+--
+-- `joueur` passe en InnoDB (était MyISAM comme la quasi-totalité du schéma
+-- historique) pour supporter la clé étrangère ci-dessous avec ON DELETE
+-- CASCADE : plus besoin de nettoyer joueur_role à la main quand un joueur
+-- est supprimé (deleteData.php, procédure DeleteUser).
+
+ALTER TABLE `joueur` ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `joueur_role` (
     `idJoueur` INT NOT NULL,
     `role_code` VARCHAR(10) NOT NULL,
     PRIMARY KEY (`idJoueur`, `role_code`),
     CONSTRAINT `fk_joueur_role_joueur` FOREIGN KEY (`idJoueur`) REFERENCES `joueur` (`idJoueur`) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 -- Migre les choix manuels existants (role_match non NULL) vers la nouvelle table.
 INSERT INTO `joueur_role` (`idJoueur`, `role_code`)
