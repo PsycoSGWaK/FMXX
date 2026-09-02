@@ -55,6 +55,7 @@ $tab = $_GET['tab'] ?? 'users';
         <a class="<?= $tab === 'competitions' ? 'active' : '' ?>" href="admin.php?tab=competitions">Compétitions</a>
         <a class="<?= $tab === 'clubs'        ? 'active' : '' ?>" href="admin.php?tab=clubs">Clubs</a>
         <a class="<?= $tab === 'pays'         ? 'active' : '' ?>" href="admin.php?tab=pays">Pays</a>
+        <a class="<?= $tab === 'tactics'      ? 'active' : '' ?>" href="admin.php?tab=tactics">Styles tactiques</a>
         <a class="<?= $tab === 'stats'        ? 'active' : '' ?>" href="admin.php?tab=stats">Stats</a>
     </div>
 
@@ -651,6 +652,56 @@ $tab = $_GET['tab'] ?? 'users';
         document.getElementById('editPaysNum').value = b.dataset.num;
     });
     </script>
+
+    <?php elseif ($tab === 'tactics'): ?>
+    <!-- ===================== STYLES TACTIQUES ===================== -->
+    <?php
+    $tacticPresets = $pdo->query("
+        SELECT tp.idTacticPreset, tp.nom, tp.idUserCreateur, tp.dateCreation, u.username,
+            (SELECT COUNT(*) FROM tactic_preset_slot s WHERE s.idTacticPreset = tp.idTacticPreset) AS nbSlots,
+            (SELECT COUNT(*) FROM tactic_card c WHERE c.idTacticPreset = tp.idTacticPreset) AS nbCartes
+        FROM tactic_preset tp
+        LEFT JOIN user u ON u.idUser = tp.idUserCreateur
+        ORDER BY tp.idUserCreateur IS NULL DESC, tp.nom
+    ")->fetchAll();
+    ?>
+    <div class="table-panel">
+        <div class="table-panel-head">
+            <span class="section-title"><span style="color:var(--heading)">Styles tactiques (<?= count($tacticPresets) ?>)</span></span>
+        </div>
+            <div class="table-scroll">
+                <table class="table table-sm table-hover table-striped mb-0 data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Nom</th><th>Créateur</th><th>Postes</th><th>Cartes utilisatrices</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($tacticPresets as $tp): ?>
+                        <tr>
+                            <td><?= $tp['idTacticPreset'] ?></td>
+                            <td><?= htmlspecialchars($tp['nom']) ?></td>
+                            <td><?= $tp['idUserCreateur'] === null ? '<span class="badge bg-secondary">Système</span>' : htmlspecialchars($tp['username'] ?? '—') ?></td>
+                            <td><?= $tp['nbSlots'] ?></td>
+                            <td><?= $tp['nbCartes'] > 0 ? '<span class="badge bg-warning text-dark">' . $tp['nbCartes'] . '</span>' : '0' ?></td>
+                            <td>
+                            <form action="admin_post.php" method="post" style="display:contents"
+                                  data-confirm="Supprimer le style « <?= htmlspecialchars($tp['nom'], ENT_QUOTES) ?> » ?<?= $tp['nbCartes'] > 0 ? ' ' . $tp['nbCartes'] . ' carte(s) tactique(s) l\'utilisent actuellement et seront supprimées avec leurs affectations de joueurs.' : '' ?>"
+                                  data-confirm-variant="danger">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="delete_tactic_preset">
+                                <input type="hidden" name="idTacticPreset" value="<?= $tp['idTacticPreset'] ?>">
+                                <button class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                </button>
+                            </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+    </div>
 
     <?php elseif ($tab === 'stats'): ?>
     <!-- ===================== STATS GLOBALES ===================== -->
