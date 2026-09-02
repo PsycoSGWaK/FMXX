@@ -1,13 +1,16 @@
 <?php
 /**
- * Met à jour le rôle "utilisé en match" (choix manuel de l'utilisateur,
- * pré-rempli automatiquement depuis l'import) d'UN SEUL joueur, appelé en
- * arrière-plan (fetch) depuis le sélecteur de la colonne Poste de
- * l'effectif — pas de rechargement de page.
+ * Met à jour les rôles "utilisés en match" (choix manuel de l'utilisateur,
+ * pré-remplis automatiquement depuis l'import) d'UN SEUL joueur, appelé en
+ * arrière-plan (fetch) depuis le multi-select de la colonne Poste de
+ * l'effectif — pas de rechargement de page. Un joueur peut avoir plusieurs
+ * rôles ; une liste vide efface le choix manuel (retour à la suggestion
+ * automatique déduite du poste importé).
  */
 session_start();
 require_once("db.php");
 require_once("csrf.php");
+require_once("poste_helpers.php");
 
 header('Content-Type: application/json');
 
@@ -24,21 +27,40 @@ if (!hash_equals(csrf_token(), $token)) {
     exit;
 }
 
-// Doit rester synchronisé avec $roleOptions dans index.php.
-$validRoles = ['GK', 'CB', 'RB', 'LB', 'RWB', 'LWB', 'SW', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST', 'FW'];
-
 $idUser   = $_SESSION['idUser'];
 $idJoueur = (int)($_POST['idJoueur'] ?? 0);
-$role     = $_POST['role'] ?? '';
-$roleVal  = in_array($role, $validRoles, true) ? $role : null;
+$rolesIn  = is_array($_POST['roles'] ?? null) ? $_POST['roles'] : [];
+$roles    = array_values(array_unique(array_filter($rolesIn, fn($r) => in_array($r, $roleOptions, true))));
 
-if ($roleVal === null) {
+if (count($roles) !== count(array_unique($rolesIn))) {
+    // Au moins une valeur envoyée n'est pas dans la liste fermée des 16 rôles.
     http_response_code(400);
     echo json_encode(['ok' => false]);
     exit;
 }
 
-$stmt = $pdo->prepare("UPDATE joueur SET role_match = :role WHERE idJoueur = :id AND idUser = :idUser");
-$stmt->execute(['role' => $roleVal, 'id' => $idJoueur, 'idUser' => $idUser]);
+$checkStmt = $pdo->prepare("SELECT poste FROM joueur WHERE idJoueur = :id AND idUser = :idUser");
+$checkStmt->execute(['id' => $idJoueur, 'idUser' => $idUser]);
+$joueur = $checkStmt->fetch();
+if (!$joueur) {
+    http_response_code(404);
+    echo json_encode(['ok' => false]);
+    exit;
+}
 
-echo json_encode(['ok' => true, 'role' => $roleVal]);
+$pdo->beginTransaction();
+$pdo->prepare("DELETE FROM joueur_role WHERE idJoueur = :id")->execute(['id' => $idJoueur]);
+if (!empty($roles)) {
+    $insertStmt = $pdo->prepare("INSERT INTO joueur_role (idJoueur, role_code) VALUES (:id, :role)");
+    foreach ($roles as $role) {
+        $insertStmt->execute(['id' => $idJoueur, 'role' => $role]);
+    }
+}
+$pdo->commit();
+
+// Liste vide envoyée -> le client doit resynchroniser ses cases sur la
+// suggestion automatique recalculée, pas rester avec un select vide.
+$returnedRoles = !empty($roles) ? $roles : $suggestRoleMatches($joueur['poste'] ?? '');
+usort($returnedRoles, fn($a, $b) => array_search($a, $roleOptions) <=> array_search($b, $roleOptions));
+
+echo json_encode(['ok' => true, 'roles' => $returnedRoles]);
