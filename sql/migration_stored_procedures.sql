@@ -25,6 +25,7 @@ BEGIN
     DELETE FROM tactic        WHERE idUser = p_idUser;
     DELETE FROM objectif      WHERE idUser = p_idUser;
     DELETE FROM saison_meta   WHERE idUser = p_idUser;
+    -- joueur_role est nettoyee automatiquement (FK ON DELETE CASCADE, voir migration_joueur_role.sql).
     DELETE FROM joueur        WHERE idUser = p_idUser;
     DELETE FROM user          WHERE idUser = p_idUser;
 END$$
