@@ -414,165 +414,39 @@ if ($genre) {
 
 // Graphiques effectif
 if (count($joueurs) > 0) {
-    // Dictionnaire explicite FR + EN (codes FM). Les qualificatifs de côté
-    // entre parenthèses ("D (C)", "MO (DGC)"...) sont retirés avant le
-    // découpage : seul le rôle de base (avant la parenthèse) est classé.
-    $posteMap = [
-        // Gardien
-        'GB' => 'Gardien', 'GK' => 'Gardien',
-        // Défense
-        'D' => 'Défense', 'DC' => 'Défense', 'DD' => 'Défense', 'DG' => 'Défense',
-        'PD' => 'Défense', 'PG' => 'Défense', 'LIB' => 'Défense',
-        'CB' => 'Défense', 'RB' => 'Défense', 'LB' => 'Défense',
-        'RWB' => 'Défense', 'LWB' => 'Défense', 'WB' => 'Défense', 'SW' => 'Défense',
-        // Milieu
-        'M' => 'Milieu', 'MD' => 'Milieu', 'MC' => 'Milieu', 'MOC' => 'Milieu',
-        'MO' => 'Milieu', 'MG' => 'Milieu',
-        'CDM' => 'Milieu', 'DM' => 'Milieu', 'CM' => 'Milieu', 'CAM' => 'Milieu',
-        'AM' => 'Milieu', 'RM' => 'Milieu', 'LM' => 'Milieu',
-        // Attaque
-        'AD' => 'Attaque', 'AG' => 'Attaque', 'AL' => 'Attaque',
-        'BU' => 'Attaque', 'BT' => 'Attaque', 'ATT' => 'Attaque',
-        'RW' => 'Attaque', 'LW' => 'Attaque', 'ST' => 'Attaque', 'FW' => 'Attaque',
-    ];
-    $rankOrder = ['Gardien' => 0, 'Défense' => 1, 'Milieu' => 2, 'Attaque' => 3];
-    $catPoste = function(string $poste) use ($posteMap, $rankOrder): string {
-        $clean  = preg_replace('/\([^)]*\)/', '', strtoupper(trim($poste)));
-        $tokens = array_filter(preg_split('/[\s,\/\-]+/', $clean));
-        $best = 99; $result = 'Autre';
-        foreach ($tokens as $tok) {
-            if (!isset($posteMap[$tok])) continue;
-            $rank = $rankOrder[$posteMap[$tok]];
-            if ($rank < $best) { $best = $rank; $result = $posteMap[$tok]; }
-        }
-        return $result;
-    };
-    // Affichage simplifié de la colonne "Poste" : un seul rôle principal
-    // (même priorité Gardien>Défense>Milieu>Attaque que pour le graphique),
-    // traduit en abréviation EN. Les lettres de côté FR (C/D/G = Centre/
-    // Droite/Gauche) et EN (C/L/R) ne se chevauchent jamais caractère par
-    // caractère : D et G n'existent qu'en FR, L n'existe qu'en EN — donc la
-    // traduction lettre à lettre est sans ambiguïté quelle que soit la
-    // langue d'import.
-    $roleEnMap = [
-        'GB' => ['GK', null], 'GK' => ['GK', null],
-        'D'  => ['D', null],
-        'DC' => ['D', 'C'], 'DD' => ['D', 'R'], 'DG' => ['D', 'L'],
-        'CB' => ['D', 'C'], 'RB' => ['D', 'R'], 'LB' => ['D', 'L'],
-        'PD' => ['WB', 'R'], 'PG' => ['WB', 'L'],
-        'RWB' => ['WB', 'R'], 'LWB' => ['WB', 'L'], 'WB' => ['WB', null],
-        'LIB' => ['SW', null], 'SW' => ['SW', null],
-        'M'  => ['M', null],
-        'MC' => ['M', 'C'], 'CM' => ['M', 'C'],
-        'MD' => ['CDM', null], 'CDM' => ['CDM', null], 'DM' => ['CDM', null],
-        'MOC' => ['AM', 'C'], 'CAM' => ['AM', 'C'],
-        'MO' => ['AM', null], 'AM' => ['AM', null],
-        'MG' => ['M', 'L'], 'LM' => ['M', 'L'], 'RM' => ['M', 'R'],
-        'AD' => ['W', 'R'], 'RW' => ['W', 'R'],
-        'AG' => ['W', 'L'], 'LW' => ['W', 'L'],
-        'AL' => ['W', null],
-        'BU' => ['ST', null], 'BT' => ['ST', null], 'ST' => ['ST', null],
-        'ATT' => ['FW', null], 'FW' => ['FW', null],
-    ];
-    $sideCharMap = ['D' => 'R', 'G' => 'L', 'C' => 'C', 'L' => 'L', 'R' => 'R'];
-    // Détection commune : le rôle (token + côté brut) le plus prioritaire
-    // d'un poste importé, réutilisée par l'affichage libre ($simplifyPoste)
-    // et par la pré-sélection contrainte à la liste fermée ($suggestRoleMatch).
-    $findBestRoleToken = function(string $poste) use ($posteMap, $rankOrder): array {
-        $groups = array_filter(array_map('trim', explode(',', $poste)));
-        $bestRank = 100; $bestRole = null; $bestSide = '';
-        foreach ($groups as $group) {
-            $sideRaw = '';
-            if (preg_match('/\(([^)]*)\)/', $group, $m)) {
-                $sideRaw = strtoupper($m[1]);
-            }
-            $rolePart = trim(preg_replace('/\([^)]*\)/', '', $group));
-            if ($rolePart === '') continue;
-            foreach (explode('/', $rolePart) as $tok) {
-                $tok = strtoupper(trim($tok));
-                if ($tok === '' || !isset($posteMap[$tok])) continue;
-                $rank = $rankOrder[$posteMap[$tok]];
-                if ($rank < $bestRank) {
-                    $bestRank = $rank;
-                    $bestRole = $tok;
-                    $bestSide = $sideRaw;
-                }
-            }
-        }
-        return [$bestRole, $bestSide];
-    };
-    $simplifyPoste = function(string $poste) use ($findBestRoleToken, $roleEnMap, $sideCharMap): string {
-        [$bestRole, $bestSide] = $findBestRoleToken($poste);
-        if ($bestRole === null) return $poste;
-        [$enRole, $impliedSide] = $roleEnMap[$bestRole] ?? [$bestRole, null];
-        $side = '';
-        if ($bestSide !== '') {
-            $side = implode('', array_map(fn($c) => $sideCharMap[$c] ?? $c, str_split($bestSide)));
-        } elseif ($impliedSide) {
-            $side = $impliedSide;
-        }
-        return $side !== '' ? "$enRole ($side)" : $enRole;
-    };
+    require_once __DIR__ . '/poste_helpers.php';
 
-    // Les 16 rôles "utilisés en match" proposés dans le sélecteur (codes
-    // courts EN de la liste FR/EN/ES fournie par Guillaume, 2026-08-29 —
-    // le code est toujours stocké en EN, l'abréviation affichée dans le
-    // sélecteur et le glossaire est traduite via $t['role_abbr_XXX']).
-    // Liste fermée : un seul rôle par combinaison rôle+côté.
-    $roleOptions = ['GK', 'CB', 'RB', 'LB', 'RWB', 'LWB', 'SW', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST', 'FW'];
-    $roleCategory = [
-        'GK' => 'Gardien',
-        'CB' => 'Défense', 'RB' => 'Défense', 'LB' => 'Défense',
-        'RWB' => 'Défense', 'LWB' => 'Défense', 'SW' => 'Défense',
-        'CDM' => 'Milieu', 'CM' => 'Milieu', 'CAM' => 'Milieu', 'RM' => 'Milieu', 'LM' => 'Milieu',
-        'RW' => 'Attaque', 'LW' => 'Attaque', 'ST' => 'Attaque', 'FW' => 'Attaque',
-    ];
-    // enRole (issu de $roleEnMap) + côté -> code final de la liste fermée.
-    $finalRoleMap = [
-        'GK|' => 'GK',
-        'D|C' => 'CB', 'D|R' => 'RB', 'D|L' => 'LB',
-        'WB|R' => 'RWB', 'WB|L' => 'LWB',
-        'SW|' => 'SW',
-        'CDM|' => 'CDM',
-        'M|C' => 'CM', 'M|R' => 'RM', 'M|L' => 'LM',
-        'AM|C' => 'CAM',
-        'W|R' => 'RW', 'W|L' => 'LW',
-        'ST|' => 'ST',
-        'FW|' => 'FW',
-    ];
-    $suggestRoleMatch = function(string $poste) use ($findBestRoleToken, $roleEnMap, $sideCharMap, $finalRoleMap): string {
-        [$bestRole, $bestSide] = $findBestRoleToken($poste);
-        if ($bestRole === null) return 'CM';
-        [$enRole, $impliedSide] = $roleEnMap[$bestRole] ?? ['M', null];
-        // AM n'a que la variante centrale (CAM) dans la liste actée.
-        if ($enRole === 'AM') return 'CAM';
-        if (in_array($enRole, ['GK', 'SW', 'CDM', 'ST', 'FW'], true)) {
-            return $finalRoleMap["$enRole|"] ?? 'CM';
+    // Choix manuels multi-postes (table joueur_role) de tous les joueurs de
+    // l'effectif, regroupés par joueur et triés selon $roleOptions.
+    $idsJoueurs = array_column($joueurs, 'idJoueur');
+    $manualRoles = [];
+    if (!empty($idsJoueurs)) {
+        $placeholders = implode(',', array_fill(0, count($idsJoueurs), '?'));
+        $rolesStmt = $pdo->prepare("SELECT idJoueur, role_code FROM joueur_role WHERE idJoueur IN ($placeholders)");
+        $rolesStmt->execute($idsJoueurs);
+        foreach ($rolesStmt->fetchAll() as $row) {
+            $manualRoles[$row['idJoueur']][] = $row['role_code'];
         }
-        $side = '';
-        if ($bestSide !== '') {
-            $translated = array_map(fn($c) => $sideCharMap[$c] ?? $c, str_split($bestSide));
-            // Un seul côté autorisé dans la liste fermée : priorité Centre > Droite > Gauche.
-            if (in_array('C', $translated, true)) $side = 'C';
-            elseif (in_array('R', $translated, true)) $side = 'R';
-            elseif (in_array('L', $translated, true)) $side = 'L';
-        } elseif ($impliedSide) {
-            $side = $impliedSide;
+        foreach ($manualRoles as &$roles) {
+            usort($roles, fn($a, $b) => array_search($a, $roleOptions) <=> array_search($b, $roleOptions));
         }
-        if ($side === '') {
-            $side = ($enRole === 'W' || $enRole === 'WB') ? 'R' : 'C';
-        }
-        return $finalRoleMap["$enRole|$side"] ?? 'CM';
+        unset($roles);
+    }
+    // Rôles effectifs d'un joueur : le(s) choix manuel(aux) de l'utilisateur
+    // (table joueur_role) priment sur la suggestion déduite de l'import.
+    // Retourne toujours au moins un rôle.
+    $effectiveRoles = function(array $j) use ($manualRoles, $suggestRoleMatches): array {
+        return $manualRoles[$j['idJoueur']] ?? $suggestRoleMatches($j['poste'] ?? '');
     };
-    // Rôle effectif : le choix manuel de l'utilisateur (role_match) prime
-    // sur la suggestion déduite de l'import.
-    $effectiveRole = function(array $j) use ($suggestRoleMatch): string {
-        return !empty($j['role_match']) ? $j['role_match'] : $suggestRoleMatch($j['poste'] ?? '');
-    };
+    // Répartition par poste : un joueur multi-rôle compte dans CHAQUE
+    // catégorie où il a un rôle (le total peut dépasser l'effectif — assumé,
+    // le nombre affiché reste "combien de joueurs peuvent jouer X").
     $parCategorie = ['Gardien' => 0, 'Défense' => 0, 'Milieu' => 0, 'Attaque' => 0];
     foreach ($joueurs as $j) {
-        $cat = $roleCategory[$effectiveRole($j)] ?? $catPoste($j['poste'] ?? '');
-        if (isset($parCategorie[$cat])) $parCategorie[$cat]++;
+        foreach ($effectiveRoles($j) as $role) {
+            $cat = $roleCategory[$role] ?? $catPoste($j['poste'] ?? '');
+            if (isset($parCategorie[$cat])) $parCategorie[$cat]++;
+        }
     }
 }
 ?>
@@ -1037,12 +911,12 @@ if (count($joueurs) > 0) {
                         <?php endif; ?>
                         <?php
                         // Liste canonique (memes 16 roles que le select du tableau, dans
-                        // l'ordre Gardien -> Defense -> Milieu -> Attaque de $roleOptions),
+                        // l'ordre voulu par Guillaume pour ce filtre, cf $filterPosteOrder),
                         // restreinte aux roles reellement presents dans l'effectif. Remplace
                         // l'ancienne liste basee sur la chaine "poste" brute importee de FM,
                         // qui ne correspondait plus a ce qu'affiche/propose le select.
-                        $postesPresents = array_unique(array_map($effectiveRole, $joueurs));
-                        $postes = array_values(array_filter($roleOptions, fn($r) => in_array($r, $postesPresents, true)));
+                        $postesPresents = array_unique(array_merge(...array_map($effectiveRoles, $joueurs)));
+                        $postes = array_values(array_filter($filterPosteOrder, fn($r) => in_array($r, $postesPresents, true)));
                         $annees = array_unique(array_filter(array_map(function($j) {
                             if (!$j['expireContrat']) return null;
                             $parts = explode('/', $j['expireContrat']);
@@ -1058,7 +932,7 @@ if (count($joueurs) > 0) {
                             <select id="filterPoste" class="btn-ghost">
                                 <option value=""><?= $t['squad_filter_position'] ?></option>
                                 <?php foreach ($postes as $p): ?>
-                                    <option value="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($t['role_' . $p] ?? $p) ?></option>
+                                    <option value="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($t['role_abbr_' . $p] ?? $p) ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <select id="filterExpire" class="btn-ghost">
@@ -1110,8 +984,9 @@ if (count($joueurs) > 0) {
                                         }
                                         $status = $j['mercato_status'];
                                         ?>
+                                        <?php $curRoles = $effectiveRoles($j); ?>
                                         <tr data-nom="<?= htmlspecialchars(mb_strtolower($j['nom'] ?? '')) ?>"
-                                            data-poste="<?= htmlspecialchars($effectiveRole($j)) ?>"
+                                            data-poste="<?= htmlspecialchars(implode(' ', $curRoles)) ?>"
                                             data-expire="<?= $expireYear ?>"
                                             data-statut="<?= $j['mercato_status'] ?? '' ?>"
                                             data-prix="<?= (int)($j['prixDemande'] ?? 0) ?>"
@@ -1128,12 +1003,21 @@ if (count($joueurs) > 0) {
                                             </td>
                                             <td class="text-end"><?= $j['age'] ?? '' ?></td>
                                             <td>
-                                                <?php $curRole = $effectiveRole($j); ?>
-                                                <select class="role-select form-select form-select-sm" data-id="<?= $j['idJoueur'] ?>">
-                                                    <?php foreach ($roleOptions as $opt): ?>
-                                                        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $curRole ? 'selected' : '' ?>><?= htmlspecialchars($t['role_abbr_' . $opt] ?? $opt) ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
+                                                <div class="dropdown role-multiselect">
+                                                    <button type="button" class="btn btn-sm role-multiselect-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                                        <?= htmlspecialchars(implode(', ', array_map(fn($r) => $t['role_abbr_' . $r] ?? $r, $curRoles))) ?>
+                                                    </button>
+                                                    <ul class="dropdown-menu role-multiselect-menu" data-id="<?= $j['idJoueur'] ?>">
+                                                        <?php foreach ($roleOptions as $opt): ?>
+                                                            <li>
+                                                                <label class="form-check role-multiselect-option">
+                                                                    <input type="checkbox" class="form-check-input" value="<?= htmlspecialchars($opt) ?>" <?= in_array($opt, $curRoles, true) ? 'checked' : '' ?>>
+                                                                    <span class="form-check-label"><?= htmlspecialchars($t['role_abbr_' . $opt] ?? $opt) ?></span>
+                                                                </label>
+                                                            </li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                </div>
                                             </td>
                                             <td class="text-end"><?= $j['app'] ?? '' ?></td>
                                             <td class="text-end"><?= $j['pDec'] ?? '' ?></td>
@@ -1197,7 +1081,7 @@ if (count($joueurs) > 0) {
                             rows.forEach(row => {
                                 const match =
                                     (!nom    || row.dataset.nom.includes(nom)) &&
-                                    (!poste  || row.dataset.poste === poste) &&
+                                    (!poste  || row.dataset.poste.split(' ').includes(poste)) &&
                                     (!expire || row.dataset.expire === expire) &&
                                     (!statut || row.dataset.statut === statut);
                                 row.style.display = match ? '' : 'none';
@@ -1253,13 +1137,13 @@ if (count($joueurs) > 0) {
                                         // Ordre logique (Gardien -> Defense -> Milieu -> Attaque,
                                         // meme categorisation que le graphique "Repartition par
                                         // poste") plutot qu'alphabetique sur l'abreviation
-                                        // affichee : on se base sur la valeur du select (code
-                                        // canonique), pas son texte.
+                                        // affichee : on se base sur le premier code de data-poste
+                                        // (deja trie cote serveur), pas le texte affiche.
                                         const roleOrder = <?= json_encode($roleOptions) ?>;
-                                        const selA = a.cells[col]?.querySelector('select');
-                                        const selB = b.cells[col]?.querySelector('select');
-                                        const ra = roleOrder.indexOf(selA?.value ?? '');
-                                        const rb = roleOrder.indexOf(selB?.value ?? '');
+                                        const roleA = (a.dataset.poste || '').split(' ')[0];
+                                        const roleB = (b.dataset.poste || '').split(' ')[0];
+                                        const ra = roleOrder.indexOf(roleA);
+                                        const rb = roleOrder.indexOf(roleB);
                                         return sortAsc ? ra - rb : rb - ra;
                                     }
                                     let va = cellText(a.cells[col]);
@@ -1369,6 +1253,8 @@ if (count($joueurs) > 0) {
                         </script>
                         <script>
                         const ROLE_CATEGORY = <?= json_encode($roleCategory ?? []) ?>;
+                        const ROLE_ABBR     = <?= json_encode(array_combine($roleOptions, array_map(fn($r) => $t['role_abbr_' . $r] ?? $r, $roleOptions))) ?>;
+                        const ROLE_ORDER    = <?= json_encode($roleOptions) ?>;
                         const POSTE_COLORS  = <?= json_encode($posteColors ?? []) ?>;
                         const POSTE_LABELS  = <?= json_encode($posteLabels ?? []) ?>;
                         const POSTE_ORDER   = ['Gardien', 'Défense', 'Milieu', 'Attaque'];
@@ -1377,10 +1263,14 @@ if (count($joueurs) > 0) {
                             const legendEl = document.getElementById('poste-legend');
                             if (!barEl || !legendEl) return;
                             const counts = { 'Gardien': 0, 'Défense': 0, 'Milieu': 0, 'Attaque': 0 };
-                            document.querySelectorAll('#effectifTable tbody .role-select').forEach(function (sel) {
-                                const cat = ROLE_CATEGORY[sel.value];
-                                if (cat) counts[cat]++;
+                            document.querySelectorAll('#effectifTable tbody .role-multiselect-menu').forEach(function (menu) {
+                                menu.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
+                                    const cat = ROLE_CATEGORY[cb.value];
+                                    if (cat) counts[cat]++;
+                                });
                             });
+                            // Un joueur multi-poste compte dans chaque categorie ou il a un
+                            // role : le total peut depasser l'effectif, assume (cf role_match_post.php).
                             const total = POSTE_ORDER.reduce((sum, cat) => sum + counts[cat], 0);
                             if (total === 0) return;
                             barEl.innerHTML = '';
@@ -1403,23 +1293,39 @@ if (count($joueurs) > 0) {
                                 legendEl.appendChild(item);
                             });
                         }
-                        document.querySelectorAll('#effectifTable .role-select').forEach(function (sel) {
-                            sel.addEventListener('change', function () {
+                        function syncRoleMultiselect(menu, roles) {
+                            const row = menu.closest('tr');
+                            const toggle = menu.closest('.role-multiselect').querySelector('.role-multiselect-toggle');
+                            menu.querySelectorAll('input[type=checkbox]').forEach(function (cb) {
+                                cb.checked = roles.includes(cb.value);
+                            });
+                            if (row) row.dataset.poste = roles.join(' ');
+                            if (toggle) toggle.textContent = roles.map(r => ROLE_ABBR[r] ?? r).join(', ');
+                        }
+                        document.querySelectorAll('#effectifTable .role-multiselect-menu').forEach(function (menu) {
+                            // Compteur de requete : si l'utilisateur coche/decoche plusieurs
+                            // cases rapidement, les reponses AJAX peuvent arriver dans le
+                            // desordre. On ignore toute reponse qui n'est plus la derniere
+                            // requete envoyee pour eviter qu'un etat perime n'ecrase un choix
+                            // plus recent.
+                            let requestSeq = 0;
+                            menu.addEventListener('change', function (e) {
+                                if (e.target.type !== 'checkbox') return;
+                                const seq = ++requestSeq;
+                                const roles = ROLE_ORDER.filter(r => menu.querySelector('input[value="' + r + '"]').checked);
                                 fetch('role_match_post.php', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                    body: new URLSearchParams({
-                                        idJoueur: sel.dataset.id,
-                                        role: sel.value,
-                                        csrf_token: <?= json_encode(csrf_token()) ?>
-                                    })
+                                    body: new URLSearchParams([
+                                        ['idJoueur', menu.dataset.id],
+                                        ['csrf_token', <?= json_encode(csrf_token()) ?>],
+                                        ...roles.map(r => ['roles[]', r])
+                                    ])
                                 }).then(r => r.json()).then(function (data) {
-                                    if (!data.ok) return;
-                                    // Garde le data-poste de la ligne synchro avec le nouveau
-                                    // role choisi, sinon le filtre "Tous les postes" reste sur
-                                    // l'ancienne valeur jusqu'au prochain rechargement.
-                                    const row = sel.closest('tr');
-                                    if (row) row.dataset.poste = sel.value;
+                                    if (!data.ok || seq !== requestSeq) return;
+                                    // Si tout est decoche, le serveur repond avec la suggestion
+                                    // automatique recalculee : on resynchronise les cases.
+                                    syncRoleMultiselect(menu, data.roles);
                                     refreshPosteStats();
                                 });
                             });
@@ -1736,8 +1642,8 @@ if (count($joueurs) > 0) {
                                             $tactics[$i]['remplacant'] ?? null,
                                             $tactics[$i]['supersub']   ?? null,
                                         ]);
-                                        $rowPlayers = array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRole) {
-                                            return $effectiveRole($j) === $roleCode || in_array($j['idJoueur'], $currentIds);
+                                        $rowPlayers = array_filter($joueursDispo, function ($j) use ($roleCode, $currentIds, $effectiveRoles) {
+                                            return in_array($roleCode, $effectiveRoles($j), true) || in_array($j['idJoueur'], $currentIds);
                                         });
                                     ?>
                                         <div class="tactic-pos-card" data-position="<?= $i ?>">
@@ -1749,8 +1655,9 @@ if (count($joueurs) > 0) {
                                                         <option value="">—</option>
                                                         <?php foreach ($rowPlayers as $j): ?>
                                                             <?php $selected = isset($tactics[$i]) && $tactics[$i][$role] == $j['idJoueur'] ? 'selected' : ''; ?>
+                                                            <?php $jPrimaryRole = $effectiveRoles($j)[0]; ?>
                                                             <option value="<?= $j['idJoueur'] ?>" <?= $selected ?>>
-                                                                <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $effectiveRole($j)] ?? $effectiveRole($j)) ?>)
+                                                                <?= htmlspecialchars($j['nom']) ?> (<?= htmlspecialchars($t['role_abbr_' . $jPrimaryRole] ?? $jPrimaryRole) ?>)
                                                             </option>
                                                         <?php endforeach; ?>
                                                     </select>
