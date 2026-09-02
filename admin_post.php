@@ -112,6 +112,25 @@ switch ($action) {
         $pdo->prepare("DELETE FROM pays WHERE idPays = :id")->execute(['id' => $id]);
         redirect('pays', 'msg', 'Pays supprimé.');
 
+    case 'delete_tactic_preset':
+        // Pas de FK entre tactic_preset et tactic_card/tactic (table partagee
+        // entre tous les utilisateurs) : suppression forcee, meme si des
+        // utilisateurs l'utilisent actuellement (choix assume) — on nettoie
+        // alors aussi leurs cartes tactiques et affectations pour ne pas
+        // laisser de lignes orphelines.
+        $id = (int)($_POST['idTacticPreset'] ?? 0);
+        $pdo->beginTransaction();
+        $pdo->prepare("
+            DELETE t FROM tactic t
+            INNER JOIN tactic_card tc ON tc.idTacticCard = t.idTacticCard
+            WHERE tc.idTacticPreset = :id
+        ")->execute(['id' => $id]);
+        $pdo->prepare("DELETE FROM tactic_card WHERE idTacticPreset = :id")->execute(['id' => $id]);
+        $pdo->prepare("DELETE FROM tactic_preset_slot WHERE idTacticPreset = :id")->execute(['id' => $id]);
+        $pdo->prepare("DELETE FROM tactic_preset WHERE idTacticPreset = :id")->execute(['id' => $id]);
+        $pdo->commit();
+        redirect('tactics', 'msg', 'Style tactique supprimé.');
+
     case 'reset_password':
         $idUser = (int)($_POST['idUser'] ?? 0);
         $pwd    = $_POST['new_password']     ?? '';
